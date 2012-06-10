@@ -2333,21 +2333,9 @@ void UI::RxIQcheckChanged(bool state)
 void UI::RxIQspinChanged(double num)
 {
     QString command;
-    bool temp;
-
-    temp = configure.getRxIQcheckboxState();
-    // Turn off RXIQMu
-    command.clear(); QTextStream(&command) << "SetIQEnable " << "false";
-    connection.sendCommand(command);
     // Set the value of RxIQMu
-    if(configure.getRxIQdivCheckBoxState()) num=num/100;
-    command.clear(); QTextStream(&command) << "RxIQmuVal " << num;
+    command.clear(); QTextStream(&command) << "RxIQmuVal " << pow(2,num);
     connection.sendCommand(command);
-    //If checked to be on, then turn it back on
-    if(temp) {
-        command.clear(); QTextStream(&command) << "SetIQEnable " << "true";
-        connection.sendCommand(command);
-    }
 }
 
 void UI::cwPitchChanged(int arg1)

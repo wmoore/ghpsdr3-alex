@@ -272,7 +272,7 @@ void Configure::loadSettings(QSettings* settings) {
 
     settings->beginGroup("RxIQimage");
     widget.RxIQcheckBox->setChecked(settings->value("RxIQon/off",TRUE).toBool());
-    widget.RxIQspinBox->setValue(settings->value("RxIQmu",25).toInt());
+    widget.RxIQspinBox->setValue(settings->value("RxIQmu",0).toInt());
     settings->endGroup();
     settings->beginGroup("UserPass");
      //QTableWidgetItem *server, *user, *pass;
@@ -808,11 +808,6 @@ double Configure::getRxIQspinBoxValue()
 int Configure::getCwPitch()
 {
     return widget.spinBox_cwPitch->value();
-}
-
-bool Configure::getRxIQdivCheckBoxState()
-{
-    return widget.RxIQdivCheckBox->isChecked();
 }
 
 void Configure::on_spinBox_cwPitch_valueChanged(int arg1)
