@@ -60,7 +60,7 @@ void correctIQ (CXB sigbuf, IQ iq, BOOLEAN isTX, int subchan) {
   if (subchan == 0) mu = iq->_mu * iq->mu;
   else mu = 0;
   if(!isTX) {
-    // test for blow up
+    // test for blow up and reset
     if (iq->w.re != iq->w.re ||	abs(iq->w.re) > 1 ||
 	iq->w.im != iq->w.im || abs(iq->w.im) > 1)
       iq->w = (COMPLEX){0.0, 0.0};
@@ -83,8 +83,13 @@ void correctIQ (CXB sigbuf, IQ iq, BOOLEAN isTX, int subchan) {
       }
       COMPLEX avg_error = Cscl(sum_error, 1.0/CXBhave (sigbuf));
       REAL max_abs = max(abs(avg_error.re), abs(avg_error.im));
-      // test for learning rate too large
-      // defined as moving more than 1 millionth of 
+      // test for learning rate too large, defined
+      // as moving more than 1 millionth of the unit
+      // circle radius per sample.  this mu can adapt
+      // any filter in a million samples.
+      // so 5, 10, or 20 seconds for 192k, 96k, or 48k
+      // adjusting the externally defined mu can be used
+      // to get a faster or slower rate.
       if (max_abs * iq->_mu > 1e-6) {
 	iq->_mu = 1e-6 / max_abs;
 	mu = iq->_mu * iq->mu;
