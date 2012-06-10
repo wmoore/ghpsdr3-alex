@@ -36,80 +36,75 @@ Bridgewater, NJ 08807
 
 #include <common.h>
 
-
-
-IQ
-newCorrectIQ (REAL phase, REAL gain, REAL mu)
-{
-	IQ iq = (IQ) safealloc (1, sizeof (iqstate), "IQ state");
-	iq->phase = phase;
-	iq->gain = gain;
-	iq->mu = mu;
-	iq->leakage = 0.000000f;
-	iq->MASK=15;
-	iq->index=0;
-	iq->w = (COMPLEX *)safealloc(16,sizeof(COMPLEX),"correctIQ w");
-	iq->y = (COMPLEX *)safealloc(16,sizeof(COMPLEX),"correctIQ y");
-	iq->del = (COMPLEX *)safealloc(16,sizeof(COMPLEX),"correctIQ del");
-	memset((void *)iq->w,0,16*sizeof(COMPLEX));
-	iq->wbir_tuned = TRUE;
-	iq->wbir_state = FastAdapt;
-	return iq;
+IQ newCorrectIQ (REAL phase, REAL gain, REAL mu) {
+  IQ iq = (IQ) safealloc (1, sizeof (iqstate), "IQ state");
+  iq->phase = phase;
+  iq->gain = gain;
+  iq->mu = mu;
+  iq->_mu = 1.0;
+  iq->w = (COMPLEX){0.0, 0.0};
+  return iq;
 }
 
-void
-delCorrectIQ (IQ iq)
-{
-	safefree((char *)iq->w);
-	safefree((char *)iq->y);
-	safefree((char *)iq->del);
-	safefree ((char *) iq);
+void delCorrectIQ (IQ iq) {
+  safefree ((char *) iq);
 }
 
 int IQdoit = 1;
 
-void
-correctIQ (CXB sigbuf, IQ iq, BOOLEAN isTX, int subchan)
-{
-	int i;
-	REAL doit;
-	if (IQdoit == 0) return;
-	if (subchan == 0) doit = iq->mu;
-	else doit = 0;
-	if(!isTX)
-	{
-
-		// if (subchan == 0) // removed so that sub rx's will get IQ correction
-		switch (iq->wbir_state) {
-			case FastAdapt:
-				break;
-			case SlowAdapt:
-				break;
-			case NoAdapt:
-				break;
-			default:
-				break;
-		}
-
-		for (i = 0; i < CXBhave (sigbuf); i++)
-		{
-			iq->del[iq->index] = CXBdata(sigbuf, i);
-			iq->y[iq->index] = Cadd(iq->del[iq->index], Cmul(iq->w[0], Conjg(iq->del[iq->index])));
-			iq->y[iq->index] = Cadd(iq->y[iq->index], Cmul(iq->w[1], Conjg(iq->y[iq->index])));
-			iq->w[1] = Csub(iq->w[1], Cscl(Cmul(iq->y[iq->index], iq->y[iq->index]), doit));  // this is where the adaption happens
-
-			CXBdata(sigbuf, i) = iq->y[iq->index];
-			iq->index = (iq->index + iq->MASK) & iq->MASK;
-		}
-		//fprintf(stderr, "w1 real: %g, w1 imag: %g\n", iq->w[1].re, iq->w[1].im); fflush(stderr); 
-	}
-	else
-	{
-		for (i = 0; i < CXBhave (sigbuf); i++)
-		{
-			CXBimag (sigbuf, i) += iq->phase * CXBreal (sigbuf, i);
-			CXBreal (sigbuf, i) *= iq->gain;
-		}
-	}
-
+void correctIQ (CXB sigbuf, IQ iq, BOOLEAN isTX, int subchan) {
+  int i;
+  REAL mu;
+  
+  if (IQdoit == 0) return;
+  if (subchan == 0) mu = iq->_mu * iq->mu;
+  else mu = 0;
+  if(!isTX) {
+    // test for blow up
+    if (iq->w.re != iq->w.re ||	abs(iq->w.re) > 1 ||
+	iq->w.im != iq->w.im || abs(iq->w.im) > 1)
+      iq->w = (COMPLEX){0.0, 0.0};
+    if (mu == 0) {
+      // the sub channels somehow share the value of w
+      // with the actively correcting channel,
+      // so we simply apply the correction
+      for (i = 0; i < CXBhave (sigbuf); i++) {
+	// output = input + w * input * conj(input);
+	CXBdata(sigbuf, i) = Cadd(CXBdata(sigbuf, i), Cmul(iq->w, Cmul(CXBdata(sigbuf, i), Conjg(CXBdata(sigbuf, i)))));
+      }
+    } else {
+      // one pass to establish average error signal at current w
+      COMPLEX sum_error = (COMPLEX){0.0, 0.0};
+      for (i = 0; i < CXBhave (sigbuf); i++) {
+	// y = input + w * input * conj(input);
+	COMPLEX y = Cadd(CXBdata(sigbuf, i), Cmul(iq->w, Cmul(CXBdata(sigbuf, i), Conjg(CXBdata(sigbuf, i)))));
+	// sum_error += y * y;
+	sum_error = Cadd(sum_error, Cmul(y, y));
+      }
+      COMPLEX avg_error = Cscl(sum_error, 1.0/CXBhave (sigbuf));
+      REAL max_abs = max(abs(avg_error.re), abs(avg_error.im));
+      // test for learning rate too large
+      // defined as moving more than 1 millionth of 
+      if (max_abs * iq->_mu > 1e-6) {
+	iq->_mu = 1e-6 / max_abs;
+	mu = iq->_mu * iq->mu;
+      }
+      // another pass to train the filter and produce the output
+      for (i = 0; i < CXBhave (sigbuf); i++) {
+	// y = input + w * input * conj(input);
+	COMPLEX y = Cadd(CXBdata(sigbuf, i), Cmul(iq->w, Cmul(CXBdata(sigbuf, i), Conjg(CXBdata(sigbuf, i)))));
+	// w -= mm * y * y;
+	iq->w = Csub(iq->w, Cscl(Cmul(y, y), mu));
+	// output = y;
+	CXBdata(sigbuf, i) = y;
+      }
+      //fprintf(stderr, "w1 real: %g, w1 imag: %g\n", iq->w.re, iq->w.im); fflush(stderr); 
+    }
+  } else {
+    // apply a fixed phase and gain correction for transmit
+    for (i = 0; i < CXBhave (sigbuf); i++) {
+      CXBimag (sigbuf, i) += iq->phase * CXBreal (sigbuf, i);
+      CXBreal (sigbuf, i) *= iq->gain;
+    }
+  }
 }

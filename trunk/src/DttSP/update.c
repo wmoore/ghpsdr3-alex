@@ -865,9 +865,6 @@ SetCorrectRXIQMu (unsigned int thread, unsigned int subrx, double mu)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	rx[thread][subrx].iqfix->mu = (REAL)mu;
-	//memset((void *)rx[thread][subrx].iqfix->w,0,16*sizeof(COMPLEX));
-	//memset((void *)rx[thread][subrx].iqfix->del,0,16*sizeof(COMPLEX));
-	//memset((void *)rx[thread][subrx].iqfix->y,0,16*sizeof(COMPLEX));
 	sem_post(&top[thread].sync.upd.sem);
 }
 
@@ -889,8 +886,7 @@ DttSP_EXP void
 SetCorrectRXIQw (unsigned int thread, unsigned int subrx, REAL wr, REAL wi, unsigned int index)
 {
 	sem_wait(&top[thread].sync.upd.sem);
-	rx[thread][subrx].iqfix->w[index] = Cmplx((REAL)wr,(REAL)wi);
-	if (index == 0) memset((void *)&rx[thread][subrx].iqfix->w[1],0,15*sizeof(COMPLEX));
+	rx[thread][subrx].iqfix->w = Cmplx((REAL)wr,(REAL)wi);
 	sem_post(&top[thread].sync.upd.sem);
 }
 
@@ -898,8 +894,8 @@ DttSP_EXP void
 GetCorrectRXIQw(int thread, int subrx, REAL *realw, REAL *imagw, unsigned int index)
 {
 	sem_wait(&top[thread].sync.upd.sem);
-	*realw = rx[thread][subrx].iqfix->w[index].re;
-	*imagw = rx[thread][subrx].iqfix->w[index].im;
+	*realw = rx[thread][subrx].iqfix->w.re;
+	*imagw = rx[thread][subrx].iqfix->w.im;
 	sem_post(&top[thread].sync.upd.sem);
 }
 
@@ -907,7 +903,7 @@ DttSP_EXP void
 SetCorrectRXIQwReal (unsigned int thread, unsigned int subrx, REAL wr, unsigned int index)
 {
 	sem_wait(&top[thread].sync.upd.sem);
-	rx[thread][subrx].iqfix->w[index].re = (REAL)wr;
+	rx[thread][subrx].iqfix->w.re = (REAL)wr;
 	sem_post(&top[thread].sync.upd.sem);
 }
 
@@ -915,7 +911,7 @@ DttSP_EXP void
 SetCorrectRXIQwImag (unsigned int thread, unsigned int subrx, REAL wi, unsigned int index)
 {
 	sem_wait(&top[thread].sync.upd.sem);
-	rx[thread][subrx].iqfix->w[index].im = (REAL)wi;
+	rx[thread][subrx].iqfix->w.im = (REAL)wi;
 	sem_post(&top[thread].sync.upd.sem);
 }
 
@@ -956,7 +952,7 @@ DttSP_EXP void
 SetCorrectTXIQW (unsigned int thread, double wr, double wi)
 {
 	sem_wait(&top[thread].sync.upd.sem);
-	tx[thread].iqfix->w[0] = Cmplx((REAL)wr,(REAL)wi);
+	tx[thread].iqfix->w = Cmplx((REAL)wr,(REAL)wi);
 	sem_post(&top[thread].sync.upd.sem);
 }
 

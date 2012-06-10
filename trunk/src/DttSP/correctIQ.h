@@ -5,23 +5,17 @@
 
 typedef enum _wbir_state
 {
-	FastAdapt,
-    SlowAdapt,
-    NoAdapt,
-	JustSayNo
+  FastAdapt,
+  SlowAdapt,
+  NoAdapt,
+  JustSayNo
 } WBIR_STATE;
 
 typedef struct _iqstate
 {
-  REAL phase, gain,mu, leakage;
-  COMPLEX *w;
-  COMPLEX *del;
-  COMPLEX *y;
-  COMPLEX dc;
-  int MASK;
-  int index;
+  REAL phase, gain, mu, _mu;
+  COMPLEX w;
   WBIR_STATE wbir_state;
-  BOOLEAN wbir_tuned;
 } *IQ, iqstate;
 
 extern IQ newCorrectIQ (REAL phase, REAL gain, REAL mu);
