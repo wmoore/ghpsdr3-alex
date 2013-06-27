@@ -4,21 +4,21 @@
 #include <QtCore>
 
 #if QT_VERSION >= 0x050000
-#include <QtWidgets/QDialog>
+#include <QtWidgets/QWidget>
 #else
-#include <QDialog>
+#include <Qwidget>
 #endif
 
 namespace Ui {
     class Servers;
 }
 class UI;
-class Servers : public QDialog
+class Servers : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Servers(QDialog *parent = 0 );
+    explicit Servers(QWidget *parent = 0 );
 
     ~Servers();
     void refreshList();

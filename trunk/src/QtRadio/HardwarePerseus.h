@@ -1,9 +1,9 @@
 #if !defined __HARDWARE_PERSEUS_H__
 #define      __HARDWARE_PERSEUS_H__
 
-#include "hardware.h"
+#include "Hardware.h"
 
-class HardwarePerseus: public DlgHardware
+class HardwarePerseus: public Hardware
 { 
    Q_OBJECT
 

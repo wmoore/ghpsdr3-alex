@@ -16,7 +16,7 @@
 * Foundation, Inc., 59 Temple Pl
 */
 
-#include "Audioinput.h"
+#include "AudioInput.h"
 
 AudioInput::AudioInput()
 {

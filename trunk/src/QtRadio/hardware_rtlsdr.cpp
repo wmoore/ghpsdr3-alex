@@ -3,7 +3,7 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QVBoxLayout>
 #endif
-#include "hardware_rtlsdr.h"
+#include "HardwareRtlsdr.h"
 
 
 /*!
@@ -19,7 +19,7 @@
  * \return 0 on success
  */
 
-HardwareRtlsdr :: HardwareRtlsdr (Connection *pC, QWidget *pW): DlgHardware (pC, pW)
+HardwareRtlsdr :: HardwareRtlsdr (Connection *pC, QWidget *pW): Hardware (pC, pW)
 {
     // Attenuator
     QGroupBox *attGroupBox = new QGroupBox(tr("Attenuator"));

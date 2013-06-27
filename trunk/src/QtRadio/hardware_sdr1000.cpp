@@ -9,10 +9,10 @@
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QTabWidget>
 #endif
-#include "hardware_sdr1000.h"
+#include "HardwareSDR1000.h"
 
 
-HardwareSDR1000 :: HardwareSDR1000 (Connection *pC, QWidget *pW): DlgHardware (pC, pW)
+HardwareSDR1000 :: HardwareSDR1000 (Connection *pC, QWidget *pW): Hardware (pC, pW)
 {
     // Attenuator
     QGroupBox *attGroupBox = new QGroupBox(tr("Attenuator"));

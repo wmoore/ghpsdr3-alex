@@ -1,9 +1,9 @@
 #if !defined __HARDWARE_SDRIQ_H__
 #define      __HARDWARE_SDRIQ_H__
 
-#include "hardware.h"
+#include "Hardware.h"
 
-class HardwareSdriq: public DlgHardware
+class HardwareSdriq: public Hardware
 { 
    Q_OBJECT
 

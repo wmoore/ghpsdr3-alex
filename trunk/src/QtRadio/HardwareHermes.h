@@ -1,11 +1,11 @@
 #if !defined __HARDWARE_HERMES_H__
 #define      __HARDWARE_HERMES_H__
 
-#include "hardware.h"
+#include "Hardware.h"
 
 class QSlider;
 
-class HardwareHermes: public DlgHardware
+class HardwareHermes: public Hardware
 { 
    Q_OBJECT
 

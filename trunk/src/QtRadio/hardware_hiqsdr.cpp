@@ -1,9 +1,9 @@
 #include <QtGui>
-#include "hardware.h"
-#include "hardware_hiqsdr.h"
+#include "Hardware.h"
+#include "HardwareHiqsdr.h"
 #include "UI.h"
 
-HardwareHiqsdr :: HardwareHiqsdr (Connection *pC, QWidget *pW): DlgHardware (pC, pW)
+HardwareHiqsdr :: HardwareHiqsdr (Connection *pC, QWidget *pW): Hardware (pC, pW)
 {
     // Attenuator
     QGroupBox *attGroupBox = new QGroupBox(tr("Attenuator"));

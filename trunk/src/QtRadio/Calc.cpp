@@ -23,7 +23,7 @@
 *
 */
 
-#include "calc.h"
+#include "Calc.h"
 
 Calc::Calc()
 {

@@ -6,10 +6,10 @@
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QTabWidget>
 #endif
-#include "hardware_hermes.h"
+#include "HardwareHermes.h"
 
 
-HardwareHermes :: HardwareHermes (Connection *pC, QWidget *pW): DlgHardware (pC, pW)
+HardwareHermes :: HardwareHermes (Connection *pC, QWidget *pW): Hardware (pC, pW)
 {
     // tab Widwged
     QTabWidget *pTw = new QTabWidget(this);

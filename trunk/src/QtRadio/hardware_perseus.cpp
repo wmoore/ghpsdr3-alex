@@ -6,9 +6,9 @@
 #include <QtWidgets/QCheckBox>
 #endif
 
-#include "hardware_perseus.h"
+#include "HardwarePerseus.h"
 
-HardwarePerseus :: HardwarePerseus (Connection *pC, QWidget *pW): DlgHardware (pC, pW)
+HardwarePerseus :: HardwarePerseus (Connection *pC, QWidget *pW): Hardware (pC, pW)
 {
 
     // Attenuator

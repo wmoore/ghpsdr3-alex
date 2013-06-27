@@ -18,21 +18,21 @@
 
 #include <QtGui>
 #include "UI.h"
-#include "hardware.h"
+#include "Hardware.h"
 
 
-DlgHardware :: DlgHardware (Connection *pC, QWidget *p): QWidget(p), pParent(p), pConn(pC)
+Hardware :: Hardware (Connection *pC, QWidget *p): QWidget(p), pParent(p), pConn(pC)
 {
 
 }
 
 
-DlgHardware :: ~DlgHardware ()
+Hardware :: ~Hardware ()
 {
 
 }
 
-DlgHardware * HardwareFactory::Clone(Connection *pConn, const char *pName, QWidget * /*  p  */) 
+Hardware * HardwareFactory::Clone(Connection *pConn, const char *pName, QWidget * /*  p  */)
 {
    qDebug() << Q_FUNC_INFO << pName;
 
@@ -102,7 +102,7 @@ void HardwareFactory :: processAnswer (QString a, Connection *pConn, UI *pUI )
      if (list[0] == "*hardware?") {
         // try to activate an hardware control panel
 #if QT_VERSION >= 0x050000
-        DlgHardware *pHwDlg = HardwareFactory::Clone (pConn, list[2].toUtf8(), 0);
+        Hardware *pHwDlg = HardwareFactory::Clone (pConn, list[2].toUtf8(), 0);
 #else
         DlgHardware *pHwDlg = HardwareFactory::Clone (pConn, list[2].toAscii(), 0);
 #endif
@@ -112,7 +112,7 @@ void HardwareFactory :: processAnswer (QString a, Connection *pConn, UI *pUI )
            pUI->setHwDlg(pHwDlg);
         }
      } else {
-        DlgHardware *pHwDlg = pUI->getHwDlg();
+        Hardware *pHwDlg = pUI->getHwDlg();
         if (pHwDlg) {
            qDebug() << Q_FUNC_INFO<<list[2];
            emit pHwDlg->processAnswer(list);
@@ -123,7 +123,7 @@ void HardwareFactory :: processAnswer (QString a, Connection *pConn, UI *pUI )
    case 4:
      {
          qDebug() << Q_FUNC_INFO <<list[0] << list[1] << list[2] << list[3];
-         DlgHardware *pHwDlg = pUI->getHwDlg();
+         Hardware *pHwDlg = pUI->getHwDlg();
          if (pHwDlg) {
             //qDebug() << Q_FUNC_INFO<<list[3];
             emit pHwDlg->processAnswer(list);

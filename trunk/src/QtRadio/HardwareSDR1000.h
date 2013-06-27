@@ -3,11 +3,11 @@
 #ifndef HARDWARE_SDR1000_H
 #define HARDWARE_SDR1000_H
 
-#include "hardware.h"
+#include "Hardware.h"
 
 class QSlider;
 
-class HardwareSDR1000: public DlgHardware
+class HardwareSDR1000: public Hardware
 {
    Q_OBJECT
 
