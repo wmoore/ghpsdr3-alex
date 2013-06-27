@@ -3,9 +3,9 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QVBoxLayout>
 #endif
-#include "hardware_sdriq.h"
+#include "HardwareSdriq.h"
 
-HardwareSdriq :: HardwareSdriq (Connection *pC, QWidget *pW): DlgHardware (pC, pW)
+HardwareSdriq :: HardwareSdriq (Connection *pC, QWidget *pW): Hardware (pC, pW)
 {
 
     // Attenuator

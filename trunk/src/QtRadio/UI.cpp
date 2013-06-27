@@ -33,6 +33,7 @@
 #include <QMessageBox>
 #endif
 
+#include <QFileDialog>
 #include <QTimer>
 #include <QThread>
 #include <ortp/ortp.h>
@@ -57,17 +58,21 @@
 #include "vfo.h"
 #include "Meter.h"
 #include "Panadapter.h"
-#include "smeter.h"
-#include "servers.h"
-#include "ctl.h"
+#include "SMeter.h"
+#include "Servers.h"
+#include "Ctl.h"
 #include "powermate.h"
 #include "Frequency.h"
 #include "EqualizerDialog.h"
+#include "RBClient.h"
+#include "LogBook.h"
 
 UI::UI(const QString server) {
 
     widget.setupUi(this);
     servers = 0;
+    rbclient = 0;
+    logbook = 0;
     pHwDlg = 0;
     meter = -121;
     initRigCtl();
@@ -89,17 +94,16 @@ UI::UI(const QString server) {
     rtp_thread->start(QThread::LowPriority);
     qDebug() << "QThread:  rtp_thread = " << rtp_thread;
     useRTP=configure.getRTP();
-    qDebug() << "WMWMWMWMWM GOT HERE #1";
     configure.initAudioDevices(audio);
-qDebug() << "WMWMWMWMWM GOT HERE #2";
+
     mic_codec2 = codec2_create(CODEC2_MODE_3200);
     audioinput = new AudioInput;
     configure.initMicDevices(audioinput);
-qDebug() << "WMWMWMWMWM GOT HERE #3";
+
     mic_buffer_count = 0;
     mic_frame_count = 0;
     connection_valid = FALSE;
-qDebug() << "WMWMWMWMWM GOT HERE #4";
+
     isConnected = false;
     modeFlag = false;
     infotick = 0;
@@ -122,6 +126,9 @@ qDebug() << "WMWMWMWMWM GOT HERE #4";
     connect(widget.actionConnectToServer,SIGNAL(triggered()),this,SLOT(actionConnect()));
     connect(widget.actionQuick_Server_List,SIGNAL(triggered()),this,SLOT(actionQuick_Server_List()));
     connect(widget.actionDisconnectFromServer,SIGNAL(triggered()),this,SLOT(actionDisconnect()));
+
+    connect(widget.actionSave_Layout, SIGNAL(triggered()), this, SLOT(saveLayout()));
+    connect(widget.actionLoad_Layout, SIGNAL(triggered()), this, SLOT(loadLayout()));
 
     connect(widget.actionSubrx,SIGNAL(triggered()),this,SLOT(actionSubRx()));
     connect(widget.actionBandscope,SIGNAL(triggered()),this,SLOT(actionBandscope()));
@@ -546,6 +553,85 @@ void UI::saveSettings() {
     widget.vfoFrame->writeSettings(&settings);
 }
 
+// KD0NUZ ********************************************************
+
+void UI::saveLayout()
+{
+    QString fileName
+        = QFileDialog::getSaveFileName(this, tr("Save layout"));
+    if (fileName.isEmpty())
+        return;
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly)) {
+        QString msg = tr("Failed to open %1\n%2")
+                        .arg(fileName)
+                        .arg(file.errorString());
+        QMessageBox::warning(this, tr("Error"), msg);
+        return;
+    }
+
+    QByteArray geo_data = saveGeometry();
+    QByteArray layout_data = saveState();
+
+    bool ok = file.putChar((uchar)geo_data.size());
+    if (ok)
+        ok = file.write(geo_data) == geo_data.size();
+    if (ok)
+        ok = file.write(layout_data) == layout_data.size();
+
+    if (!ok) {
+        QString msg = tr("Error writing to %1\n%2")
+                        .arg(fileName)
+                        .arg(file.errorString());
+        QMessageBox::warning(this, tr("Error"), msg);
+        return;
+    }
+}
+
+void UI::loadLayout()
+{
+    QString fileName
+        = QFileDialog::getOpenFileName(this, tr("Load layout"));
+    if (fileName.isEmpty())
+        return;
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly)) {
+        QString msg = tr("Failed to open %1\n%2")
+                        .arg(fileName)
+                        .arg(file.errorString());
+        QMessageBox::warning(this, tr("Error"), msg);
+        return;
+    }
+
+    uchar geo_size;
+    QByteArray geo_data;
+    QByteArray layout_data;
+
+    bool ok = file.getChar((char*)&geo_size);
+    if (ok) {
+        geo_data = file.read(geo_size);
+        ok = geo_data.size() == geo_size;
+    }
+    if (ok) {
+        layout_data = file.readAll();
+        ok = layout_data.size() > 0;
+    }
+
+    if (ok)
+        ok = restoreGeometry(geo_data);
+    if (ok)
+        ok = restoreState(layout_data);
+
+    if (!ok) {
+        QString msg = tr("Error reading %1")
+                        .arg(fileName);
+        QMessageBox::warning(this, tr("Error"), msg);
+        return;
+    }
+}
+
+// *************************************************************
+
 void UI::hostChanged(QString host) {
     widget.spectrumView->setHost(host);
     printWindowTitle("Remote disconnected");
@@ -721,8 +807,37 @@ void UI::actionQuick_Server_List() {
    QObject::connect(servers, SIGNAL(disconnectNow()), this, SLOT(actionDisconnectNow()));
    QObject::connect(servers, SIGNAL(connectNow(QString)), this, SLOT(actionConnectNow(QString)));
    QObject::connect(servers, SIGNAL(dialogClosed()), this, SLOT(closeServers()));
+
+   QDockWidget *dw = new QDockWidget;
+   dw->setObjectName("dockServerList");
+   dw->setWindowTitle("Server List");
+   dw->setWidget(servers);
+
+   addDockWidget(Qt::BottomDockWidgetArea, dw);
+
    servers->show();
    servers->refreshList();
+
+   rbclient = new RBClient();
+   QDockWidget *dw2 = new QDockWidget;
+   dw2->setObjectName("dockReverseBeacon");
+   dw2->setWindowTitle("Reverse Beacon");
+   dw2->setWidget(rbclient);
+
+   addDockWidget(Qt::BottomDockWidgetArea, dw2);
+
+   rbclient->show();
+
+   logbook = new LogBook();
+   QDockWidget *dw3 = new QDockWidget;
+   dw2->setObjectName("dockLogBook");
+   dw2->setWindowTitle("Log Book");
+   dw2->setWidget(logbook);
+
+   addDockWidget(Qt::BottomDockWidgetArea, dw3);
+
+   logbook->show();
+
 }
 
 void UI::connected() {
@@ -903,10 +1018,12 @@ void UI::connected() {
     command.clear(); QTextStream(&command) << "*hardware?";
     connection.sendCommand(command);
 
+
     // start the spectrum
     //qDebug() << "starting spectrum timer";
     connection.SemSpectrum.release();
     spectrumTimer->start(1000/fps);
+    printWindowTitle("Remote connected");
     connection_valid = TRUE;
     if((mode.getStringMode()=="CWU")||(mode.getStringMode()=="CWL")) frequencyChanged(frequency); //gvj dummy call to set Rx offset for cw
 
@@ -1073,7 +1190,7 @@ void UI::actionSubRx() {
         subRx=FALSE;
         widget.spectrumView->setSubRxState(FALSE);
 //        widget.waterfallView->setSubRxState(FALSE);
-        widget.sMeterFrame->setSubRxState(FALSE);
+        widget.SMeterFrame->setSubRxState(FALSE);
         widget.actionMuteSubRx->setChecked(FALSE);
         widget.actionMuteSubRx->setDisabled(TRUE);
         widget.actionMuteMainRx->setChecked(FALSE);
@@ -1095,7 +1212,7 @@ void UI::actionSubRx() {
         }
         widget.spectrumView->setSubRxState(TRUE);
 //        widget.waterfallView->setSubRxState(TRUE);
-        widget.sMeterFrame->setSubRxState(TRUE);
+        widget.SMeterFrame->setSubRxState(TRUE);
 
         command.clear(); QTextStream(&command) << "SetSubRXFrequency " << frequency - subRxFrequency;
         connection.sendCommand(command);
@@ -2408,9 +2525,9 @@ void UI::selectXVTR(QAction* action) {
 
 void UI::getMeterValue(int m, int s)
 {
-    widget.sMeterFrame->meter_dbm = m;
-    widget.sMeterFrame->sub_meter_dbm = s;
-    widget.sMeterFrame->update();
+    widget.SMeterFrame->meter_dbm = m;
+    widget.SMeterFrame->sub_meter_dbm = s;
+    widget.SMeterFrame->update();
 }
 
 void UI::printWindowTitle(QString message)
@@ -2421,7 +2538,7 @@ void UI::printWindowTitle(QString message)
     }
     setWindowTitle("QtRadio - Server: " + servername + " " + configure.getHost() + "(Rx "
                    + QString::number(configure.getReceiver()) +") .. "
-                   + getversionstring() +  message + "  [" + QString("Qt: %1").arg(QT_VERSION, 0, 16) + "]  21 May 2014"); // KD0OSS  Fixed Qt version format
+                   + getversionstring() +  message + "  [" + QString("Qt: %1").arg(QT_VERSION, 0, 16) + "]  27 May 2013"); // KD0OSS  Fixed Qt version format
     lastmessage = message;
 }
 
@@ -2856,13 +2973,20 @@ void UI :: hardware (QString answer)
 }
 
 
-void UI :: setHwDlg(DlgHardware *p)
+void UI :: setHwDlg(Hardware *p)
 {
    if (pHwDlg) {
       pHwDlg->close(); 
       delete pHwDlg;
    }
    pHwDlg = p;
+
+   QDockWidget *dw = new QDockWidget;
+   dw->setObjectName("dockServerList");
+   dw->setWindowTitle("Hardware Options");
+   dw->setWidget(pHwDlg);
+
+   addDockWidget(Qt::BottomDockWidgetArea, dw);
 }
 
 void UI :: rmHwDlg()

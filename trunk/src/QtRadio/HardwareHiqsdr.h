@@ -1,12 +1,12 @@
 #if !defined __HARDWARE_HIQSDR_H__
 #define      __HARDWARE_HIQSDR_H__
 
-#include "hardware.h"
+#include "Hardware.h"
 
 class QRadioButton;
 class QCheckBox;
 
-class HardwareHiqsdr: public DlgHardware
+class HardwareHiqsdr: public Hardware
 { 
    Q_OBJECT
 

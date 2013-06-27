@@ -36,11 +36,11 @@
 #include <QQueue>
 #include <QThread>
 
-#include "servers.h"
+#include "Servers.h"
 #include "About.h"
 #include "Configure.h"
 #include "Audio.h"
-#include "Audioinput.h"
+#include "AudioInput.h"
 #include "Connection.h"
 #include "Panadapter.h"
 #include "Band.h"
@@ -68,12 +68,14 @@
 #include "KeypadDialog.h"
 #include "vfo.h"
 #include "rigctl.h"
-#include "ctl.h"
+#include "Ctl.h"
 #include "G711A.h"
 #include "RTP.h"
-#include "hardware.h"
+#include "Hardware.h"
 #include "powermate.h"
 #include "EqualizerDialog.h"
+#include "RBClient.h"
+#include "LogBook.h"
 
 #define DSPSERVER_BASE_PORT 8000
 
@@ -106,8 +108,8 @@ public:
     void rigctlSetMode(int newmode);
     void rigctlSetFilter(int newfilter);
     void rigSetPTT(int enabled);
-    void setHwDlg(DlgHardware *);
-    DlgHardware * getHwDlg() { return pHwDlg; }
+    void setHwDlg(Hardware *);
+    Hardware * getHwDlg() { return pHwDlg; }
     void rmHwDlg();
     Connection connection;
 
@@ -122,6 +124,9 @@ public slots:
     void getMeterValue(int m, int s);
 
     bool newDspServerCheck(void); // KD0OSS
+
+    void saveLayout(); // KD0NUZ
+    void loadLayout(); // KD0NUZ
 
     void actionConfigure();
     void actionEqualizer(); // KD0OSS
@@ -408,9 +413,12 @@ private:
     About about;
     Configure configure;
     Servers *servers;
+    RBClient *rbclient;
+    LogBook *logbook;
+
     int sampleRate;
 
-    DlgHardware *pHwDlg;
+    Hardware *pHwDlg;
 
     Bandscope* bandscope;
 

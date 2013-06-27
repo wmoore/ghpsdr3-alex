@@ -1,4 +1,4 @@
-#include "smeter.h"
+#include "SMeter.h"
 #include "Panadapter.h"
 #include "UI.h"
 

@@ -35,7 +35,7 @@
 
 #include "Audio.h"
 #include "Xvtr.h"
-#include "Audioinput.h"
+#include "AudioInput.h"
 
 class Configure : public QDialog {
     Q_OBJECT

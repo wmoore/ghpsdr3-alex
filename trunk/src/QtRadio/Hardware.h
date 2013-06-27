@@ -5,6 +5,7 @@
 #include <QtCore>
 #if QT_VERSION >= 0x050000
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QDockWidget>
 #include <QtWidgets/QRadioButton>
 #else
 #include <QWidget>
@@ -22,13 +23,13 @@ public:
     virtual void send (const char *) {}
 };
 
-class DlgHardware: public QWidget {
+class Hardware: public QWidget {
 
 Q_OBJECT
 
 public:
-    DlgHardware (Connection *pC, QWidget *parent);
-    virtual ~DlgHardware ();
+    Hardware (Connection *pC, QWidget *parent);
+    virtual ~Hardware ();
 
 public slots:
     virtual void processAnswer (QStringList) {}
@@ -50,10 +51,10 @@ class UI;
 // 
 class HardwareFactory {
 public:
-   typedef DlgHardware * (*CreateDlgHardwareCallback)(Connection *pConn);
+   typedef Hardware * (*CreateDlgHardwareCallback)(Connection *pConn);
 
    // Factory public methods
-   DlgHardware *Clone(Connection *pConn, const char *, QWidget *p);
+   Hardware *Clone(Connection *pConn, const char *, QWidget *p);
    void processAnswer (QString a, Connection *pConn, UI *p );
 
    bool Register (std::string id, CreateDlgHardwareCallback CreateFn)
@@ -86,7 +87,7 @@ template
   class Base
 >  
 struct RegisterHw {
- static DlgHardware *cb(Connection *pConn) { return new Base(pConn, 0); }
+ static Hardware *cb(Connection *pConn) { return new Base(pConn, 0); }
  RegisterHw (std::string hwName) { HardwareFactory::Instance ().Register (hwName, cb); } ;
 };
 

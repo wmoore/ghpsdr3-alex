@@ -1,9 +1,9 @@
 #if !defined __HARDWARE_RTLSDR_H__
 #define      __HARDWARE_RTLSDR_H__
 
-#include "hardware.h"
+#include "Hardware.h"
 
-class HardwareRtlsdr: public DlgHardware
+class HardwareRtlsdr: public Hardware
 { 
    Q_OBJECT
 

@@ -11,11 +11,11 @@
 # or if using Ubuntu repo set _UsingSDK to false
 #-------------------------------------------------
 
-_UsingSDK = false
+_UsingSDK = true
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     message("Using Qt5")
-    QT       += core gui widgets multimedia
+    QT       += core gui widgets multimedia sql
 
 
 #    INCLUDEPATH += /opt/qt5/include
@@ -84,25 +84,27 @@ SOURCES += main.cpp\
     XvtrEntry.cpp \
     Bookmarks.cpp \
     KeypadDialog.cpp \
-    smeter.cpp \
-    rigctl.cpp \
     vfo.cpp \
-    ctl.cpp \
     Audioinput.cpp\
-    servers.cpp \
     G711A.cpp \
     RTP.cpp \
     hardware.cpp\
     powermate.cpp \
     hardware_sdr1000.cpp \
-    calc.cpp \
     EqualizerDialog.cpp \
     hardware_sdriq.cpp \
     hardware_rtlsdr.cpp \
     hardware_perseus.cpp \
     hardware_hiqsdr.cpp \
     hardware_hermes.cpp \
-    Panadapter.cpp
+    Panadapter.cpp \
+    LogBook.cpp \
+    RBClient.cpp \
+    Servers.cpp \
+    SMeter.cpp \
+    Ctl.cpp \
+    RigCtl.cpp \
+    Calc.cpp
 
 
 HEADERS  += \ 
@@ -142,27 +144,28 @@ HEADERS  += \
     Bookmarks.h \
     KeypadDialog.h \
     codec2.h \
-    smeter.h \
     rigctl.h \
     vfo.h \
-    ctl.h \
-    Audioinput.h \
-    servers.h \
     G711A.h \
     RTP.h \
     cusdr_queue.h \
-    hardware.h\
     powermate.h \
-    hardware_sdr1000.h \
-    hardware_sdr1000.h \
-    calc.h \
     EqualizerDialog.h \
-    hardware_sdriq.h \
-    hardware_perseus.h \
-    hardware_hiqsdr.h \
-    hardware_hermes.h \
-    hardware_rtlsdr.h \
-    Panadapter.h
+    Panadapter.h \
+    LogBook.h \
+    RBClient.h \
+    Servers.h \
+    AudioInput.h \
+    Calc.h \
+    Ctl.h \
+    SMeter.h \
+    Hardware.h \
+    HardwareHiqsdr.h \
+    HardwareSdriq.h \
+    HardwareSDR1000.h \
+    HardwareRtlsdr.h \
+    HardwarePerseus.h \
+    HardwareHermes.h
 
 FORMS    += \   
     UI.ui \
@@ -173,10 +176,12 @@ FORMS    += \
     BookmarksDialog.ui \
     BookmarksEditDialog.ui \
     KeypadDialog.ui \
-    vfo.ui \
-    ctl.ui \
-    servers.ui \
-    EqualizerDialog.ui
+    EqualizerDialog.ui \
+    LogBook.ui \
+    RBClient.ui \
+    Servers.ui \
+    Ctl.ui \
+    Vfo.ui
 
 OTHER_FILES +=
 
