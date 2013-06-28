@@ -74,7 +74,6 @@ vfo::vfo(QWidget *parent) :
     connect(input, SIGNAL(rotated(int)), this, SLOT(increase(int)));
     input->start();
 #endif
-
 }
 
 vfo::~vfo()
