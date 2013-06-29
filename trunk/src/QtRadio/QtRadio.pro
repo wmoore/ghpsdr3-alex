@@ -3,9 +3,6 @@
 # Project created by QtCreator 2010-07-05T10:00:09
 #
 #-------------------------------------------------
-
-
-
 #-------------------------------------------------
 # If using the Nokia Qt SDK set _UsingSDK to true
 # or if using Ubuntu repo set _UsingSDK to false
@@ -16,7 +13,6 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     message("Using Qt5")
 
     QT       += core gui widgets multimedia # opengl
-
 
 #    INCLUDEPATH += /opt/qt5/include
 #    INCLUDEPATH += /opt/qt5/include/QtMultimedia
@@ -87,15 +83,16 @@ SOURCES += main.cpp\
     RTP.cpp \
     powermate.cpp \
     EqualizerDialog.cpp \
-    Panadapter.cpp \
     Servers.cpp \
     SMeter.cpp \
     Ctl.cpp \
     RigCtl.cpp \
     Calc.cpp
+    Panadapter.cpp \
+    Waterfallgl.cpp
 
 
-HEADERS  += \ 
+HEADERS  += \
     USBFilters.h \
     UI.h \
     SAMFilters.h \
@@ -139,12 +136,13 @@ HEADERS  += \
     cusdr_queue.h \
     powermate.h \
     EqualizerDialog.h \
-    Panadapter.h \
     Servers.h \
     AudioInput.h \
     Calc.h \
     Ctl.h \
     SMeter.h
+    Panadapter.h \
+    Waterfallgl.h
 
 FORMS    += \   
     UI.ui \
@@ -168,5 +166,5 @@ OTHER_FILES +=
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/lib/release/ 
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/lib/debug/ 
 else:symbian: LIBS += -lcodec2 -lsamplerate
-else:unix: LIBS += -lcodec2 -lsamplerate -lortp
+else:unix: LIBS += -lcodec2 -lsamplerate -lortp -lGLU
 

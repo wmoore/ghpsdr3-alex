@@ -55,6 +55,7 @@ Audioinput.moc.cpp \
 servers.moc.cpp \
 G711A.moc.cpp \
 RTP.moc.cpp \
+Waterfallgl.moc.cpp \
 hardware.moc.cpp \
 hardware_hermes.moc.cpp \
 hardware_perseus.moc.cpp \
@@ -105,6 +106,7 @@ rigctl.moc.cpp \
 servers.moc.cpp \
 G711A.moc.cpp \
 RTP.moc.cpp \
+Waterfallgl.moc.cpp \
 hardware.moc.cpp \
 hardware_hermes.moc.cpp \
 hardware_perseus.moc.cpp \
@@ -115,7 +117,6 @@ hardware_rtlsdr.moc.cpp \
 powermate.moc.cpp \
 EqualizerDialog.moc.cpp
 
-
 QtRadio_SOURCES = \
 About.cpp      BandStackEntry.cpp       Buffer.cpp       DIGUFilters.cpp  Frequency.cpp      Mode.cpp        EqualizerDialog.cpp  \
 AMFilters.cpp  Bookmark.cpp             Configure.cpp    DSBFilters.cpp   FrequencyInfo.cpp  SAMFilters.cpp  Xvtr.cpp       \
@@ -125,6 +126,7 @@ BandLimit.cpp  BookmarksDialog.cpp      CWUFilters.cpp   Filters.cpp      main.c
 Bandscope.cpp  BookmarksEditDialog.cpp  DIGLFilters.cpp  FMNFilters.cpp   Meter.cpp          vfo.cpp         smeter.cpp     \
 ctl.cpp rigctl.cpp\
 Audioinput.cpp \
+Waterfallgl.cpp \
 servers.cpp\
 G711A.cpp RTP.cpp hardware.cpp hardware_hermes.cpp hardware_perseus.cpp hardware_sdriq.cpp hardware_sdr1000.cpp hardware_hiqsdr.cpp hardware_rtlsdr.cpp powermate.cpp \
 About.h      Bandscope.h        BookmarksEditDialog.h  Connection.h   DSBFilters.h   Frequency.h      Mode.h        vfo.h        \
@@ -136,6 +138,7 @@ ctl.h rigctl.h\
 Audioinput.h \
 servers.h \
 G711A.h RTP.h \
+Watefallgl.h \
 cusdr_queue.h \
 hardware.h \
 hardware_hermes.h \
@@ -145,6 +148,7 @@ hardware_sdr1000.h \
 hardware_hiqsdr.h \
 hardware_rtlsdr.h \
 powermate.h \
+Waterfallgl.h \
 About.ui  Bandscope.ui  BookmarksDialog.ui  BookmarksEditDialog.ui  Bookmark.ui  Configure.ui  KeypadDialog.ui  UI.ui  vfo.ui \
 ctl.ui servers.ui EqualizerDialog.ui
 
@@ -191,6 +195,7 @@ Audioinput.moc.cpp		\
 servers.moc.cpp \
 G711A.moc.cpp \
 RTP.moc.cpp \
+Waterfallgl.moc.cpp \
 hardware.moc.cpp \
 hardware_hermes.moc.cpp \
 hardware_perseus.moc.cpp \

@@ -35,7 +35,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 int fOutputDisabled = 0;
 
 #if QT_VERSION >= 0x050000
@@ -103,9 +102,9 @@ int main(int argc, char *argv[]) {
     QString srv("");
 
     if ( args.size() >1 ) srv = args.at(1) ;
+
     // create and show your widgets here
     UI widget(srv);
-
     widget.show();
     return app.exec();
 }

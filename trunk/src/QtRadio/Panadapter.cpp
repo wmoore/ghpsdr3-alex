@@ -225,9 +225,9 @@ Panadapter::Panadapter(QWidget*& widget) {
 
     panadapterScene->update();
 
-    panadapterScene->spectrumPlot = new spectrumObject(width(), height()/2);
+    panadapterScene->spectrumPlot = new spectrumObject(width(), height()-3);
     panadapterScene->waterfallItem = new waterfallObject(width(), height()/2);
-    splitViewBoundary = panadapterScene->height()/2;
+    splitViewBoundary = panadapterScene->height()-3;
 
     updateNfTimer = new QTimer(this);
     connect(updateNfTimer, SIGNAL(timeout()), this, SLOT(updateNotchFilter()));
@@ -244,9 +244,11 @@ void Panadapter::resizeEvent(QResizeEvent *event)
     // KD0OSS **********************
     if (!initialized || splitViewBoundary > height())
     {
-        splitViewBoundary = (height() / 2) - 3;
+        splitViewBoundary = height() - 3;
         if (!initialized) return;
     }
+    splitViewBoundary = height() - 3;
+
     drawFrequencyLines();
     drawdBmLines();
     drawBandLimits();
@@ -263,7 +265,7 @@ void Panadapter::redrawItems(void)
 {
     if (!initialized || splitViewBoundary > height())
     {
-        splitViewBoundary = (height() / 2) - 3;
+        splitViewBoundary = height() - 3;
         if (!initialized) return;
     }
     drawFrequencyLines();
@@ -1012,6 +1014,7 @@ void Panadapter::setZoom(int value){
     drawCursor(2, !subRx);
     drawFilter(2, !subRx);
     drawUpdatedNotchFilter(1);
+
     panadapterScene->removeItem(panadapterScene->waterfallItem);
     panadapterScene->addItem(panadapterScene->waterfallItem);
  //   drawUpdatedNotchFilter(2);
@@ -1152,6 +1155,7 @@ void Panadapter::updateSpectrumFrame(char* header,char* buffer,int width) {
         panadapterScene->clear();
         panadapterScene->addItem(panadapterScene->spectrumPlot);
         panadapterScene->addItem(panadapterScene->waterfallItem);
+        //panadapterScene->addWidget(panadapterScene->container);
         drawFrequencyLines();
         drawdBmLines();
         drawBandLimits();
@@ -1160,13 +1164,12 @@ void Panadapter::updateSpectrumFrame(char* header,char* buffer,int width) {
         drawUpdatedNotchFilter(1);
 //        drawUpdatedNotchFilter(2);
         QGraphicsView::setMouseTracking(true);
-        splitViewBoundary = panadapterScene->height()/2;
+        splitViewBoundary = panadapterScene->height()-1;
 
 //        QTimer::singleShot(1000,this,SLOT(redrawItems()));
     }
 
     QTimer::singleShot(0,this,SLOT(drawSpectrum()));
-    QTimer::singleShot(0,this,SLOT(updateWaterfall()));
 }
 
 void Panadapter::setSquelch(bool state) {
@@ -1342,10 +1345,6 @@ void Panadapter::deleteAllNotchFilters(void)   // KD0OSS
     }
 }
 
-void Panadapter::updateWaterfall(void)
-{
-    panadapterScene->waterfallItem->updateWaterfall(wsamples, size, splitViewBoundary);
-}
 
 //*************************************************************************Waterfall**************************************************
 
@@ -1364,35 +1363,22 @@ waterfallObject::waterfallObject(int width, int height) {
     colorHighR=255;
     colorHighG=255;
     colorHighB=0;
-
     samples=NULL;
 
     itemWidth = width;
     itemHeight = height;
-    ypos = itemHeight / 2;
 
-    image = QImage(width, height * 2, QImage::Format_RGB32);
+ //   fitInView(sceneRect().x()-1, sceneRect().y()+1, sceneRect().width()+1, sceneRect().height()-1, Qt::KeepAspectRatio);
 
-    int x, y;
-#pragma omp parallel for schedule(static)
-    for (x = 0; x < image.width(); x++) {
-        for (y = 0; y < image.height(); y++) {
-            image.setPixel(x, y, 0xFF000000);
-        }
-    }
-    cy = image.height()/2 - 1;
 }
 
 void waterfallObject::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
-    // plot waterfall
-    painter->drawImage(0,ypos,image,0,cy,image.width(),image.height()/2,Qt::AutoColor);
-    if (cy <= 0) cy = image.height()/2 - 1;
-    else cy--;          // "scroll"
 }
+
 
 QRectF waterfallObject::boundingRect() const
 {
-    return QRectF(QPointF(0.0, itemHeight), QPointF(image.width(), image.height()/2));
+    return QRectF(QPointF(0.0, itemHeight), QPointF(itemWidth, itemHeight*2));
 } /** end boundingRect **/
 
 int waterfallObject::getHigh() {
@@ -1419,95 +1405,6 @@ bool waterfallObject::getAutomatic() {
     return waterfallAutomatic;
 }
 
-void waterfallObject::updateWaterfall(char* buffer, int length, int starty) {
-    int i;
-    int x,y;
-    int average=0;
-
-    if(samples!=NULL) {
-        free(samples);
-    }
-
-    itemWidth = this->scene()->width();
-    itemHeight = this->scene()->height() - starty;
-    ypos = starty;
-
-    samples = (float*) malloc(itemWidth * sizeof (float));
-
-    // do not rotate spectrum display.  It is done by dspserver now
-#pragma omp parallel for schedule(static)
-    for(i=0;i<itemWidth;i++) {
-        samples[i] = -(buffer[i] & 0xFF);
-    }
-
-    size = length;
- //   QTimer::singleShot(0,this,SLOT(updateWaterfall_2()));
-
-    if(image.width()!=itemWidth || (image.height()/2) != itemHeight) {
-        qDebug() << "Waterfall::updateWaterfall " << size << "(" << itemWidth << ")," << itemHeight;
-        image = QImage(itemWidth, itemHeight*2, QImage::Format_RGB32);
-        cy = image.height()/2 - 1;
-        #pragma omp parallel for schedule(static)
-        for (x = 0; x < itemWidth; x++) {
-            for (y = 0; y < image.height(); y++) {
-                image.setPixel(x, y, 0xFF000000);
-            }
-        }
-    }
-
-    // draw the new line
-    #pragma omp parallel for schedule(static)
-    for(x=0;x<size;x++){
-        uint pixel = calculatePixel(samples[x]);
-        image.setPixel(x,cy,pixel);
-        image.setPixel(x,cy+(image.height()/2),pixel);
-        #pragma omp critical
-        average+=samples[x];
-    }
-
-    if (waterfallAutomatic) {
-        waterfallLow=(average/size)-10;
-        waterfallHigh=waterfallLow+60;
-    }
-}
-/*
-void waterfallObject::updateWaterfall_2(void){
-    int x,y;
-
-    if(image.width()!=itemWidth || (image.height()/2) != itemHeight) {
-        qDebug() << "Waterfall::updateWaterfall " << size << "(" << itemWidth << ")," << itemHeight;
-        image = QImage(itemWidth, itemHeight*2, QImage::Format_RGB32);
-        cy = image.height()/2 - 1;
-        #pragma omp parallel for schedule(static)
-        for (x = 0; x < itemWidth; x++) {
-            for (y = 0; y < image.height(); y++) {
-                image.setPixel(x, y, 0xFF000000);
-            }
-        }
-    }
-    QTimer::singleShot(0,this,SLOT(updateWaterfall_4()));
-}
-
-void waterfallObject::updateWaterfall_4(void){
-    int x;
-    int average=0;
-
-    // draw the new line
-    #pragma omp parallel for schedule(static)
-    for(x=0;x<size;x++){
-        uint pixel = calculatePixel(samples[x]);
-        image.setPixel(x,cy,pixel);
-        image.setPixel(x,cy+(image.height()/2),pixel);
-        #pragma omp critical
-        average+=samples[x];
-    }
-
-    if (waterfallAutomatic) {
-        waterfallLow=(average/size)-10;
-        waterfallHigh=waterfallLow+60;
-    }
-}
-*/
 uint waterfallObject::calculatePixel(int sample) {
         // simple gray scale
 //        int v=((int)sample-waterfallLow)*255/(waterfallHigh-waterfallLow);

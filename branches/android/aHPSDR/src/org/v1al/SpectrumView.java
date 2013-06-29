@@ -1,4 +1,4 @@
-package org.g0orx;
+package org.v1al;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -11,6 +11,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.opengl.GLSurfaceView;
@@ -30,6 +31,7 @@ public class SpectrumView extends View implements OnTouchListener {
 		average= -100;
 		cy = MAX_CL_HEIGHT - 1;
 		this.setOnTouchListener(this);
+		detector = new ScaleGestureDetector(context, new ScaleListener());
 	}
 
 	public void setConnection(Connection connection) {
@@ -59,11 +61,21 @@ public class SpectrumView extends View implements OnTouchListener {
 	
 	protected void onDraw(Canvas canvas) {
 		if (connection.isConnected()) {
+			float zoom_factor;
+			
+			if (connection.getIsSlave()){
+				scaleFactor = (float)connection.getScaleFactor();
+				mGLSurfaceView.setScaleFactor(scaleFactor);
+			}
+			zoom_factor = 1f + (scaleFactor - 1f)/25f;
 
 			// draw the filter
 			paint.setColor(Color.GRAY);
 			paint.setTextSize(10.0F);
-			canvas.drawRect(filterLeft+offset, 0, filterRight+offset, HEIGHT, paint);
+			filterLeft = WIDTH/2 + (int)((float)(filterLow)*(float)WIDTH*zoom_factor/(float)connection.getSampleRate());
+			filterRight = WIDTH/2 + (int)((float)(filterHigh)*(float)WIDTH*zoom_factor/(float)connection.getSampleRate());
+			canvas.drawRect(filterLeft+(float)offset*zoom_factor, 0,
+					filterRight+(float)offset*zoom_factor, HEIGHT, paint);
 
 			// plot the spectrum levels
 			paint.setColor(Color.GRAY);
@@ -81,13 +93,20 @@ public class SpectrumView extends View implements OnTouchListener {
 			}
 
 			// plot the vertical frequency markers
-			float hzPerPixel=(float)connection.getSampleRate()/(float)WIDTH;
-			long f=connection.getFrequency()-(connection.getSampleRate()/2);
+			float hzPerPixel=(float)connection.getSampleRate()/(float)WIDTH/zoom_factor;
+			//long f=connection.getFrequency()-(connection.getSampleRate()/2);
 			String fs;
+			long lineStep = 10000;
+			if (connection.getSampleRate() > 1000000) lineStep = 100000;
+			else if (connection.getSampleRate() > 400000) lineStep = 50000;
+			else if (connection.getSampleRate() > 200000) lineStep = 20000;
 			for(int i=0;i<WIDTH;i++) {
-				f=connection.getFrequency()-(connection.getSampleRate()/2)+(long)(hzPerPixel*i);
+				long f=connection.getFrequency()
+						-(long)((float)connection.getSampleRate()/zoom_factor/2f)
+						+(long)(hzPerPixel*i)
+						- connection.getLO_offset();
 				if(f>0) {
-					if((f%10000)<(long)hzPerPixel) {
+					if((f%lineStep)<(long)(hzPerPixel* 1.5f)) {
 						paint.setColor(Color.YELLOW);
 						DashPathEffect dashPath = new DashPathEffect(new float[]{1,4}, 1);
 						paint.setPathEffect(dashPath);
@@ -103,7 +122,8 @@ public class SpectrumView extends View implements OnTouchListener {
 
 			// plot the cursor
 			paint.setColor(Color.RED);
-			canvas.drawLine((WIDTH/2)+offset, 0, (WIDTH/2)+offset, HEIGHT, paint);
+			canvas.drawLine((WIDTH/2)+(int)((float)offset*zoom_factor), 0,
+					(WIDTH/2)+(int)((float)offset*zoom_factor), HEIGHT, paint);
 
 			// display the frequency and mode
 			paint.setColor(Color.GREEN);
@@ -166,26 +186,31 @@ public class SpectrumView extends View implements OnTouchListener {
 				canvas.drawText(status, 0, 10, paint);
 			}
 			
-			// draw the job buttons
+			// draw the jog and PTT buttons
 			paint.setColor(Color.DKGRAY);
-			canvas.drawRect(0, HEIGHT-62, 50, HEIGHT-12, paint);
-            canvas.drawRect(WIDTH-50,HEIGHT-62,WIDTH,HEIGHT-12,paint);
-            canvas.drawRect(125, HEIGHT-62, 200, HEIGHT-12, paint); //kb3omm add 1000's button
-            canvas.drawRect(WIDTH-200,HEIGHT-62,WIDTH-125,HEIGHT-12,paint); //kb3omm add 1000's button
+			canvas.drawRect(0, HEIGHT-66, 50, HEIGHT-16, paint);
+            canvas.drawRect(WIDTH-50,HEIGHT-66,WIDTH,HEIGHT-16,paint);
+            canvas.drawRect(125, HEIGHT-66, 200, HEIGHT-16, paint); //kb3omm add 1000's button
+            canvas.drawRect(WIDTH-200,HEIGHT-66,WIDTH-125,HEIGHT-16,paint); //kb3omm add 1000's button
+            if (connection.getAllowTx()){
+            	paint.setColor(connection.getMOX()? Color.RED : Color.DKGRAY);
+            	canvas.drawRect(WIDTH-50, 100, WIDTH, HEIGHT-100, paint);
+            }     
             paint.setColor(Color.WHITE);
             paint.setTextSize(40.0F);
-            canvas.drawText("<", 12, HEIGHT-24, paint);
-            canvas.drawText(">", WIDTH-36, HEIGHT-24, paint);
-            canvas.drawText("<<", 142, HEIGHT-24, paint); //kb3omm add 1000's button
-            canvas.drawText(">>", WIDTH-182, HEIGHT-24, paint); //kb3omm add 1000's button
-			
+            canvas.drawText("<", 12, HEIGHT-28, paint);
+            canvas.drawText(">", WIDTH-36, HEIGHT-28, paint);
+            canvas.drawText("<<", 142, HEIGHT-28, paint); //kb3omm add 1000's button
+            canvas.drawText(">>", WIDTH-182, HEIGHT-28, paint); //kb3omm add 1000's button
+			if (connection.getAllowTx()){
+				canvas.drawText("T", WIDTH-36, 150, paint);
+				canvas.drawText("x", WIDTH-36, 200, paint);
+			}
 		} else {
 			paint.setColor(0xffffffff);
 			canvas.drawRect(0, 0, WIDTH, HEIGHT, paint);
 			paint.setColor(Color.RED);
-			//canvas.drawText("Server is busy - please wait", 20, canvas
-			//		.HEIGHT / 2, paint);
-			canvas.drawText(connection.getStatus(), 20, HEIGHT, paint);
+			canvas.drawText(connection.getStatus(), 20, HEIGHT/2, paint);
 		}
 	}
 
@@ -222,8 +247,8 @@ public class SpectrumView extends View implements OnTouchListener {
 
 		this.filterLow = filterLow;
 		this.filterHigh = filterHigh;
-		filterLeft = (filterLow - (-sampleRate / 2)) * WIDTH / sampleRate;
-		filterRight = (filterHigh - (-sampleRate / 2)) * WIDTH / sampleRate;
+		mGLSurfaceView.setFilterLow(filterLow);
+		mGLSurfaceView.setFilterHigh(filterHigh);
 
 		average = (int) ((float)average * 0.98f + (float)sum / WIDTH * 0.02f);
 		waterfallLow= average -15;
@@ -231,17 +256,15 @@ public class SpectrumView extends View implements OnTouchListener {
 		
 		
 		if (renderer != null && mGLSurfaceView != null){
-			final byte[] bitmap = new byte[WIDTH*4];	// RBGA
+			final byte[] bitmap = new byte[WIDTH];	// GL_LUMINANCE
 			for (int i = 0; i < WIDTH; i++){
-				bitmap[i*4] = samples[i];
+				bitmap[i] = samples[i];
 			}
             mGLSurfaceView.queueEvent(new Runnable() {
                 // This method will be called on the rendering
                 // thread:
                 public void run() {
         			renderer.set_cy(cy);
-        			renderer.set_width(WIDTH);
-        			renderer.set_LO_offset(0); // offset should be offset/samplerate * width/MAX_CL_WIDTH
         			renderer.set_waterfallHigh(waterfallHigh);
         			renderer.set_waterfallLow(waterfallLow);	
         			renderer.plotWaterfall(bitmap);
@@ -261,8 +284,12 @@ public class SpectrumView extends View implements OnTouchListener {
 		this.renderer = renderer;
 	}
 	
-	public void setGLSurfaceView(GLSurfaceView mGLSurfaceView){
+	public void setGLSurfaceView(Waterfall mGLSurfaceView){
 		this.mGLSurfaceView = mGLSurfaceView;
+	}
+	
+	public void setScaleFactor(float scaleFactor){
+		this.scaleFactor = scaleFactor;
 	}
 
 	public void scroll(int step) {
@@ -274,6 +301,7 @@ public class SpectrumView extends View implements OnTouchListener {
 	}
 
 	public boolean onTouch(View view, MotionEvent event) {
+		detector.onTouchEvent(event);
 		if (!vfoLocked) {
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_CANCEL:
@@ -288,21 +316,21 @@ public class SpectrumView extends View implements OnTouchListener {
 					moved=false;
 					scroll=false;
 					jog=false;
-					if(startX<=50 && startY>=(HEIGHT-62) && startY <= HEIGHT) {
+					if(startX<=50 && startY>=(HEIGHT-66) && startY <= HEIGHT) {
 						// frequency down 100
 						jog=true;
 						jogAmount=-100;
 						connection.setFrequency((long) (connection.getFrequency() + jogAmount));
 						timer=new Timer();
 						timer.schedule(new JogTask(), 1000);
-					} else if(startX>=(WIDTH-50) && startY>=(HEIGHT-62) && startY <= HEIGHT) {
+					} else if(startX>=(WIDTH-50) && startY>=(HEIGHT-66) && startY <= HEIGHT) {
 						// frequency up 100 Hz
 						jog=true;
 						jogAmount=100;
 						connection.setFrequency((long) (connection.getFrequency() + jogAmount));
 						timer=new Timer();
 						timer.schedule(new JogTask(), 1000);
-					} else if((startX<=200) && (startX>=125) && (startY>=(HEIGHT-62))
+					} else if((startX<=200) && (startX>=125) && (startY>=(HEIGHT-66))
 							&& (startY <= HEIGHT)) {
 						// frequency down 1000 Hz kb3omm added 1k decrement
 						jog=true;
@@ -311,13 +339,18 @@ public class SpectrumView extends View implements OnTouchListener {
 						timer=new Timer();
 						timer.schedule(new JogTask(), 1000);
 					} else if((startX<=(WIDTH-125)) && (startX>=(WIDTH-200)) 
-							&& (startY>=(HEIGHT-62)) && (startY <= HEIGHT)) {
+							&& (startY>=(HEIGHT-66)) && (startY <= HEIGHT)) {
 						// frequency up 1000 Hz kb3omm added 1k increment
 						jog=true;
 						jogAmount=1000;
 						connection.setFrequency((long) (connection.getFrequency() + jogAmount));
 						timer=new Timer();
 						timer.schedule(new JogTask(), 1000);
+					} else if ((startX>=(WIDTH-50)) && (startY>=100) && startY <=(HEIGHT-100)
+							&& connection.getAllowTx()){
+						jog = true;
+						if (!connection.getMOX()) connection.setMOX(true);
+						else connection.setMOX(false);
 					}
 				}
 				break;
@@ -327,9 +360,19 @@ public class SpectrumView extends View implements OnTouchListener {
 					if(!jog) {
 					// connection.setStatus("onTouch.ACTION_MOVE: "+(int)event.getX());
 					    int increment = (int) (startX - event.getX());
+					    float zoom_factor = 1f + (scaleFactor - 1f)/25f;
+					    float move_ratio = (float)connection.getSampleRate()/48000f/zoom_factor;
+			            int move_step = 100;
+			            if (move_ratio > 10.0f) move_step = 500;
+			            else if (move_ratio > 5.0f) move_step = 200;
+			            else if (move_ratio > 2.5f) move_step = 100;
+			            else if (move_ratio > 1.0f) move_step = 50;
+			            else if (move_ratio > 0.5f) move_step = 10;
+			            else if (move_ratio > 0.25f) move_step = 5;
+			            else move_step = 1;
 					    if(!scroll) {
 						    connection.setFrequency((long) (((connection.getFrequency() + (increment * (connection
-									.getSampleRate() / WIDTH))))/100)*100); // kb3omm *100/100 min swipe increment 100hz
+									.getSampleRate() / WIDTH))/zoom_factor))/move_step)*move_step);
 					    startX = event.getX();
 	   				    moved=true;
 			            } 
@@ -343,22 +386,25 @@ public class SpectrumView extends View implements OnTouchListener {
 				// Log.i("onTouch","ACTION_UP");
 				if (connection.isConnected()) {
 					if(!jog) {
-					    int scrollAmount = (int) ((event.getX() - (WIDTH / 2)) * (connection
-							.getSampleRate() / WIDTH));
+						float zoom_factor = 1f + (scaleFactor - 1f)/25f;
+					    int scrollAmount = (int) ((event.getX() - (WIDTH / 2)) * (int)((float)connection
+							.getSampleRate() / (float)WIDTH / zoom_factor));
 
 					    if (!moved & !scroll) {
 						    // move this frequency to center of filter
 						    if (filterHigh < 0) {
 							    connection.setFrequency(connection.getFrequency()
-											+ (scrollAmount + ((filterHigh - filterLow) / 2)));
+											+ (scrollAmount 
+											+ (int)((float)(filterHigh - filterLow)/zoom_factor/ 2f)));
 						    } else {
 							    connection.setFrequency(connection.getFrequency()
-											+ (scrollAmount - ((filterHigh - filterLow) / 2)));
+											+ (scrollAmount 
+											- (int)((float)(filterHigh - filterLow)/zoom_factor / 2f)));
 						    }
 					    }
 					} else {
 						jog=false;
-						timer.cancel();
+						if (timer != null) timer.cancel();
 					}
 				}
 				break;
@@ -381,10 +427,26 @@ public class SpectrumView extends View implements OnTouchListener {
 	    }
 	}
 	
+	private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+		@Override
+		public boolean onScale(ScaleGestureDetector detector) {
+			float multiplier = detector.getScaleFactor();
+			if (scaleFactor < 0.2f * MAX_ZOOM){
+				if (multiplier > 1.0) multiplier *= 1.3f;
+				else multiplier /= 1.3f;
+			}
+			scaleFactor *= multiplier;
+			scaleFactor = Math.max(MIN_ZOOM, Math.min(scaleFactor, MAX_ZOOM));
+			connection.setScaleFactor(scaleFactor);
+			mGLSurfaceView.setScaleFactor(scaleFactor);
+			return true;
+		}
+	}
+	
 	private Paint paint;
 
 	private Connection connection;
-	private GLSurfaceView mGLSurfaceView;
+	private Waterfall mGLSurfaceView;
 	private Renderer renderer;
 
 	private int WIDTH = 480;
@@ -421,5 +483,10 @@ public class SpectrumView extends View implements OnTouchListener {
 	
 	private Timer timer;
 	private long jogAmount;
+	
+	private float scaleFactor = 1f;
+	private ScaleGestureDetector detector;
+	private static float MIN_ZOOM = 1f;
+	private static float MAX_ZOOM = 100f;
 
 }

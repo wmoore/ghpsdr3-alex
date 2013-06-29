@@ -48,6 +48,7 @@
 
 #include "Meter.h"
 #include "Connection.h"
+#include "Waterfallgl.h"
 
 /****************** Added by KD0OSS **********************************************/
 
@@ -72,13 +73,6 @@ public:
     void setAutomatic(bool state);
     bool getAutomatic();
 
-    int cy;         // current row
-    int ypos;
-    QImage image;
-
-public slots:
-    void updateWaterfall(char*, int, int);
-
 private:
     uint calculatePixel(int sample);
 
@@ -98,7 +92,10 @@ private:
     int colorHighR;
     int colorHighG;
     int colorHighB;
-    int size;
+    int sampleRate;
+    short LO_offset; 
+    float average;
+
 };
 
 
@@ -287,7 +284,6 @@ public slots:
     void addNotchFilter(int index);    // KD0OSS
     void enableNotchFilter(bool enable);   // KD0OSS
     void enableNotchFilter(int index, bool enable);   // KD0OSS
-    void updateWaterfall(void);
 
 private slots:
     void drawCursor(int vfo, bool disable);  // KD0OSS

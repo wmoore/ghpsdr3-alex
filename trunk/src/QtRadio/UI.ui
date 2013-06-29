@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1067</width>
+    <width>994</width>
     <height>470</height>
    </rect>
   </property>
@@ -19,209 +19,17 @@
   <property name="windowTitle">
    <string>QtRadio - not connected</string>
   </property>
-  <property name="dockNestingEnabled">
-   <bool>true</bool>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <property name="verticalSpacing">
+     <number>0</number>
+    </property>
     <property name="rightMargin">
      <number>4</number>
     </property>
     <property name="bottomMargin">
      <number>4</number>
     </property>
-    <property name="verticalSpacing">
-     <number>0</number>
-    </property>
-    <item row="1" column="3">
-     <widget class="QSlider" name="zoomSpectrumSlider">
-      <property name="minimumSize">
-       <size>
-        <width>30</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="maximum">
-       <number>200</number>
-      </property>
-      <property name="singleStep">
-       <number>1</number>
-      </property>
-      <property name="value">
-       <number>0</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="tickPosition">
-       <enum>QSlider::TicksBelow</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0" colspan="4">
-     <widget class="QWidget" name="widget_2" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>120</height>
-       </size>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <property name="leftMargin">
-        <number>1</number>
-       </property>
-       <property name="topMargin">
-        <number>1</number>
-       </property>
-       <property name="rightMargin">
-        <number>1</number>
-       </property>
-       <property name="bottomMargin">
-        <number>1</number>
-       </property>
-       <item>
-        <spacer name="horizontalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QFrame" name="sMFrame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>154</width>
-           <height>118</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>154</width>
-           <height>119</height>
-          </size>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Box</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <property name="lineWidth">
-          <number>2</number>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>1</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>1</number>
-          </property>
-          <item>
-           <widget class="SMeter" name="SMeterFrame">
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="vfo" name="vfoFrame">
-         <property name="minimumSize">
-          <size>
-           <width>575</width>
-           <height>118</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>575</width>
-           <height>118</height>
-          </size>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Box</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <property name="lineWidth">
-          <number>2</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="Ctl" name="ctlFrame">
-         <property name="minimumSize">
-          <size>
-           <width>240</width>
-           <height>118</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>118</height>
-          </size>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Box</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <property name="lineWidth">
-          <number>2</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item row="1" column="0" colspan="3">
      <widget class="Panadapter" name="spectrumView">
       <property name="minimumSize">
@@ -500,6 +308,186 @@
       </layout>
      </widget>
     </item>
+    <item row="1" column="3">
+     <widget class="QSlider" name="zoomSpectrumSlider">
+      <property name="minimumSize">
+       <size>
+        <width>30</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="maximum">
+       <number>200</number>
+      </property>
+      <property name="singleStep">
+       <number>1</number>
+      </property>
+      <property name="value">
+       <number>0</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="tickPosition">
+       <enum>QSlider::TicksBelow</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="4">
+     <widget class="QWidget" name="widget_2" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>118</height>
+       </size>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="margin">
+        <number>1</number>
+       </property>
+       <item>
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QFrame" name="sMFrame">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>154</width>
+           <height>118</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>154</width>
+           <height>119</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <property name="lineWidth">
+          <number>2</number>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>1</number>
+          </property>
+          <item>
+           <widget class="sMeter" name="sMeterFrame">
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="vfo" name="vfoFrame">
+         <property name="minimumSize">
+          <size>
+           <width>575</width>
+           <height>118</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>575</width>
+           <height>118</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <property name="lineWidth">
+          <number>2</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Ctl" name="ctlFrame">
+         <property name="minimumSize">
+          <size>
+           <width>240</width>
+           <height>118</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>118</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <property name="lineWidth">
+          <number>2</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -507,8 +495,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1067</width>
-     <height>20</height>
+     <width>994</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuBand">
@@ -633,7 +621,6 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionPlugins"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuBookmarks">
@@ -666,15 +653,6 @@
     <addaction name="separator"/>
     <addaction name="actionSquelchReset"/>
    </widget>
-   <widget class="QMenu" name="menuWindow">
-    <property name="title">
-     <string>&amp;Window</string>
-    </property>
-    <addaction name="actionLoad_Layout"/>
-    <addaction name="actionSave_Layout"/>
-    <addaction name="separator"/>
-    <addaction name="actionDefault_Layout"/>
-   </widget>
    <addaction name="menuReceiver"/>
    <addaction name="menuAudio"/>
    <addaction name="menuBand"/>
@@ -686,7 +664,6 @@
    <addaction name="menuSquelch"/>
    <addaction name="menuHardware"/>
    <addaction name="menuBookmarks"/>
-   <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
@@ -1266,35 +1243,12 @@
     <string>Filter 10</string>
    </property>
   </action>
-  <action name="actionLoad_Layout">
-   <property name="text">
-    <string>Load Layout...</string>
-   </property>
-  </action>
-  <action name="actionSave_Layout">
-   <property name="text">
-    <string>Save Layout...</string>
-   </property>
-  </action>
-  <action name="actionDefault_Layout">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Default Layout</string>
-   </property>
-  </action>
-  <action name="actionPlugins">
-   <property name="text">
-    <string>Plugins</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SMeter</class>
+   <class>sMeter</class>
    <extends>QFrame</extends>
-   <header>SMeter.h</header>
+   <header>smeter.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -1306,7 +1260,7 @@
   <customwidget>
    <class>Ctl</class>
    <extends>QFrame</extends>
-   <header>Ctl.h</header>
+   <header>ctl.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

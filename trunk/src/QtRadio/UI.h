@@ -464,6 +464,9 @@ private:
     bool txNow; // KD0OSS
     double loffset;
     bool protocol3;
+
+    Waterfallgl *waterfallgl;
+    QWidget *container;
 };
 
 #endif	/* _UI_H */

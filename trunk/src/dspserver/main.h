@@ -24,8 +24,6 @@
 * 
 */
 
-// version string moved into main.c
-
 #if ! defined __MAIN_H__
 #define __MAIN_H__
 

@@ -1,3 +1,4 @@
+
 AC_INIT([QtRadio Build], [hermes], [andrew att montefusco dott com], [QtRadio])
 
 #AC_CONFIG_AUX_DIR([build-aux])
