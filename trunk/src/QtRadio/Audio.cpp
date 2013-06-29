@@ -49,7 +49,6 @@
 #include "Audio.h"
 
 
-
 Audio_playback::Audio_playback()
     :   QIODevice()
 {
