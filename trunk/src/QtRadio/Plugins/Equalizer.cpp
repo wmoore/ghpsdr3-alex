@@ -1,8 +1,8 @@
-#include "EqualizerDialog.h"
-#include "ui_EqualizerDialog.h"
+#include "Equalizer.h"
+#include "ui_Equalizer.h"
 #include "UI.h"
 
-EqualizerDialog::EqualizerDialog(Connection *pConn, QWidget *parent) : QDialog(parent), ui(new Ui::EqualizerDialog)
+Equalizer::Equalizer(Connection *pConn, QWidget *parent) : QDialog(parent), ui(new Ui::Equalizer)
 {
     ui->setupUi(this);
 
@@ -42,12 +42,12 @@ EqualizerDialog::EqualizerDialog(Connection *pConn, QWidget *parent) : QDialog(p
     connect(ui->eqSaveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
 }
 
-EqualizerDialog::~EqualizerDialog()
+Equalizer::~Equalizer()
 {
     delete ui;
 }
 
-void EqualizerDialog::resetRx(void)
+void Equalizer::resetRx(void)
 {
     ui->rxEqPreampSlider->setValue(0);
     ui->rxEq32Slider->setValue(0);
@@ -62,7 +62,7 @@ void EqualizerDialog::resetRx(void)
     ui->rxEq16KSlider->setValue(0);
 } // end resetRx
 
-void EqualizerDialog::resetTx(void)
+void Equalizer::resetTx(void)
 {
     ui->txEqPreampSlider->setValue(0);
     ui->txEq32Slider->setValue(0);
@@ -77,7 +77,7 @@ void EqualizerDialog::resetTx(void)
     ui->txEq16KSlider->setValue(0);
 } // end resetTx
 
-void EqualizerDialog::set3BandEqualizer(void)
+void Equalizer::set3BandEqualizer(void)
 {
     QSettings settings("G0ORX", "QtRadio");
 
@@ -128,7 +128,7 @@ void EqualizerDialog::set3BandEqualizer(void)
     ui->eq3BandButton->setCheckable(true);
 } // end set3BandEqualizer
 
-void EqualizerDialog::set10BandEqualizer(void)
+void Equalizer::set10BandEqualizer(void)
 {
     QSettings settings("G0ORX", "QtRadio");
 
@@ -179,7 +179,7 @@ void EqualizerDialog::set10BandEqualizer(void)
     ui->eq10BandButton->setChecked(true);
 } // end set10BandEqualizer
 
-void EqualizerDialog::rxSliderChanged(void)
+void Equalizer::rxSliderChanged(void)
 {
     QString command;
     QString line;
@@ -212,7 +212,7 @@ void EqualizerDialog::rxSliderChanged(void)
     qDebug()<<Q_FUNC_INFO<<":   The command sent is is "<< command;
 } // end rxSliderChanged
 
-void EqualizerDialog::txSliderChanged(void)
+void Equalizer::txSliderChanged(void)
 {
     QString command;
     QString line;
@@ -245,7 +245,7 @@ void EqualizerDialog::txSliderChanged(void)
     qDebug()<<Q_FUNC_INFO<<":   The command sent is is "<< command;
 } // end txSliderChanged
 
-void EqualizerDialog::saveSettings(void)
+void Equalizer::saveSettings(void)
 {
     if (ui->eq3BandButton->isChecked())
         saveSettings3Band();
@@ -253,7 +253,7 @@ void EqualizerDialog::saveSettings(void)
         saveSettings10Band();
 } // end saveSettings
 
-void EqualizerDialog::saveSettings3Band(void)
+void Equalizer::saveSettings3Band(void)
 {
     QSettings settings("G0ORX", "QtRadio");
 
@@ -269,7 +269,7 @@ void EqualizerDialog::saveSettings3Band(void)
     settings.endGroup();
 } // end saveSettings3Band
 
-void EqualizerDialog::loadSettings3Band(void)
+void Equalizer::loadSettings3Band(void)
 {
     QSettings settings("G0ORX", "QtRadio");
 
@@ -285,7 +285,7 @@ void EqualizerDialog::loadSettings3Band(void)
     settings.endGroup();
 } // end loadSettings3Band
 
-void EqualizerDialog::saveSettings10Band(void)
+void Equalizer::saveSettings10Band(void)
 {
     QSettings settings("G0ORX", "QtRadio");
 
@@ -319,7 +319,7 @@ void EqualizerDialog::saveSettings10Band(void)
     txSliderChanged();
 } // end saveSettings10Band
 
-void EqualizerDialog::loadSettings10Band(void)
+void Equalizer::loadSettings10Band(void)
 {
     QSettings settings("G0ORX", "QtRadio");
 

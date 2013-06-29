@@ -1,21 +1,21 @@
-#ifndef EQUALIZERDIALOG_H
-#define EQUALIZERDIALOG_H
+#ifndef EQUALIZER_H
+#define EQUALIZER_H
 
 #include <QDialog>
 #include <QSettings>
 #include "Connection.h"
 
 namespace Ui {
-class EqualizerDialog;
+class Equalizer;
 }
 
-class EqualizerDialog : public QDialog
+class Equalizer : public QDialog
 {
     Q_OBJECT
     
 public:
-    explicit EqualizerDialog(Connection *pConn, QWidget *parent = 0);
-    ~EqualizerDialog();
+    explicit Equalizer(Connection *pConn, QWidget *parent = 0);
+    ~Equalizer();
 
     Connection *connection;
     
@@ -33,8 +33,8 @@ public slots:
     void loadSettings10Band(void);
 
 private:
-    Ui::EqualizerDialog *ui;
+    Ui::Equalizer *ui;
 
 };
 
-#endif // EQUALIZERDIALOG_H
+#endif // EQUALIZER_H

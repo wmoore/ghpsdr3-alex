@@ -436,7 +436,7 @@ private:
 
     Bookmarks bookmarks;
 
-    KeypadDialog keypad;
+    Keypad keypad;
 //    Meter* sMeter;
     int meter;
 //    int txPwr;
