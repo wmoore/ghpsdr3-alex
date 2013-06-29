@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>KeypadDialog</class>
- <widget class="QDialog" name="KeypadDialog">
+ <class>Keypad</class>
+ <widget class="QDialog" name="Keypad">
   <property name="geometry">
    <rect>
     <x>0</x>

@@ -1,5 +1,5 @@
-#ifndef KEYPADDIALOG_H
-#define KEYPADDIALOG_H
+#ifndef KEYPAD_H
+#define KEYPAD_H
 
 #include <QtCore>
 #if QT_VERSION >= 0x050000
@@ -17,16 +17,16 @@
 
 
 namespace Ui {
-    class KeypadDialog;
+    class Keypad;
 }
 
-class KeypadDialog : public QDialog
+class Keypad : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit KeypadDialog(QWidget *parent = 0);
-    ~KeypadDialog();
+    explicit Keypad(QWidget *parent = 0);
+    ~Keypad();
     long long getFrequency();
     void clear();
 	void commitFrequency();
@@ -53,7 +53,7 @@ protected:
 	void keyPressEvent(QKeyEvent *event);
 
 private:
-    Ui::KeypadDialog *ui;
+    Ui::Keypad *ui;
 
     void showFrequency();
 
@@ -61,4 +61,4 @@ private:
     QString frequency;
 };
 
-#endif // KEYPADDIALOG_H
+#endif // KEYPADD_H

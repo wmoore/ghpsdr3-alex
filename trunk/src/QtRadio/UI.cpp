@@ -821,7 +821,6 @@ void UI::actionQuick_Server_List() {
    dw2->setWidget(rbclient);
    addDockWidget(Qt::RightDockWidgetArea, dw2);
 
-
    logbook = new LogBook();
    QDockWidget *dw3 = new QDockWidget;
    dw3->setObjectName("dockLogBook");
@@ -831,7 +830,6 @@ void UI::actionQuick_Server_List() {
    addDockWidget(Qt::RightDockWidgetArea, dw3);
 
    tabifyDockWidget(dw3,dw2);
-
 
    rbclient->show();
    logbook->show();

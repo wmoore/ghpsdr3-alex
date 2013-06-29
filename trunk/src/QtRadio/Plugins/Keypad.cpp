@@ -16,15 +16,15 @@
 * Foundation, Inc., 59 Temple Pl
 */
 
-#include "KeypadDialog.h"
-#include "ui_KeypadDialog.h"
+#include "Keypad.h"
+#include "ui_Keypad.h"
 
 #include <QDebug>
 
 
-KeypadDialog::KeypadDialog(QWidget *parent) :
+Keypad::Keypad(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::KeypadDialog)
+    ui(new Ui::Keypad)
 {
     ui->setupUi(this);
 
@@ -51,27 +51,27 @@ KeypadDialog::KeypadDialog(QWidget *parent) :
     showFrequency();
 }
 
-KeypadDialog::~KeypadDialog()
+Keypad::~Keypad()
 {
     delete ui;
 }
 
-long long KeypadDialog::getFrequency() {
+long long Keypad::getFrequency() {
     return (long long)(frequency.toDouble()*1000000.0);
 }
 
-void KeypadDialog::clear() {
+void Keypad::clear() {
     frequency="";
     showFrequency();
 }
 
-void KeypadDialog::commitFrequency() {
+void Keypad::commitFrequency() {
     if ((long long)(frequency.toDouble() * 1000000.0)!=0)
         emit setKeypadFrequency((long long)(frequency.toDouble() * 1000000.0));
 }
 
-void KeypadDialog::clicked(QAbstractButton* button) {
-    qDebug()<<"KeypadDialog::clicked "<<button->text();
+void Keypad::clicked(QAbstractButton* button) {
+    qDebug()<<"Keypad::clicked "<<button->text();
     if(button->text()=="&OK") {
         commitFrequency();
     } else if(button->text()=="Reset") {
@@ -81,67 +81,67 @@ void KeypadDialog::clicked(QAbstractButton* button) {
     }
 }
 
-void KeypadDialog::key_0() {
+void Keypad::key_0() {
     //frequency=frequency*10;
     frequency.append("0");
     showFrequency();
 }
 
-void KeypadDialog::key_1() {
+void Keypad::key_1() {
     //frequency=(frequency*10)+1;
     frequency.append("1");
     showFrequency();
 }
 
-void KeypadDialog::key_2() {
+void Keypad::key_2() {
     //frequency=(frequency*10)+2;
     frequency.append("2");
     showFrequency();
 }
 
-void KeypadDialog::key_3() {
+void Keypad::key_3() {
     //frequency=(frequency*10)+3;
     frequency.append("3");
     showFrequency();
 }
 
-void KeypadDialog::key_4() {
+void Keypad::key_4() {
     //frequency=(frequency*10)+4;
     frequency.append("4");
     showFrequency();
 }
 
-void KeypadDialog::key_5() {
+void Keypad::key_5() {
     //frequency=(frequency*10)+5;
     frequency.append("5");
     showFrequency();
 }
 
-void KeypadDialog::key_6() {
+void Keypad::key_6() {
     //frequency=(frequency*10)+6;
     frequency.append("6");
     showFrequency();
 }
 
-void KeypadDialog::key_7() {
+void Keypad::key_7() {
     //frequency=(frequency*10)+7;
     frequency.append("7");
     showFrequency();
 }
 
-void KeypadDialog::key_8() {
+void Keypad::key_8() {
     //frequency=(frequency*10)+8;
     frequency.append("8");
     showFrequency();
 }
 
-void KeypadDialog::key_9() {
+void Keypad::key_9() {
     //frequency=(frequency*10)+9;
     frequency.append("9");
     showFrequency();
 }
 
-void KeypadDialog::key_period() {
+void Keypad::key_period() {
     //frequency=frequency*1000;
     if(frequency.count(".")==0) {
         frequency.append(".");
@@ -149,7 +149,7 @@ void KeypadDialog::key_period() {
     }
 }
 
-void KeypadDialog::keyPressEvent(QKeyEvent *event) {
+void Keypad::keyPressEvent(QKeyEvent *event) {
     switch (event->key()) {
         case Qt::Key_0:
             frequency.append("0");
@@ -210,7 +210,7 @@ void KeypadDialog::keyPressEvent(QKeyEvent *event) {
     }
 }
 
-void KeypadDialog::showFrequency() {
+void Keypad::showFrequency() {
     //QString f;
     //f.sprintf("%lld.%03lld.%03lld",frequency/1000000,frequency%1000000/1000,frequency%1000);
     ui->frequency->setText(frequency);

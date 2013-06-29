@@ -72,7 +72,6 @@ SOURCES += main.cpp\
     Xvtr.cpp \
     XvtrEntry.cpp \
     Bookmarks.cpp \
-    KeypadDialog.cpp \
     vfo.cpp \
     Audioinput.cpp\
     G711A.cpp \
@@ -80,7 +79,6 @@ SOURCES += main.cpp\
     powermate.cpp \
     EqualizerDialog.cpp \
     Panadapter.cpp \
-    Servers.cpp \
     SMeter.cpp \
     Ctl.cpp \
     RigCtl.cpp \
@@ -122,7 +120,6 @@ HEADERS  += \
     Xvtr.h \
     XvtrEntry.h \
     Bookmarks.h \
-    KeypadDialog.h \
     codec2.h \
     rigctl.h \
     vfo.h \
@@ -132,7 +129,6 @@ HEADERS  += \
     powermate.h \
     EqualizerDialog.h \
     Panadapter.h \
-    Servers.h \
     AudioInput.h \
     Calc.h \
     Ctl.h \
@@ -146,9 +142,7 @@ FORMS    += \
     Bookmark.ui \
     BookmarksDialog.ui \
     BookmarksEditDialog.ui \
-    KeypadDialog.ui \
     EqualizerDialog.ui \
-    Servers.ui \
     Ctl.ui \
     Vfo.ui
 

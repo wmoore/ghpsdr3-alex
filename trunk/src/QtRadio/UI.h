@@ -65,7 +65,7 @@
 #include "BookmarksEditDialog.h"
 #include "Xvtr.h"
 #include "XvtrEntry.h"
-#include "KeypadDialog.h"
+#include "Plugins/Keypad.h"
 #include "vfo.h"
 #include "rigctl.h"
 #include "Ctl.h"
