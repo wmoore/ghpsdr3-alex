@@ -47,7 +47,7 @@ public:
     void deleteRow(QModelIndex dindex);
     void writeVFO(QString freq);
     Ui::LogBook *ui;
-    int HAMLIB_PORT;
+    //int HAMLIB_PORT;
 
 private:
     //Ui::MainWindow *ui;
@@ -55,7 +55,7 @@ private:
     QSqlQueryModel *model;
 
     //QSqlTableModel *modell;
-    QTcpSocket *socket;
+    //QTcpSocket *socket;
     QTimer *timer;
     QSqlQuery *query;
     QString line;
@@ -73,18 +73,18 @@ public slots:
     void recordProgress(qint64 duration);
     void row_clicked(QModelIndex index);
     void row_doubleClicked(QModelIndex dindex);
-    void about();
-    void connectRadio();
-    void disconnectRadio();
-    void radio_connected();
-    void radio_disconnected();
+    //void about();
+    //void connectRadio();
+    //void disconnectRadio();
+    //void radio_connected();
+    //void radio_disconnected();
     void timerHandler();
-    void writeSettings();
-    void readSettings();
+    //void writeSettings();
+    //void readSettings();
     
 private slots:
 
-    void on_actionHamlib_Port_triggered();
+    //void on_actionHamlib_Port_triggered();
 
 };
 

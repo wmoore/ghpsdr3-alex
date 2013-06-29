@@ -32,7 +32,7 @@
 */
 
 
-#include "ui_logbook.h"
+#include "ui_LogBook.h"
 #include <QtCore>
 #include <QtGui>
 #include <QtSql>
@@ -47,7 +47,7 @@
 #include "RBClient.h"
 #include "LogBook.h"
 
-#define HAMLIB_ADDR     "127.0.0.1"
+#define HAMLIB_ADDR     "192.168.1.230"
 
 
 LogBook::LogBook(QWidget *parent) :
@@ -56,29 +56,13 @@ LogBook::LogBook(QWidget *parent) :
 {
 
    ui->setupUi(this);
-   //new structure
-   // reversebeacon client subclass
-   //rbclient *rbclientWidget = new rbclient(this);
-   //connect(ui->tabWidget, SIGNAL(currentChanged(int)), rbclientWidget, SLOT(initRBClient(int)));
-
-   /*
-   // FIXME
-   ui->menuBar->setStyleSheet("color: rgb(255,255,255);"
-           "background-color: rgb(44,43,41);"
-                              "selection-color: rgb(255,255,255);"
-                              "selection-background-color: rgb(85,0,64);");
-   */
-
    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-   ui->tabWidget->setTabText(0, "Frequencies");
-   ui->tabWidget->setTabText(1, "Reverse Beacon Spots");
-   ui->tabWidget->setCurrentIndex(0);
 
    // open or create sqlite db file
    db = QSqlDatabase::addDatabase("QSQLITE");
 
    // FIXME choose different filename for WINDOWS
+   // FIXME include directory in source tree/install
    db.setDatabaseName("db/qrg_db.sqlite");
    db.open();
 
@@ -89,23 +73,6 @@ LogBook::LogBook(QWidget *parent) :
    // connect pushbuttons
    connect(ui->pbClear, SIGNAL(clicked()), this, SLOT(clearLineEdits()));
    connect(ui->pbRecord, SIGNAL(clicked()), this, SLOT(startRecording()));
-
-   // connect menues
-   ui->actionDisconnect->setEnabled(false); // we are not connected yet
-
-   connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(connectRadio()));
-   connect(ui->actionDisconnect, SIGNAL(triggered()), this, SLOT(disconnectRadio()));
-   connect(ui->actionClose,SIGNAL (triggered()), qApp, SLOT(quit()));
-   connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-   connect(ui->actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-
-   setWindowTitle("QtRadioManager: Disconnected"); // we are not connected yet
-
-   socket = new QTcpSocket(this);
-
-   connect(socket, SIGNAL(connected()), this, SLOT(radio_connected())); // we are connected
-   connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(disconnectRadio())); // we are not connected
-   connect(socket, SIGNAL(disconnected()), this, SLOT(radio_disconnected())); // we are not connected
 
    /*
     *  FIXED
@@ -119,45 +86,45 @@ LogBook::LogBook(QWidget *parent) :
    // we start the timer here and call the timerHandler
    timer = new QTimer(this);
    timer->start(1500);
-   readSettings();
-   radio_disconnected();
+   //readSettings();
+   //radio_disconnected();
 
 
 }
 
 LogBook::~LogBook()
 {
-
-    socket->close();
+    //socket->close();
     db.close();
     delete ui;
-    writeSettings();
+//    writeSettings();
 }
 
 
 
-void LogBook::connectRadio()
-{
+//void LogBook::connectRadio()
+//{
 
-    QSettings settings("DL6KBG", "QtRadioManager");
-    settings.beginGroup("Receiver");
-    int HAMLIB_PORT = (settings.value("HAMLIB_PORT", 19090)).toInt();
-    settings.endGroup();
-    socket->connectToHost(HAMLIB_ADDR, HAMLIB_PORT);
+//    QSettings settings("DL6KBG", "QtRadioManager");
+//    settings.beginGroup("Receiver");
+//    int HAMLIB_PORT = (settings.value("HAMLIB_PORT", 19090)).toInt();
+//    settings.endGroup();
+//    socket->connectToHost(HAMLIB_ADDR, HAMLIB_PORT);
+//    qDebug() << "Connected to LogBook";
 
-}
+//}
 
-
+/*
 void LogBook::disconnectRadio()
 {
-    socket->close();
+    //socket->close();
     //qDebug() << "socket closed: Radio disconnected";
 }
-
+*/
 
 void LogBook::timerHandler()
 {
-    //qDebug() << "timerHandler(): called from QTimer";
+    qDebug() << "timerHandler(): called from QTimer";
 
     ui->labelTime->setText(QTime::currentTime().toString("hh:mm:ss"));
     ui->labelDate->setText(QDate::currentDate().toString("yyyy-MM-dd"));
@@ -166,13 +133,14 @@ void LogBook::timerHandler()
     getQRG();
 }
 
+/*
 void LogBook::radio_connected()
 {
-    //qDebug() << "We are connected";
-    ui->actionConnect->setEnabled(false);
-    ui->actionDisconnect->setEnabled(true);
-    ui->tabWidget->setCurrentIndex(0);
-    setWindowTitle("QtRadioManager: Connected");
+    qDebug() << "We are connected";
+//    ui->actionConnect->setEnabled(false);
+//    ui->actionDisconnect->setEnabled(true);
+//    ui->tabWidget->setCurrentIndex(0);
+    //setWindowTitle("QtRadioManager: Connected");
 
     connect(timer, SIGNAL(timeout()), this, SLOT(timerHandler())); // we are connected
     disconnect(ui->tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(row_clicked(QModelIndex)));
@@ -184,25 +152,27 @@ void LogBook::radio_connected()
 void LogBook::radio_disconnected()
 {
 
-    QString freq = " 0 "; // we set this to fetch the whole db list later
+//    QString freq = " 0 "; // we set this to fetch the whole db list later
     //qDebug() << "radio_disconnected: freq =" << freq;
 
     //qDebug() << "we are disconnected";
-    ui->actionConnect->setEnabled(true);
-    ui->actionDisconnect->setEnabled(false);
+//    ui->actionConnect->setEnabled(true);
+//    ui->actionDisconnect->setEnabled(false);
 
-    setWindowTitle("QtRadioManager: Disconnected");
+    //setWindowTitle("QtRadioManager: Disconnected");
 
-    disconnect(timer, SIGNAL(timeout()), this, SLOT(timerHandler())); // we are connected
-    connect(ui->tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(row_clicked(QModelIndex)));
-    connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(row_doubleClicked(QModelIndex)));
-    disconnect(ui->pbAdd, SIGNAL(clicked()), this, SLOT(addDB()));
-    queryDB(freq);
+//    disconnect(timer, SIGNAL(timeout()), this, SLOT(timerHandler())); // we are connected
+//    connect(ui->tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(row_clicked(QModelIndex)));
+//    connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(row_doubleClicked(QModelIndex)));
+//    disconnect(ui->pbAdd, SIGNAL(clicked()), this, SLOT(addDB()));
+//    queryDB(freq);
 
 }
+*/
 
 void LogBook::getQRG()
 {
+/*
     // fetch frequency from radio
     socket->write("f\n");
     socket->waitForBytesWritten();
@@ -218,8 +188,14 @@ void LogBook::getQRG()
     QStringList lines = QString(getQtRadio).split("\n");
     QString mode = lines.takeFirst();
     QString filter = lines.takeFirst();
+*/
 
-    //qDebug()  << mode << filter;
+    //TODO - PULL FROM QtRadio Direct, Hamlib internal isn't working right and isn't right for an internal widget anyway
+    QByteArray freq = "14253530";
+    QString mode = "DSB";
+    QString filter = "6600";
+
+    qDebug()  << mode << filter;
 
     // update lineedits with freq, mode and filter
     QString freq_s = freq.simplified();
@@ -291,7 +267,7 @@ void LogBook::addDB()
          query.bindValue(6, day);
          query.bindValue(7, time);
          query.exec();
-         ui->statusBar->showMessage("entry added", 5000);
+         //ui->statusBar->showMessage("entry added", 5000);
          clearLineEdits();
 }
 
@@ -305,6 +281,8 @@ void LogBook::clearLineEdits()
 void LogBook::startRecording()
 
 {
+
+    //FIXME - Records blank audio?
 
     QString name, mode, filter, remarks, date, day, time, file;
 
@@ -336,7 +314,7 @@ void LogBook::startRecording()
     audioRecorder->record();
 
     //qDebug() << "recording";
-    ui->statusBar->showMessage("recording to: recordings/" +date +"_" +time +"_" +qrg +"_" +mode +".wav",5000);
+    //ui->statusBar->showMessage("recording to: recordings/" +date +"_" +time +"_" +qrg +"_" +mode +".wav",5000);
 
 }
 
@@ -361,7 +339,7 @@ void LogBook::recordProgress(qint64 duration)
     if (audioRecorder->error() != QMediaRecorder::NoError || duration < 2000)
         return;
 
-    ui->statusBar->showMessage(tr("Recorded %1 sec").arg(duration / 1000));
+    //ui->statusBar->showMessage(tr("Recorded %1 sec").arg(duration / 1000));
 }
 
 
@@ -404,8 +382,8 @@ void LogBook::row_clicked(QModelIndex index)
     settings.beginGroup("Receiver");
     int HAMLIB_PORT = (settings.value("HAMLIB_PORT", 19090)).toInt();
     settings.endGroup();
-    socket->connectToHost(HAMLIB_ADDR, HAMLIB_PORT);
-    socket->waitForConnected();
+  //  socket->connectToHost(HAMLIB_ADDR, HAMLIB_PORT);
+  //  socket->waitForConnected();
 
     // qDebug() << "connected to radio";
 
@@ -429,13 +407,13 @@ void LogBook::row_clicked(QModelIndex index)
 
     //array_mode = array_mode.simplified();
 
-    socket->write(array_mode);
+    //socket->write(array_mode);
     //qDebug() << array_qrg;
     //socket->waitForBytesWritten();
-    socket->waitForReadyRead();
-    socket->write(array_qrg);
+    //socket->waitForReadyRead();
+    //socket->write(array_qrg);
     //qDebug() << array_mode;
-    socket->close();
+    //socket->close();
     writeVFO(db_qrg);
 }
 
@@ -455,7 +433,7 @@ void LogBook::row_doubleClicked(QModelIndex dindex)
           break;
       case QMessageBox::Cancel:
           // Cancel was clicked
-          radio_disconnected();
+      //    radio_disconnected();
           break;
       default:
           // should never be reached
@@ -474,9 +452,10 @@ void LogBook::deleteRow(QModelIndex dindex)
     query.prepare("DELETE FROM frequencies WHERE id = ?"); // or SELECT * FROM
     query.addBindValue(myRow);
     query.exec();
-    radio_disconnected();
+    //radio_disconnected();
 }
 
+/*
 void LogBook::readSettings()
 {
     QSettings settings("DL6KBG", "QtRadioManager");
@@ -505,7 +484,9 @@ void LogBook::about()
        "<p><i><pre>http://www.oliver-goldenstein.de/qtradiomanager</i></pre></p>"
        ));
 }
+*/
 
+/*
 void LogBook::on_actionHamlib_Port_triggered()
 {
     QStringList items;
@@ -526,6 +507,7 @@ void LogBook::on_actionHamlib_Port_triggered()
     settings.endGroup();
 
 }
+*/
 
 // taken from ghpsdr3-alex - QtRadio vfo.cpp 
 void LogBook::writeVFO(QString freq)

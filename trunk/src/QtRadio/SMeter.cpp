@@ -3,35 +3,35 @@
 #include "UI.h"
 
 
-sMeter::sMeter(QWidget* parent) : QFrame(parent) {
-    sMeterMain=new Meter("Main Rx");
-    sMeterSub=new Meter("Sub Rx");
+SMeter::SMeter(QWidget* parent) : QFrame(parent) {
+    SMeterMain=new Meter("Main Rx");
+    SMeterSub=new Meter("Sub Rx");
     meter_dbm = -121;
     sub_meter_dbm = -121;
     subRx = FALSE;
 }
 
-sMeter::~sMeter() {
+SMeter::~SMeter() {
 
 }
 
-void sMeter::setSubRxState(bool state)
+void SMeter::setSubRxState(bool state)
 {
     subRx=state;
 }
 
-void sMeter::paintEvent(QPaintEvent*)
+void SMeter::paintEvent(QPaintEvent*)
 {
-//qDebug() << "smeter.cpp - Meter value is equal to " << meter_dbm;
+//qDebug() << "SMeter.cpp - Meter value is equal to " << meter_dbm;
 //return;
     // Draw the Main Rx S-Meter
     QPainter painter(this);
-    QImage image=sMeterMain->getImage(meter_dbm);
+    QImage image=SMeterMain->getImage(meter_dbm);
     painter.drawImage(4,0,image);
 
     // Draw the Sub Rx S-Meter
     if(subRx) {
-        image=sMeterSub->getImage(sub_meter_dbm);
+        image=SMeterSub->getImage(sub_meter_dbm);
         painter.drawImage(4,image.height()+1,image);
     }
 }
