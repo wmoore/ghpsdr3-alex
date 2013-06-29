@@ -1,15 +1,21 @@
 #ifndef EQUALIZER_H
 #define EQUALIZER_H
 
-#include <QDialog>
 #include <QSettings>
 #include "Connection.h"
 
+#if QT_VERSION >= 0x050000
+    #include <QtWidgets/QWidget>
+#else
+    #include <Qwidget>
+#endif
+
 namespace Ui {
-class Equalizer;
+    class Equalizer;
 }
 
-class Equalizer : public QDialog
+class UI;
+class Equalizer : public QWidget
 {
     Q_OBJECT
     

@@ -63,7 +63,7 @@
 #include "Ctl.h"
 #include "powermate.h"
 #include "Frequency.h"
-#include "EqualizerDialog.h"
+#include "Plugins/Equalizer.h"
 #include "RBClient.h"
 #include "LogBook.h"
 
@@ -73,6 +73,7 @@ UI::UI(const QString server) {
     servers = 0;
     rbclient = 0;
     logbook = 0;
+    keypad = 0;
     pHwDlg = 0;
     meter = -121;
     initRigCtl();
@@ -165,7 +166,7 @@ UI::UI(const QString server) {
     connect(widget.actionSquelchReset,SIGNAL(triggered()),this,SLOT(actionSquelchReset()));
 
     connect(widget.actionKeypad, SIGNAL(triggered()),this,SLOT(actionKeypad()));
-    connect(&keypad,SIGNAL(setKeypadFrequency(long long)),this,SLOT(setKeypadFrequency(long long)));
+    // connect(&keypad,SIGNAL(setKeypadFrequency(long long)),this,SLOT(setKeypadFrequency(long long)));
 
     connect(widget.vfoFrame,SIGNAL(bandBtnClicked(int)),this,SLOT(getBandBtn(int)));
 
@@ -396,7 +397,7 @@ UI::UI(const QString server) {
     widget.spectrumView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     widget.spectrumView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    equalizer = new EqualizerDialog(&connection); // KD0OSS
+    equalizer = new Equalizer(&connection); // KD0OSS
 
     // load any saved settings
     loadSettings();
@@ -665,6 +666,11 @@ void UI::actionConfigure() {
 }
 
 void UI::actionEqualizer() { // KD0OSS
+    QDockWidget *dw2 = new QDockWidget;
+    dw2->setObjectName("dockEqualizer");
+    dw2->setWindowTitle("Equalizer");
+    dw2->setWidget(equalizer);
+    addDockWidget(Qt::BottomDockWidgetArea, dw2);
     equalizer->show();
 }
 
@@ -1235,11 +1241,16 @@ void UI::setSubRxGain(int gain) {
 }
 
 void UI::actionKeypad() {
-
-    keypad.clear();
-    keypad.show();
+    keypad = new Keypad();
+    QDockWidget *dw2 = new QDockWidget;
+    dw2->setObjectName("dockKeypad");
+    dw2->setWindowTitle("Keypad");
+    dw2->setWidget(keypad);
+    addDockWidget(Qt::BottomDockWidgetArea, dw2);
+    keypad->clear();
+    keypad->show();
+    qDebug() << "WTF??";
 }
-
 void UI::setKeypadFrequency(long long f) {
     frequencyChanged(f);
 }

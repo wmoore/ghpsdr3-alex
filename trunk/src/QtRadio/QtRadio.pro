@@ -77,7 +77,6 @@ SOURCES += main.cpp\
     G711A.cpp \
     RTP.cpp \
     powermate.cpp \
-    EqualizerDialog.cpp \
     Panadapter.cpp \
     SMeter.cpp \
     Ctl.cpp \
@@ -127,7 +126,6 @@ HEADERS  += \
     RTP.h \
     cusdr_queue.h \
     powermate.h \
-    EqualizerDialog.h \
     Panadapter.h \
     AudioInput.h \
     Calc.h \
@@ -142,7 +140,6 @@ FORMS    += \
     Bookmark.ui \
     BookmarksDialog.ui \
     BookmarksEditDialog.ui \
-    EqualizerDialog.ui \
     Ctl.ui \
     Vfo.ui
 

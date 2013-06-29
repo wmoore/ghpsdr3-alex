@@ -3,15 +3,10 @@
 
 #include <QtCore>
 #if QT_VERSION >= 0x050000
-#include <QtWidgets/QDialog>
-#include <QtWidgets/QAbstractButton>
-#include <QtWidgets/QDialogButtonBox>
+    #include <QtWidgets/QWidget>
 #else
-#include <QDialog>
-#include <QAbstractButton>
-#include <QDialogButtonBox>
+    #include <Qwidget>
 #endif
-
 
 #include <QKeyEvent>
 
@@ -20,7 +15,8 @@ namespace Ui {
     class Keypad;
 }
 
-class Keypad : public QDialog
+class UI;
+class Keypad : public QWidget
 {
     Q_OBJECT
 
@@ -44,7 +40,7 @@ public slots:
     void key_9();
     void key_period();
 
-    void clicked(QAbstractButton*);
+    //void clicked(QAbstractButton*);
 
 signals:
     void setKeypadFrequency(long long);

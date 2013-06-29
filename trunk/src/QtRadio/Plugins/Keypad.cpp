@@ -15,6 +15,11 @@
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Pl
 */
+#if QT_VERSION >= 0x050000
+    #include <QtWidgets/QWidget>
+#else
+    #include <QWidget>
+#endif
 
 #include "Keypad.h"
 #include "ui_Keypad.h"
@@ -22,14 +27,11 @@
 #include <QDebug>
 
 
-Keypad::Keypad(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::Keypad)
+Keypad::Keypad(QWidget *parent) : QWidget(parent), ui(new Ui::Keypad)
 {
     ui->setupUi(this);
-
+    qDebug() << "Got here Keypad";
     ui->frequency->setStyleSheet("QLabel { background-color : black; color : green; }");
-
 
     connect(ui->pushButton_0,SIGNAL(clicked()),this,SLOT(key_0()));
     connect(ui->pushButton_1,SIGNAL(clicked()),this,SLOT(key_1()));
@@ -43,12 +45,13 @@ Keypad::Keypad(QWidget *parent) :
     connect(ui->pushButton_9,SIGNAL(clicked()),this,SLOT(key_9()));
     connect(ui->pushButton_period,SIGNAL(clicked()),this,SLOT(key_period()));
 
-    connect(ui->buttonBox,SIGNAL(clicked(QAbstractButton*)),this,SLOT(clicked(QAbstractButton*)));
-
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setFocus();
+    //connect(ui->buttonBox,SIGNAL(clicked(QAbstractButton*)),this,SLOT(clicked(QAbstractButton*)));
+    //ui->buttonBox->button(QDialogButtonBox::Ok)->setFocus();
 
     frequency="";
+            qDebug() << "got here keypad 3";
     showFrequency();
+            qDebug() << "got here keypad 4";
 }
 
 Keypad::~Keypad()
@@ -67,9 +70,10 @@ void Keypad::clear() {
 
 void Keypad::commitFrequency() {
     if ((long long)(frequency.toDouble() * 1000000.0)!=0)
+        qDebug() << "got here keypad 2";
         emit setKeypadFrequency((long long)(frequency.toDouble() * 1000000.0));
 }
-
+/*
 void Keypad::clicked(QAbstractButton* button) {
     qDebug()<<"Keypad::clicked "<<button->text();
     if(button->text()=="&OK") {
@@ -80,7 +84,7 @@ void Keypad::clicked(QAbstractButton* button) {
     } else {
     }
 }
-
+*/
 void Keypad::key_0() {
     //frequency=frequency*10;
     frequency.append("0");
@@ -206,12 +210,13 @@ void Keypad::keyPressEvent(QKeyEvent *event) {
             break;
 
         default:
-            QDialog::keyPressEvent(event);
+            break;
+            //QDialog::keyPressEvent(event);
     }
 }
 
 void Keypad::showFrequency() {
     //QString f;
     //f.sprintf("%lld.%03lld.%03lld",frequency/1000000,frequency%1000000/1000,frequency%1000);
-    ui->frequency->setText(frequency);
+     ui->frequency->setText(frequency);
 }

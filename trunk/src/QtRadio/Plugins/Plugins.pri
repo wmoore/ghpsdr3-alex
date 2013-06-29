@@ -17,7 +17,7 @@ HEADERS += \
 
 FORMS += \
     Plugins/Servers.ui \
-    Plugins/Equalizer. ui \
+    Plugins/Equalizer.ui \
     Plugins/Keypad.ui  \
     Plugins/LogBook.ui \
     Plugins/RBClient.ui

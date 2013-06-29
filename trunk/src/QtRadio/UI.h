@@ -73,7 +73,7 @@
 #include "RTP.h"
 #include "Hardware.h"
 #include "powermate.h"
-#include "EqualizerDialog.h"
+#include "Plugins/Equalizer.h"
 #include "RBClient.h"
 #include "LogBook.h"
 
@@ -423,7 +423,7 @@ private:
 
     Bandscope* bandscope;
 
-    EqualizerDialog *equalizer; // KD0OSS
+    Equalizer *equalizer; // KD0OSS
 
     int sampleZoomLevel; // KD0OSS
     int viewZoomLevel; // KD0OSS
@@ -436,7 +436,8 @@ private:
 
     Bookmarks bookmarks;
 
-    Keypad keypad;
+    Keypad *keypad;
+
 //    Meter* sMeter;
     int meter;
 //    int txPwr;

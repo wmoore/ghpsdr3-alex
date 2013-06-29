@@ -1,8 +1,14 @@
+#if QT_VERSION >= 0x050000
+    #include <QtWidgets/QWidget>
+#else
+    #include <QWidget>
+#endif
+
 #include "Equalizer.h"
 #include "ui_Equalizer.h"
 #include "UI.h"
 
-Equalizer::Equalizer(Connection *pConn, QWidget *parent) : QDialog(parent), ui(new Ui::Equalizer)
+Equalizer::Equalizer(Connection *pConn, QWidget *parent) : QWidget(parent), ui(new Ui::Equalizer)
 {
     ui->setupUi(this);
 
