@@ -258,8 +258,26 @@ public slots:
     void receiverChanged(int rx);
     void rxDCBlockChanged(bool state); //KD0OSS
     void txDCBlockChanged(bool state); //KD0OSS
+    void rxDCBlockGainChanged(int value); //KD0OSS
     void setTxIQPhase(double value); //KD0OSS
     void setTxIQGain(double value); //KD0OSS
+
+    void agcSlopeChanged(int); //KD0OSS
+    void agcMaxGainChanged(int); //KD0OSS
+    void agcAttackChanged(int); //KD0OSS
+    void agcDecayChanged(int); //KD0OSS
+    void agcHangChanged(int); //KD0OSS
+    void agcFixedGainChanged(int); //KD0OSS
+    void agcHangThreshChanged(int); //KD0OSS
+    void levelerStateChanged(int); //KD0OSS
+    void levelerMaxGainChanged(int); //KD0OSS
+    void levelerAttackChanged(int); //KD0OSS
+    void levelerDecayChanged(int); //KD0OSS
+    void levelerHangChanged(int); //KD0OSS
+    void alcStateChanged(int); //KD0OSS
+    void alcAttackChanged(int); //KD0OSS
+    void alcDecayChanged(int); //KD0OSS
+    void alcHangChanged(int); //KD0OSS
 
     void AGCTLevelChanged(int level); //KD0OSS
     void enableRxEq(bool); // KD0OSS
@@ -271,7 +289,7 @@ public slots:
     void sdromThresholdChanged(double);
     void windowTypeChanged(int); //KD0OSS
     void statusMessage(QString); //KD0OSS
-    void removeNotchFilter(void);
+    void removeNotchFilter(void); //KD0OSS
 
     void actionBookmark();
     void addBookmark();
@@ -443,6 +461,7 @@ private:
     QString servername;
     bool canTX;
     bool chkTX;
+    bool txNow; // KD0OSS
     double loffset;
     bool protocol3;
 };

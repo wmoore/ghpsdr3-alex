@@ -14,7 +14,9 @@ _UsingSDK = true
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     message("Using Qt5")
-    QT       += core gui widgets multimedia sql
+
+    QT       += core gui widgets multimedia # opengl
+
 
 #    INCLUDEPATH += /opt/qt5/include
 #    INCLUDEPATH += /opt/qt5/include/QtMultimedia
