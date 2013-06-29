@@ -410,7 +410,7 @@
            <number>1</number>
           </property>
           <item>
-           <widget class="sMeter" name="sMeterFrame">
+           <widget class="SMeter" name="SMeterFrame">
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
@@ -1246,9 +1246,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>sMeter</class>
+   <class>SMeter</class>
    <extends>QFrame</extends>
-   <header>smeter.h</header>
+   <header>SMeter.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -1260,7 +1260,7 @@
   <customwidget>
    <class>Ctl</class>
    <extends>QFrame</extends>
-   <header>ctl.h</header>
+   <header>Ctl.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

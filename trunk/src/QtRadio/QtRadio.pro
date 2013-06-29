@@ -13,6 +13,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     message("Using Qt5")
 
     QT       += core gui widgets multimedia # opengl
+    QT += sql
 
 #    INCLUDEPATH += /opt/qt5/include
 #    INCLUDEPATH += /opt/qt5/include/QtMultimedia
@@ -87,10 +88,9 @@ SOURCES += main.cpp\
     SMeter.cpp \
     Ctl.cpp \
     RigCtl.cpp \
-    Calc.cpp
+    Calc.cpp \
     Panadapter.cpp \
     Waterfallgl.cpp
-
 
 HEADERS  += \
     USBFilters.h \
@@ -140,7 +140,7 @@ HEADERS  += \
     AudioInput.h \
     Calc.h \
     Ctl.h \
-    SMeter.h
+    SMeter.h \
     Panadapter.h \
     Waterfallgl.h
 

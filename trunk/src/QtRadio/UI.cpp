@@ -124,7 +124,7 @@ UI::UI(const QString server) {
     waterfallgl->setGeometry(0,0, 512, 512);
 
     container = QWidget::createWindowContainer(waterfallgl);
-    container->setParent(widget.waterfallFrame);
+    //container->setParent(widget.waterfallFrame);
 
     connect(widget.vfoFrame,SIGNAL(getBandFrequency()),this,SLOT(getBandFrequency()));
 
@@ -134,8 +134,8 @@ UI::UI(const QString server) {
     connect(widget.actionQuick_Server_List,SIGNAL(triggered()),this,SLOT(actionQuick_Server_List()));
     connect(widget.actionDisconnectFromServer,SIGNAL(triggered()),this,SLOT(actionDisconnect()));
 
-    connect(widget.actionSave_Layout, SIGNAL(triggered()), this, SLOT(saveLayout()));
-    connect(widget.actionLoad_Layout, SIGNAL(triggered()), this, SLOT(loadLayout()));
+    //connect(widget.actionSave_Layout, SIGNAL(triggered()), this, SLOT(saveLayout()));
+    //connect(widget.actionLoad_Layout, SIGNAL(triggered()), this, SLOT(loadLayout()));
 
     connect(widget.actionSubrx,SIGNAL(triggered()),this,SLOT(actionSubRx()));
     connect(widget.actionBandscope,SIGNAL(triggered()),this,SLOT(actionBandscope()));
@@ -701,7 +701,7 @@ void UI::setFPS(void){
 }
 
 void UI::resizeEvent(QResizeEvent *){
-    container->resize(widget.spectrumView->width(), widget.waterfallFrame->height());
+    //container->resize(widget.spectrumView->width(), widget.waterfallFrame->height());
 
     if (protocol3){
         QString command;
