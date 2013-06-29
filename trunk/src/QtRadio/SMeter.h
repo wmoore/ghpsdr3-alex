@@ -15,7 +15,7 @@
 
 // class Spectrum: public QFrame {
 //    Q_OBJECT
-class sMeter: public QFrame {
+class SMeter: public QFrame {
     Q_OBJECT
 
 public:
