@@ -19,9 +19,9 @@ class SMeter: public QFrame {
     Q_OBJECT
 
 public:
-    sMeter();
-    sMeter(QWidget* parent=0);
-    virtual ~sMeter();
+    SMeter();
+    SMeter(QWidget* parent=0);
+    virtual ~SMeter();
     int meter_dbm;
     int sub_meter_dbm;
     void setSubRxState(bool state);
@@ -34,8 +34,8 @@ signals:
 public slots:
 
 private:
-    Meter* sMeterMain;
-    Meter* sMeterSub;
+    Meter* SMeterMain;
+    Meter* SMeterSub;
     bool subRx;
 };
 

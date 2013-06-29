@@ -22,7 +22,7 @@
 *
 */
 #include "Ctl.h"
-#include "ui_ctl.h"
+#include "ui_Ctl.h"
 #include <QDebug>
 
 Ctl::Ctl(QWidget *parent) :

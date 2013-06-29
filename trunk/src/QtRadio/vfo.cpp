@@ -25,7 +25,7 @@
 *
 */
 #include "vfo.h"
-#include "ui_vfo.h"
+#include "ui_Vfo.h"
 #include <QDebug>
 #include <QKeyEvent>
 

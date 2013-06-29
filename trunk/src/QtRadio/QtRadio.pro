@@ -17,19 +17,10 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     message("Using Qt5")
     QT       += core gui widgets multimedia sql
 
-
-#    INCLUDEPATH += /opt/qt5/include
-#    INCLUDEPATH += /opt/qt5/include/QtMultimedia
-#    INCLUDEPATH += /opt/qt5/include/QtNetwork
-
     #KD0NUZ OSX Homebrew includes/libs
     INCLUDEPATH += /usr/local/include
     LIBS += -L/usr/local/lib
 
-#    INCLUDEPATH += /usr/local/Qt-5.0.2/include/QtCore
-#    INCLUDEPATH += /usr/local/Qt-5.0.2/include/QtGui
-#    INCLUDEPATH += /usr/local/Qt-5.0.2/include/QtWidgets
-#    INCLUDEPATH += /usr/local/Qt-5.0.2/include/QtMultimedia
 } else {
     $$_UsingSDK {
         message("Using the Nokia Qt SDK installation")
@@ -44,8 +35,6 @@ greaterThan(QT_MAJOR_VERSION, 4) {
         INCLUDEPATH += /usr/include/QtMultimediaKit
     }
 }
-
-
 
 
 SOURCES += main.cpp\
@@ -88,18 +77,9 @@ SOURCES += main.cpp\
     Audioinput.cpp\
     G711A.cpp \
     RTP.cpp \
-    hardware.cpp\
     powermate.cpp \
-    hardware_sdr1000.cpp \
     EqualizerDialog.cpp \
-    hardware_sdriq.cpp \
-    hardware_rtlsdr.cpp \
-    hardware_perseus.cpp \
-    hardware_hiqsdr.cpp \
-    hardware_hermes.cpp \
     Panadapter.cpp \
-    LogBook.cpp \
-    RBClient.cpp \
     Servers.cpp \
     SMeter.cpp \
     Ctl.cpp \
@@ -152,20 +132,11 @@ HEADERS  += \
     powermate.h \
     EqualizerDialog.h \
     Panadapter.h \
-    LogBook.h \
-    RBClient.h \
     Servers.h \
     AudioInput.h \
     Calc.h \
     Ctl.h \
-    SMeter.h \
-    Hardware.h \
-    HardwareHiqsdr.h \
-    HardwareSdriq.h \
-    HardwareSDR1000.h \
-    HardwareRtlsdr.h \
-    HardwarePerseus.h \
-    HardwareHermes.h
+    SMeter.h
 
 FORMS    += \   
     UI.ui \
@@ -177,11 +148,12 @@ FORMS    += \
     BookmarksEditDialog.ui \
     KeypadDialog.ui \
     EqualizerDialog.ui \
-    LogBook.ui \
-    RBClient.ui \
     Servers.ui \
     Ctl.ui \
     Vfo.ui
+
+include(Hardware/Hardware.pri)
+include(Plugins/Plugins.pri)
 
 OTHER_FILES +=
 

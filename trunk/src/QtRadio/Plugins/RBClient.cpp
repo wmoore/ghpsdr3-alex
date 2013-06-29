@@ -1,5 +1,5 @@
 #include "RBClient.h"
-#include "ui_rbclient.h"
+#include "ui_RBClient.h"
 #include "UI.h"
 #include <QtCore>
 #include <QtGui>

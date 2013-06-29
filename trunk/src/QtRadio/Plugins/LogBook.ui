@@ -20,29 +20,7 @@
    <string>QtRadioManager</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0" rowspan="2" colspan="3">
-    <widget class="QMenuBar" name="menuBar">
-     <widget class="QMenu" name="menuConnect">
-      <property name="title">
-       <string>Receiver</string>
-      </property>
-      <addaction name="actionConnect"/>
-      <addaction name="actionDisconnect"/>
-      <addaction name="actionHamlib_Port"/>
-      <addaction name="actionClose"/>
-     </widget>
-     <widget class="QMenu" name="menuHelp">
-      <property name="title">
-       <string>Help</string>
-      </property>
-      <addaction name="actionAbout"/>
-      <addaction name="actionAbout_Qt"/>
-     </widget>
-     <addaction name="menuConnect"/>
-     <addaction name="menuHelp"/>
-    </widget>
-   </item>
-   <item row="2" column="1">
+   <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QTableView" name="tableView">
@@ -57,7 +35,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
-        <widget class="QFrame" name="frame">
+        <widget class="QFrame" name="frame_info">
          <property name="frameShape">
           <enum>QFrame::Panel</enum>
          </property>
@@ -171,7 +149,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="widget" native="true">
+        <widget class="QWidget" name="frame_input" native="true">
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -205,7 +183,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="frame">
+        <widget class="QFrame" name="frame_buttons">
          <property name="frameShape">
           <enum>QFrame::Panel</enum>
          </property>
@@ -271,51 +249,8 @@
     </layout>
    </item>
   </layout>
-  <widget class="QStatusBar" name="statusBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>3</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <action name="actionAbout">
-   <property name="text">
-    <string>about</string>
-   </property>
-  </action>
-  <action name="actionAbout_Qt">
-   <property name="text">
-    <string>about Qt</string>
-   </property>
-  </action>
-  <action name="actionConnect">
-   <property name="text">
-    <string>Connect</string>
-   </property>
-  </action>
-  <action name="actionDisconnect">
-   <property name="text">
-    <string>Disconnect</string>
-   </property>
-  </action>
-  <action name="actionClose">
-   <property name="text">
-    <string>Close</string>
-   </property>
-  </action>
-  <action name="actionHamlib_Port">
-   <property name="text">
-    <string>Hamlib Port</string>
-   </property>
-  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections/>
- <slots>
-  <slot>Connect()</slot>
- </slots>
 </ui>
