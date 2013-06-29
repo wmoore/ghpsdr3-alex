@@ -1,5 +1,6 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
+QT += sql
 SOURCES += \
     Plugins/LogBook.cpp \
     Plugins/RBClient.cpp
