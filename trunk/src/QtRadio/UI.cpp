@@ -812,32 +812,31 @@ void UI::actionQuick_Server_List() {
    dw->setObjectName("dockServerList");
    dw->setWindowTitle("Server List");
    dw->setWidget(servers);
-
    addDockWidget(Qt::BottomDockWidgetArea, dw);
-
-   servers->show();
-   servers->refreshList();
 
    rbclient = new RBClient();
    QDockWidget *dw2 = new QDockWidget;
    dw2->setObjectName("dockReverseBeacon");
    dw2->setWindowTitle("Reverse Beacon");
    dw2->setWidget(rbclient);
+   addDockWidget(Qt::RightDockWidgetArea, dw2);
 
-   addDockWidget(Qt::BottomDockWidgetArea, dw2);
-
-   rbclient->show();
 
    logbook = new LogBook();
    QDockWidget *dw3 = new QDockWidget;
-   dw2->setObjectName("dockLogBook");
-   dw2->setWindowTitle("Log Book");
-   dw2->setWidget(logbook);
+   dw3->setObjectName("dockLogBook");
+   dw3->setWindowTitle("Log Book");
+   dw3->setWidget(logbook);
+   //dw3->setTabOrder(logbook, rbclient);
+   addDockWidget(Qt::RightDockWidgetArea, dw3);
 
-   addDockWidget(Qt::BottomDockWidgetArea, dw3);
+   tabifyDockWidget(dw3,dw2);
 
+
+   rbclient->show();
    logbook->show();
-
+   servers->show();
+   servers->refreshList();
 }
 
 void UI::connected() {
@@ -2986,7 +2985,9 @@ void UI :: setHwDlg(Hardware *p)
    dw->setWindowTitle("Hardware Options");
    dw->setWidget(pHwDlg);
 
-   addDockWidget(Qt::BottomDockWidgetArea, dw);
+   addDockWidget(Qt::LeftDockWidgetArea, dw);
+
+   pHwDW = dw;
 }
 
 void UI :: rmHwDlg()
@@ -2995,6 +2996,8 @@ void UI :: rmHwDlg()
       pHwDlg->close(); 
       delete pHwDlg;
       pHwDlg = 0;
+      pHwDW->close();
+      delete pHwDW;
    }
 }
 

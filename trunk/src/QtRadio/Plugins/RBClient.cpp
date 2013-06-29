@@ -153,7 +153,7 @@ void RBClient::row_clicked(QModelIndex)
 
         radiosocket->write(array_mode);
         //socket->waitForBytesWritten();
-        radiosocket->waitForReadyRead(100);
+        //radiosocket->waitForReadyRead(100);
         radiosocket->write(array_qrg);
         radiosocket->close();
 

@@ -419,6 +419,7 @@ private:
     int sampleRate;
 
     Hardware *pHwDlg;
+    QDockWidget *pHwDW;
 
     Bandscope* bandscope;
 

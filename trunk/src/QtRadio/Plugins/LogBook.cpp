@@ -89,6 +89,11 @@ LogBook::LogBook(QWidget *parent) :
    //readSettings();
    //radio_disconnected();
 
+   connect(timer, SIGNAL(timeout()), this, SLOT(timerHandler())); // we are connected
+   disconnect(ui->tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(row_clicked(QModelIndex)));
+   disconnect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(row_doubleClicked(QModelIndex)));
+   connect(ui->pbAdd, SIGNAL(clicked()), this, SLOT(addDB()));
+
 
 }
 
@@ -191,7 +196,7 @@ void LogBook::getQRG()
 */
 
     //TODO - PULL FROM QtRadio Direct, Hamlib internal isn't working right and isn't right for an internal widget anyway
-    QByteArray freq = "14253530";
+    QString freq = "14253530";
     QString mode = "DSB";
     QString filter = "6600";
 
@@ -210,7 +215,7 @@ void LogBook::getQRG()
 void LogBook::queryDB(QString freq)
 {
     //QString limit = "LIMIT 30";
-    QString order = "ORDER BY QRG ASC ";
+    QString order = " ORDER BY QRG ASC ";
 
     model = new QSqlQueryModel(this); // QSqlTabelModel ?
     model->setQuery("SELECT ID, QRG, MODE, FILTER, NAME, REMARKS, DATE, DAY, TIME FROM FREQUENCIES WHERE QRG>=" + freq + order);
