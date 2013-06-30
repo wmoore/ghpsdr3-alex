@@ -66,6 +66,7 @@
 #include "Plugins/Equalizer.h"
 #include "Plugins/RBClient.h"
 #include "Plugins/LogBook.h"
+#include "Plugins/AFSK1200Decoder/AFSK1200Decoder.h"
 
 UI::UI(const QString server) {
 
@@ -74,6 +75,7 @@ UI::UI(const QString server) {
     rbclient = 0;
     logbook = 0;
     keypad = 0;
+    afsk1200decoder = 0;
     pHwDlg = 0;
     meter = -121;
     initRigCtl();
@@ -1248,7 +1250,14 @@ void UI::actionKeypad() {
     addDockWidget(Qt::BottomDockWidgetArea, dw2);
     keypad->clear();
     keypad->show();
-    qDebug() << "WTF??";
+
+    afsk1200decoder = new AFSK1200Decoder();
+    QDockWidget *dw3 = new QDockWidget;
+    dw3->setObjectName("dockAFSK1200Decoder");
+    dw3->setWindowTitle("AFSK1200Decoder");
+    dw3->setWidget(afsk1200decoder);
+    addDockWidget(Qt::RightDockWidgetArea, dw3);
+    afsk1200decoder->show();
 }
 void UI::setKeypadFrequency(long long f) {
     frequencyChanged(f);

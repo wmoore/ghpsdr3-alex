@@ -29,6 +29,7 @@
 #include <QTimer>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQueryModel>
+#include <QFile>
 
 namespace Ui {
     class LogBook;

@@ -17,10 +17,10 @@
  *      along with this program; if not, write to the Free Software
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef AFSK1200DECODER_H
+#define AFSK1200DECODER_H
 
-#include <QtWidgets/QMainWindow>
+#include <QtWidgets>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QLabel>
 #include <QAudioInput>
@@ -31,16 +31,16 @@
 
 
 namespace Ui {
-    class MainWindow;
+    class AFSK1200Decoder;
 }
 
-class MainWindow : public QMainWindow
+class AFSK1200Decoder : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    explicit AFSK1200Decoder(QWidget *parent = 0);
+    ~AFSK1200Decoder();
 
 private slots:
     void samplesReceived(float *buffer, const int length);
@@ -53,7 +53,7 @@ private slots:
     void on_actionAboutQt_triggered();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::AFSK1200Decoder *ui;
 
     QLabel     *inputLabel;
     QComboBox  *inputSelector;  /*! Audio input delector. */
@@ -76,4 +76,4 @@ private:
 
 };
 
-#endif // MAINWINDOW_H
+#endif // AFSK1200DECODER_H
