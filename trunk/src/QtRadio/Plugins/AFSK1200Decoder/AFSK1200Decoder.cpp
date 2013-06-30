@@ -54,8 +54,9 @@ AFSK1200Decoder::AFSK1200Decoder(QWidget *parent) : QWidget(parent), ui(new Ui::
 
     /* initialise decoders */
     afsk12 = new CAfsk12();
+    dtmf = new DTMF();
 
-    connect(afsk12, SIGNAL(newMessage(QString)), ui->textView, SLOT(appendPlainText(QString)));
+    connect(dtmf, SIGNAL(newMessage(QString)), ui->textView, SLOT(appendPlainText(QString)));
 
     //ui->statusBar->showMessage(tr("Decoder ready - select and input source then press start"));
 }
@@ -182,7 +183,8 @@ void AFSK1200Decoder::on_actionDecode_toggled(bool enabled)
         qDebug() << "----------------------------------------------------";
 
         /* initialise decoder; looks weird but dmeods were organised in array in multimon */
-        afsk12->reset();
+       // afsk12->reset();
+        dtmf->reset();
 
         audioInput = new QAudioInput(inputDevices.at(inputSelector->currentIndex()), audioFormat, this);
 
@@ -229,7 +231,8 @@ void AFSK1200Decoder::samplesReceived(float *buffer, const int length)
         tmpbuf.append(buffer[i]);
     }
 
-    afsk12->demod(tmpbuf.data(), length);
+    //afsk12->demod(tmpbuf.data(), length);
+    dtmf->demod(tmpbuf.data(), length);
 
     /* clear tmpbuf and store "overlap" */
     tmpbuf.clear();

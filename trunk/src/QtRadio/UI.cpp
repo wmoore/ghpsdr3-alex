@@ -1254,7 +1254,7 @@ void UI::actionKeypad() {
     afsk1200decoder = new AFSK1200Decoder();
     QDockWidget *dw3 = new QDockWidget;
     dw3->setObjectName("dockAFSK1200Decoder");
-    dw3->setWindowTitle("AFSK1200Decoder");
+    dw3->setWindowTitle("Multimon Decoder");
     dw3->setWidget(afsk1200decoder);
     addDockWidget(Qt::RightDockWidgetArea, dw3);
     afsk1200decoder->show();

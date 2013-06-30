@@ -25,6 +25,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include "multimon.h"
 #include "filter.h"
 #include "cafsk12.h"
 
@@ -87,7 +88,7 @@ void CAfsk12::demod(float *buffer, int length)
             fsqr(mac(buffer, corr_space_q, CORRLEN));
         state->l1.afsk12.dcd_shreg <<= 1;
         state->l1.afsk12.dcd_shreg |= (f > 0);
-        verbprintf(10, "%c", '0'+(state->l1.afsk12.dcd_shreg & 1));
+        //verbprintf(10, "%c", '0'+(state->l1.afsk12.dcd_shreg & 1));
         /*
          * check if transition
          */
@@ -104,7 +105,7 @@ void CAfsk12::demod(float *buffer, int length)
             state->l1.afsk12.lasts |= state->l1.afsk12.dcd_shreg & 1;
             curbit = (state->l1.afsk12.lasts ^
                   (state->l1.afsk12.lasts >> 1) ^ 1) & 1;
-            verbprintf(9, " %c ", '0'+curbit);
+            //verbprintf(9, " %c ", '0'+curbit);
             hdlc_rxbit(state, curbit);
         }
     }
@@ -183,7 +184,7 @@ void CAfsk12::hdlc_rxbit(struct demod_state *s, int bit)
     if (s->l2.hdlc.rxbitbuf & 1) {
         if (s->l2.hdlc.rxptr >= s->l2.hdlc.rxbuf+sizeof(s->l2.hdlc.rxbuf)) {
             s->l2.hdlc.rxstate = 0;
-            verbprintf(1, "Error: packet size too large\n");
+            //verbprintf(1, "Error: packet size too large\n");
             return;
         }
         *s->l2.hdlc.rxptr++ = s->l2.hdlc.rxbitbuf >> 1;
@@ -195,7 +196,7 @@ void CAfsk12::hdlc_rxbit(struct demod_state *s, int bit)
 
 
 static int verbose_level = 2;
-
+/*
 void CAfsk12::verbprintf(int verb_level, const char *fmt, ...)
 {
     va_list args;
@@ -207,7 +208,7 @@ void CAfsk12::verbprintf(int verb_level, const char *fmt, ...)
     }
     va_end(args);
 }
-
+*/
 
 static inline int check_crc_ccitt(const unsigned char *buf, int cnt)
 {
@@ -225,13 +226,13 @@ void CAfsk12::ax25_disp_packet(unsigned char *bp, unsigned int len)
     unsigned char v1=1,cmd=0;
     unsigned char i,j;
 
-    verbprintf(6, "AX.25 PKT; L=%d\n", len);
+    //verbprintf(6, "AX.25 PKT; L=%d\n", len);
 
     if (!bp || len < 10)
         return;
 #if 1
     if (!check_crc_ccitt(bp, len)) {
-        verbprintf(6, "CRC check failed\n");
+        //verbprintf(6, "CRC check failed\n");
         return;
     }
 #endif
@@ -247,46 +248,46 @@ void CAfsk12::ax25_disp_packet(unsigned char *bp, unsigned int len)
         v1 = 0;
         cmd = (bp[1] & 2) != 0;
 
-        verbprintf(0, "AFSK1200: fm ? to ");
+        //verbprintf(0, "AFSK1200: fm ? to ");
         message.append(QString("%1$ fm ? to ").arg(time.toString("hh:mm:ss")));
 
         i = (bp[2] >> 2) & 0x3f;
         if (i) {
-            verbprintf(0, "%c",i+0x20);
+            //verbprintf(0, "%c",i+0x20);
             message.append(QChar(i+0x20));
         }
 
         i = ((bp[2] << 4) | ((bp[3] >> 4) & 0xf)) & 0x3f;
         if (i) {
-            verbprintf(0, "%c",i+0x20);
+            //verbprintf(0, "%c",i+0x20);
             message.append(QChar(i+0x20));
         }
 
         i = ((bp[3] << 2) | ((bp[4] >> 6) & 3)) & 0x3f;
         if (i) {
-            verbprintf(0, "%c",i+0x20);
+            //verbprintf(0, "%c",i+0x20);
             message.append(QChar(i+0x20));
         }
 
         i = bp[4] & 0x3f;
         if (i) {
-            verbprintf(0, "%c",i+0x20);
+            //verbprintf(0, "%c",i+0x20);
             message.append(QChar(i+0x20));
         }
 
         i = (bp[5] >> 2) & 0x3f;
         if (i) {
-            verbprintf(0, "%c",i+0x20);
+            //verbprintf(0, "%c",i+0x20);
             message.append(QChar(i+0x20));
         }
 
         i = ((bp[5] << 4) | ((bp[6] >> 4) & 0xf)) & 0x3f;
         if (i) {
-            verbprintf(0, "%c",i+0x20);
+            //verbprintf(0, "%c",i+0x20);
             message.append(QChar(i+0x20));
         }
 
-        verbprintf(0, "-%u QSO Nr %u", bp[6] & 0xf, (bp[0] << 6) | (bp[1] >> 2));
+        //verbprintf(0, "-%u QSO Nr %u", bp[6] & 0xf, (bp[0] << 6) | (bp[1] >> 2));
         message.append(QString("-%1 QSO Nr %1").arg(bp[6] & 0xf).arg((bp[0] << 6) | (bp[1] >> 2)));
 
         bp += 7;
@@ -303,48 +304,48 @@ void CAfsk12::ax25_disp_packet(unsigned char *bp, unsigned int len)
             cmd = (bp[6] & 0x80);
         }
 
-        verbprintf(0, "AFSK1200: fm ");
+        //verbprintf(0, "AFSK1200: fm ");
         message.append(QString("%1$ fm ").arg(time.toString("hh:mm:ss")));
 
         for(i = 7; i < 13; i++)
             if ((bp[i] &0xfe) != 0x40) {
-                verbprintf(0, "%c",bp[i] >> 1);
+                //verbprintf(0, "%c",bp[i] >> 1);
                 message.append(QChar(bp[i] >> 1));
             }
 
-        verbprintf(0, "-%u to ",(bp[13] >> 1) & 0xf);
+        //verbprintf(0, "-%u to ",(bp[13] >> 1) & 0xf);
         message.append(QString("-%1 to ").arg((bp[13] >> 1) & 0xf));
 
         for(i = 0; i < 6; i++)
             if ((bp[i] &0xfe) != 0x40) {
-                verbprintf(0, "%c",bp[i] >> 1);
+                //verbprintf(0, "%c",bp[i] >> 1);
                 message.append(QChar(bp[i] >> 1));
             }
 
-        verbprintf(0, "-%u",(bp[6] >> 1) & 0xf);
+        //verbprintf(0, "-%u",(bp[6] >> 1) & 0xf);
         message.append(QString("-%1").arg((bp[6] >> 1) & 0xf));
 
         bp += 14;
         len -= 14;
         if ((!(bp[-1] & 1)) && (len >= 7)) {
-            verbprintf(0, " via ");
+            //verbprintf(0, " via ");
             message.append(" via ");
         }
 
         while ((!(bp[-1] & 1)) && (len >= 7)) {
             for(i = 0; i < 6; i++)
                 if ((bp[i] &0xfe) != 0x40) {
-                    verbprintf(0, "%c",bp[i] >> 1);
+                    //verbprintf(0, "%c",bp[i] >> 1);
                     message.append(QChar(bp[i] >> 1));
                 }
 
-            verbprintf(0, "-%u",(bp[6] >> 1) & 0xf);
+            //verbprintf(0, "-%u",(bp[6] >> 1) & 0xf);
             message.append(QString("-%1").arg((bp[6] >> 1) & 0xf));
 
             bp += 7;
             len -= 7;
             if ((!(bp[-1] & 1)) && (len >= 7)) {
-                verbprintf(0, ",");
+                //verbprintf(0, ",");
                 message.append(",");
             }
         }
@@ -358,38 +359,38 @@ void CAfsk12::ax25_disp_packet(unsigned char *bp, unsigned int len)
              ((i & 0x10) ? (cmd ? '+' : '-') : (cmd ? '^' : 'v'));
     if (!(i & 1)) {
         /* Info frame */
-        verbprintf(0, " I%u%u%c",(i >> 5) & 7,(i >> 1) & 7,j);
+        //verbprintf(0, " I%u%u%c",(i >> 5) & 7,(i >> 1) & 7,j);
         message.append(QString(" I%1%2%3").arg((i >> 5) & 7).arg((i >> 1) & 7).arg(j));
     }
     else if (i & 2) {
         /* U frame */
         switch (i & (~0x10)) {
         case 0x03:
-            verbprintf(0, " UI%c",j);
+            //verbprintf(0, " UI%c",j);
             message.append(QString(" UI%1").arg(QChar(j)));
             break;
         case 0x2f:
-            verbprintf(0, " SABM%c",j);
+            //verbprintf(0, " SABM%c",j);
             message.append(QString(" SABM%1").arg(QChar(j)));
             break;
         case 0x43:
-            verbprintf(0, " DISC%c",j);
+            //verbprintf(0, " DISC%c",j);
             message.append(QString(" DISC%1").arg(QChar(j)));
             break;
         case 0x0f:
-            verbprintf(0, " DM%c",j);
+            //verbprintf(0, " DM%c",j);
             message.append(QString(" DM%1").arg(QChar(j)));
             break;
         case 0x63:
-            verbprintf(0, " UA%c",j);
+            //verbprintf(0, " UA%c",j);
             message.append(QString(" UA%1").arg(QChar(j)));
             break;
         case 0x87:
-            verbprintf(0, " FRMR%c",j);
+            //verbprintf(0, " FRMR%c",j);
             message.append(QString(" FRMR%1").arg(QChar(j)));
             break;
         default:
-            verbprintf(0, " unknown U (0x%x)%c",i & (~0x10),j);
+            //verbprintf(0, " unknown U (0x%x)%c",i & (~0x10),j);
             message.append(QString(" unknown U (0x%1)%2").arg(i & (~0x10),0,16).arg(QChar(j)));
             break;
         }
@@ -397,32 +398,32 @@ void CAfsk12::ax25_disp_packet(unsigned char *bp, unsigned int len)
         /* supervisory */
         switch (i & 0xf) {
         case 0x1:
-            verbprintf(0, " RR%u%c",(i >> 5) & 7,j);
+            //verbprintf(0, " RR%u%c",(i >> 5) & 7,j);
             message.append(QString(" RR%1%2").arg((i >> 5) & 7).arg(QChar(j)));
             break;
         case 0x5:
-            verbprintf(0, " RNR%u%c",(i >> 5) & 7,j);
+            //verbprintf(0, " RNR%u%c",(i >> 5) & 7,j);
             message.append(QString(" RNR%1%2").arg((i >> 5) & 7).arg(QChar(j)));
             break;
         case 0x9:
-            verbprintf(0, " REJ%u%c",(i >> 5) & 7,j);
+            //verbprintf(0, " REJ%u%c",(i >> 5) & 7,j);
             message.append(QString(" REJ%1%2").arg((i >> 5) & 7).arg(QChar(j)));
             break;
         default:
-            verbprintf(0, " unknown S (0x%x)%u%c", i & 0xf, (i >> 5) & 7, j);
+            //verbprintf(0, " unknown S (0x%x)%u%c", i & 0xf, (i >> 5) & 7, j);
             message.append(QString(" unknown S (0x%1)%2%3").arg(i & 0xf,0,16).arg((i >> 5) & 7).arg(QChar(j)));
             break;
         }
     }
 
     if (!len) {
-        verbprintf(0, "\n");
+        //verbprintf(0, "\n");
         //message.append("\n");
         goto finished;
     }
 
     i = *bp++;
-    verbprintf(0, " pid=%02X\n", i);
+    //verbprintf(0, " pid=%02X\n", i);
     message.append(QString(" pid=%1\n          ").arg(i,0,16).toUpper());
 
     len--;
@@ -430,18 +431,18 @@ void CAfsk12::ax25_disp_packet(unsigned char *bp, unsigned int len)
     while (len) {
         i = *bp++;
         if ((i >= 32) && (i < 128)) {
-            verbprintf(0, "%c",i);
+            //verbprintf(0, "%c",i);
             message.append(QChar(i));
         }
         else if (i == 13) {
             if (j) {
-                verbprintf(0, "\n");
+                //verbprintf(0, "\n");
                 //message.append("\n");
             }
             j = 0;
         }
         else {
-            verbprintf(0, ".");
+            //verbprintf(0, ".");
             message.append(".");
         }
 
@@ -450,7 +451,7 @@ void CAfsk12::ax25_disp_packet(unsigned char *bp, unsigned int len)
         len--;
     }
     if (j) {
-        verbprintf(0, "\n");
+        //verbprintf(0, "\n");
         //message.append("\n");
     }
 

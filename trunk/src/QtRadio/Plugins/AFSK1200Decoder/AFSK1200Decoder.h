@@ -28,6 +28,7 @@
 #include "AudioBuffer.h"
 #include "Ssi.h"
 #include "multimon/cafsk12.h"
+#include "multimon/demod_dtmf.h"
 
 
 namespace Ui {
@@ -66,6 +67,7 @@ private:
     CAudioBuffer *audioBuffer;              /*! Audio buffer. */
 
     CAfsk12      *afsk12;
+    DTMF         *dtmf;
 
     QVarLengthArray<float, 8192> tmpbuf;   /*! Needed to remember "overlap" smples. */
 

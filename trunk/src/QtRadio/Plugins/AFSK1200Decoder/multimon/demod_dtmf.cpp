@@ -20,8 +20,9 @@
  */
 
 /* ---------------------------------------------------------------------- */
-
-//#include "multimon.h"
+#include <QDebug>
+#include "multimon.h"
+#include "demod_dtmf.h"
 #include "filter.h"
 #include <math.h>
 #include <string.h>
@@ -40,24 +41,24 @@
  * 
  */
 
-#define SAMPLE_RATE 22050
-#define BLOCKLEN (SAMPLE_RATE/100)  /* 10ms blocks */
-#define BLOCKNUM 4    /* must match numbers in multimon.h */
-
-#define PHINC(x) ((x)*0x10000/SAMPLE_RATE)
-
-static const char *dtmf_transl = "123A456B789C*0#D";
-
-static const unsigned int dtmf_phinc[8] = {
-	PHINC(1209), PHINC(1336), PHINC(1477), PHINC(1633),
-	PHINC(697), PHINC(770), PHINC(852), PHINC(941)
-};
-
 /* ---------------------------------------------------------------------- */
 	
-static void dtmf_init(struct demod_state *s)
+DTMF::DTMF(QObject *parent) :
+    QObject(parent)
 {
-	memset(&s->l1.dtmf, 0, sizeof(s->l1.dtmf));
+    state = (demod_state *) malloc(sizeof(demod_state));
+    reset();
+}
+
+DTMF::~DTMF()
+{
+    free(state);
+}
+
+/*! \brief Reset the decoder. */
+void DTMF::reset()
+{
+    memset(&state->l1.dtmf, 0, sizeof(state->l1.dtmf));
 }
 
 /* ---------------------------------------------------------------------- */
@@ -105,9 +106,10 @@ static inline int process_block(struct demod_state *s)
 	memmove(s->l1.dtmf.tenergy+1, s->l1.dtmf.tenergy, 
 		sizeof(s->l1.dtmf.tenergy) - sizeof(s->l1.dtmf.tenergy[0]));
 	memset(s->l1.dtmf.tenergy, 0, sizeof(s->l1.dtmf.tenergy[0]));
-	tote *= (BLOCKNUM*BLOCKLEN*0.5);  /* adjust for block lengths */
-	verbprintf(10, "DTMF: Energies: %8.5f  %8.5f %8.5f %8.5f %8.5f  %8.5f %8.5f %8.5f %8.5f\n",
-		   tote, totte[0], totte[1], totte[2], totte[3], totte[4], totte[5], totte[6], totte[7]);
+    tote *= (BLOCKNUM*BLOCKLEN*0.5);  /* adjust for block lengths */
+//	verbprintf(10, "DTMF: Energies: %8.5f  %8.5f %8.5f %8.5f %8.5f  %8.5f %8.5f %8.5f %8.5f\n",
+//		   tote, totte[0], totte[1], totte[2], totte[3], totte[4], totte[5], totte[6], totte[7]);
+    //qDebug() << tote;
 	if ((i = find_max_idx(totte)) < 0)
 		return -1;
 	if ((j = find_max_idx(totte+4)) < 0)
@@ -119,33 +121,34 @@ static inline int process_block(struct demod_state *s)
 
 /* ---------------------------------------------------------------------- */
 
-static void dtmf_demod(struct demod_state *s, float *buffer, int length)
+void DTMF::demod(float *buffer, int length)
 {
 	float s_in;
 	int i;
+    QString message;
 
 	for (; length > 0; length--, buffer++) {
 		s_in = *buffer;
-		s->l1.dtmf.energy[0] += fsqr(s_in);
+        state->l1.dtmf.energy[0] += fsqr(s_in);
 		for (i = 0; i < 8; i++) {
-			s->l1.dtmf.tenergy[0][i] += COS(s->l1.dtmf.ph[i]) * s_in;
-			s->l1.dtmf.tenergy[0][i+8] += SIN(s->l1.dtmf.ph[i]) * s_in;
-			s->l1.dtmf.ph[i] += dtmf_phinc[i];
+            state->l1.dtmf.tenergy[0][i] += COS(state->l1.dtmf.ph[i]) * s_in;
+            state->l1.dtmf.tenergy[0][i+8] += SIN(state->l1.dtmf.ph[i]) * s_in;
+            state->l1.dtmf.ph[i] += dtmf_phinc[i];
 		}
-		if ((s->l1.dtmf.blkcount--) <= 0) {
-			s->l1.dtmf.blkcount = BLOCKLEN;
-			i = process_block(s);
-			if (i != s->l1.dtmf.lastch && i >= 0)
-				verbprintf(0, "DTMF: %c\n", dtmf_transl[i]);
-			s->l1.dtmf.lastch = i;
+        if ((state->l1.dtmf.blkcount--) <= 0) {
+            state->l1.dtmf.blkcount = BLOCKLEN;
+            i = process_block(state);
+            if (i != state->l1.dtmf.lastch && i >= 0)
+            {
+                //verbprintf(0, "DTMF: %c\n", dtmf_transl[i]);
+                message = "DTMF: ";
+                message.append(QChar(dtmf_transl[i]));
+                //qDebug() << message;
+                emit newMessage(message);
+            }
+            state->l1.dtmf.lastch = i;
 		}
 	}
 }
 				
-/* ---------------------------------------------------------------------- */
-
-const struct demod_param demod_dtmf = {
-    "DTMF", SAMPLE_RATE, 0, dtmf_init, dtmf_demod, NULL
-};
-
 /* ---------------------------------------------------------------------- */
