@@ -36,7 +36,6 @@
 #include <QQueue>
 #include <QThread>
 
-#include "Servers.h"
 #include "About.h"
 #include "Configure.h"
 #include "Audio.h"
@@ -73,9 +72,10 @@
 #include "RTP.h"
 #include "Hardware.h"
 #include "powermate.h"
+#include "Plugins/Servers.h"
 #include "Plugins/Equalizer.h"
-#include "RBClient.h"
-#include "LogBook.h"
+#include "Plugins/RBClient.h"
+#include "Plugins/LogBook.h"
 
 #define DSPSERVER_BASE_PORT 8000
 

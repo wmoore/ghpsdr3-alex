@@ -23,8 +23,8 @@
 #include <QTextStream>
 #include <QtWidgets/QFileDialog>
 #include <QDir>
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "AFSK1200Decoder.h"
+#include "ui_AFSK1200Decoder.h"
 
 
 

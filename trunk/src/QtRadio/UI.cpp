@@ -59,13 +59,13 @@
 #include "Meter.h"
 #include "Panadapter.h"
 #include "SMeter.h"
-#include "Servers.h"
 #include "Ctl.h"
 #include "powermate.h"
 #include "Frequency.h"
+#include "Plugins/Servers.h"
 #include "Plugins/Equalizer.h"
-#include "RBClient.h"
-#include "LogBook.h"
+#include "Plugins/RBClient.h"
+#include "Plugins/LogBook.h"
 
 UI::UI(const QString server) {
 
@@ -1020,7 +1020,6 @@ void UI::connected() {
     //
     command.clear(); QTextStream(&command) << "*hardware?";
     connection.sendCommand(command);
-
 
     // start the spectrum
     //qDebug() << "starting spectrum timer";

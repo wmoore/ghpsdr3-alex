@@ -20,16 +20,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-//#include <QMainWindow>
-//#include <QComboBox>
-//#include <QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QLabel>
 #include <QAudioInput>
 #include <QList>
-#include "audiobuffer.h"
-#include "ssi.h"
+#include "AudioBuffer.h"
+#include "Ssi.h"
 #include "multimon/cafsk12.h"
 
 

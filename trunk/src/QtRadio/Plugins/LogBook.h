@@ -19,7 +19,6 @@
 #include <QMainWindow>
 #include <QDebug>
 #include <QTimer>
-#include <QtSql>
 #include <QTcpSocket>
 #include <QString>
 #include <QAudioInput>
@@ -28,7 +27,8 @@
 #include <QTableView>
 #include <QMessageBox>
 #include <QTimer>
-
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQueryModel>
 
 namespace Ui {
     class LogBook;

@@ -41,7 +41,7 @@
 ****************************************************************************/
 #include <QDebug>
 #include <QtCore/qendian.h>
-#include "audiobuffer.h"
+#include "AudioBuffer.h"
 
 
 const int BufferSize = 4096;

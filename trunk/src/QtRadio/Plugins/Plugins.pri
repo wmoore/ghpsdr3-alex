@@ -1,6 +1,8 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
+
 QT += sql
+
 SOURCES += \
     Plugins/Servers.cpp \
     Plugins/Equalizer.cpp \
@@ -22,4 +24,4 @@ FORMS += \
     Plugins/LogBook.ui \
     Plugins/RBClient.ui
 
-include(Plugins/AFSK1200Decoder/AFSK1200Decoder.pri)
+include(AFSK1200Decoder/AFSK1200Decoder.pri)

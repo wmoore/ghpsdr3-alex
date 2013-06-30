@@ -42,7 +42,7 @@
 ****************************************************************************/
 
 #include <QPainter>
-#include "ssi.h"
+#include "Ssi.h"
 
 
 CSsi::CSsi(QWidget *parent)
