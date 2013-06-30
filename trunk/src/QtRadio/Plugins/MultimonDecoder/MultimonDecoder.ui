@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>MultimonDecoder</class>
  <widget class="QWidget" name="MultimonDecoder">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>300</height>
+   </rect>
+  </property>
   <property name="minimumSize">
    <size>
     <width>500</width>
@@ -12,7 +20,24 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="0" column="0">
+   <item row="3" column="1">
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMaximumSize</enum>
+     </property>
+     <item row="0" column="0">
+      <widget class="QPlainTextEdit" name="textView">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="maximumBlockCount">
+        <number>1000</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="1">
     <widget class="QToolBar" name="mainToolBar">
      <property name="allowedAreas">
       <set>Qt::BottomToolBarArea|Qt::TopToolBarArea</set>
@@ -32,22 +57,12 @@
      <addaction name="actionSave"/>
     </widget>
    </item>
-   <item row="1" column="0">
-    <layout class="QGridLayout" name="gridLayout">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetMaximumSize</enum>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="DecoderComboBox">
+     <property name="currentText">
+      <string/>
      </property>
-     <item row="0" column="0">
-      <widget class="QPlainTextEdit" name="textView">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="maximumBlockCount">
-        <number>1000</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    </widget>
    </item>
   </layout>
   <action name="actionDecode">

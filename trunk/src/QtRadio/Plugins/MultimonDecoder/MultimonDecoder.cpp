@@ -27,9 +27,9 @@
 #include "ui_MultimonDecoder.h"
 
 
-
 MultimonDecoder::MultimonDecoder(QWidget *parent) : QWidget(parent), ui(new Ui::MultimonDecoder)
 {
+    currentDecoder = 0;
     ui->setupUi(this);
 
     /* select font for text viewer */
@@ -39,10 +39,11 @@ MultimonDecoder::MultimonDecoder(QWidget *parent) : QWidget(parent), ui(new Ui::
     ui->textView->setFont(QFont("Monospace", 9));
 #endif
 
-    initialiseAudio();
+    initializeAudio();
     createDeviceSelector();
 
     /* create SSI and to toolbar */
+/*
     ssiSpacer = new QWidget();
     ssiSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     ui->mainToolBar->addWidget(ssiSpacer);
@@ -50,15 +51,37 @@ MultimonDecoder::MultimonDecoder(QWidget *parent) : QWidget(parent), ui(new Ui::
     ui->mainToolBar->addWidget(ssi);
 
     connect(audioBuffer, SIGNAL(update(qreal)), ssi, SLOT(setLevel(qreal)));
+*/
     connect(audioBuffer, SIGNAL(newData(float*,int)), this, SLOT(samplesReceived(float*,int)));
 
-    /* initialise decoders */
+    /** TODO Support multiple decoders here */
+
+    formatMessage("Multimon Initialized...");
+
+    /* initialize decoders */
+
     afsk12 = new CAfsk12();
+    formatMessage("Decoder: AFSK1200 / APRS / AX.25");
+
     dtmf = new DTMF();
+    formatMessage("Decoder: DTMF Decoder");
 
-    connect(dtmf, SIGNAL(newMessage(QString)), ui->textView, SLOT(appendPlainText(QString)));
+    // Set Decoder
+    currentDecoder = 1;
 
-    //ui->statusBar->showMessage(tr("Decoder ready - select and input source then press start"));
+    //TODO Choose Decoder via dropdown
+    if (currentDecoder == 1)
+    {
+        formatMessage("Mode Selected: APSK1200 / APRS / AX.25");
+        connect(afsk12, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
+    }
+
+    if (currentDecoder == 2)
+    {
+        formatMessage("Mode Selected: DTMF");
+        connect(dtmf, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
+    }
+
 }
 
 MultimonDecoder::~MultimonDecoder()
@@ -73,11 +96,28 @@ MultimonDecoder::~MultimonDecoder()
     delete inputLabel;
     delete inputSelector;
     delete ssi;
+
+    /** TODO support multiple decoders here */
+
     delete afsk12;
+    delete dtmf;
+
     delete ui;
 
 }
 
+void MultimonDecoder::formatMessage(QString message)
+{
+    //TODO format messages, timestamp, frequency, mode, etc...  LogBook connection?
+    /* get current time that will be prepended to packet display */
+    QDateTime dateTime = QDateTime::currentDateTime();
+    QString dateString = dateTime.toString("yyyy.MM.dd hh:mm:ss:zzz");
+    message.prepend(" ");
+    message.prepend(AVAILABLE_DECODERS[currentDecoder]);
+    message.prepend(" ");
+    message.prepend(dateString);
+    ui->textView->appendPlainText(message);
+}
 
 /*! \brief Create device selector widget.
  *
@@ -110,11 +150,9 @@ void MultimonDecoder::createDeviceSelector()
 
 
 /*! \brief Initialise audio related data. */
-void MultimonDecoder::initialiseAudio()
+void MultimonDecoder::initializeAudio()
 {
-    //audioFormat.setFrequency(22050);
     audioFormat.setSampleRate(22050);
-    //audioFormat.setChannels(1);
     audioFormat.setChannelCount(1);
     audioFormat.setSampleSize(16);
     audioFormat.setSampleType(QAudioFormat::SignedInt);
@@ -122,7 +160,6 @@ void MultimonDecoder::initialiseAudio()
     audioFormat.setCodec("audio/pcm");
 
     audioBuffer  = new CAudioBuffer(audioFormat, this);
-
 
 }
 
@@ -155,7 +192,6 @@ void MultimonDecoder::inputSelectionChanged(int index)
 void MultimonDecoder::on_actionDecode_toggled(bool enabled)
 {
     if (enabled) {
-        //ui->statusBar->showMessage(tr("Starting decoder..."));
 
         /* check that selected input device supports desired format, if not try nearest */
         QAudioDeviceInfo info(inputDevices.at(inputSelector->currentIndex()));
@@ -163,7 +199,7 @@ void MultimonDecoder::on_actionDecode_toggled(bool enabled)
             qWarning() << "Default format not supported - trying to use nearest";
             audioFormat = info.nearestFormat(audioFormat);
         }
-
+/*
         qDebug() << "----------------------------------------------------";
         qDebug() << "Input device: " << inputDevices.at(inputSelector->currentIndex()).deviceName();
         qDebug() << "      Codecs: " << inputDevices.at(inputSelector->currentIndex()).supportedCodecs();
@@ -181,36 +217,34 @@ void MultimonDecoder::on_actionDecode_toggled(bool enabled)
         qDebug() << "Sample type: " << audioFormat.sampleType();
         qDebug() << "   Channels: " << audioFormat.channelCount();
         qDebug() << "----------------------------------------------------";
-
+*/
+        //TODO support multiple widgets here
         /* initialise decoder; looks weird but dmeods were organised in array in multimon */
-       // afsk12->reset();
+        afsk12->reset();
         dtmf->reset();
 
         audioInput = new QAudioInput(inputDevices.at(inputSelector->currentIndex()), audioFormat, this);
 
-        /** TODO: connect signals and slots */
-        //connect(audioInput, SIGNAL(notify()), SLOT(notified()));
         connect(audioInput, SIGNAL(stateChanged(QAudio::State)), SLOT(audioStateChanged(QAudio::State)));
         audioBuffer->start();
         audioInput->start(audioBuffer);
 
         ui->actionDecode->setToolTip(tr("Stop decoder"));
-        //ui->statusBar->showMessage(tr("Decoder running"));
     }
     else {
-        //ui->statusBar->showMessage(tr("Stopping decoder"));
 
         /* stop audio processing */
         audioBuffer->stop();
         audioInput->stop();
-        /** TODO: disconnect signals and slots */
         delete audioInput;
 
         ui->actionDecode->setToolTip(tr("Start decoder"));
-        //ui->statusBar->showMessage(tr("Decoder stopped"));
 
+        //TODO use regular widget instead of ssi
         /* reset input level indicator */
         ssi->setLevel(0.0);
+
+        currentDecoder = 0;
 
     }
 }
@@ -231,11 +265,23 @@ void MultimonDecoder::samplesReceived(float *buffer, const int length)
         tmpbuf.append(buffer[i]);
     }
 
-    //afsk12->demod(tmpbuf.data(), length);
-    dtmf->demod(tmpbuf.data(), length);
+    //TODO Support multiple decoders here
+    if (currentDecoder == 1)
+    {
+        //afsk12->demod(tmpbuf.data(), length);
+        afsk12->demod(tmpbuf.data(), length);
+    }
 
+    if (currentDecoder == 2)
+    {
+        //afsk12->demod(tmpbuf.data(), length);
+        dtmf->demod(tmpbuf.data(), length);
+    }
+
+    //TODO Overlap?  Was not working left buffer with junk?
     /* clear tmpbuf and store "overlap" */
     tmpbuf.clear();
+
     for (i = length-overlap; i < length; i++) {
         tmpbuf.append(buffer[i]);
     }
@@ -298,33 +344,14 @@ void MultimonDecoder::on_actionSave_triggered()
     file.close();
 }
 
-/*! \brief Action: About AFSK1200 Decoder
- *
- * This slot is called when the user activates the
- * Help|About menu item (or AFSK1200 Decoder|About on Mac)
- */
-void MultimonDecoder::on_actionAbout_triggered()
-{
-    /*
-    QMessageBox::about(this, tr("About AFSK1200 Decoder"),
-                       tr("<p>AFSK1200 Decoder %1</p>"
-                          "<p>A simple AFSK1200 decoder that uses the computer's soundcard "
-                          "for input. It can decode AX.25 packets and displays them in a text view.</p>"
-                          "<p>AFSK1200 is the modulation mode used by radio amateurs for packet radio "
-                          "transmissions, including APRS.</p>"
-                          "<p>AFSK1200 decoder is written using the Qt toolkit (see About Qt) and is avaialble "
-                          "for Linux, Mac and Windows. You can download the latest version from the "
-                          "<a href='http://qtmm.sf.net/'>application website</a>."
-                          ).arg(VERSION));
-                          */
-}
 
-/*! \brief Action: About Qt
- *
- * This slot is called when the user activates the
- * Help|About Qt menu item (or AFSK Decoder|About Qt on Mac)
- */
-void MultimonDecoder::on_actionAboutQt_triggered()
-{
-    QMessageBox::aboutQt(this, tr("About Qt"));
-}
+    /*! \brief Action: About Qt
+     *
+     * This slot is called when the user activates the
+     * Help|About Qt menu item (or AFSK Decoder|About Qt on Mac)
+     */
+/*    void MultimonDecoder::on_actionAboutQt_triggered()
+    {
+        QMessageBox::aboutQt(this, tr("About Qt"));
+    }
+*/

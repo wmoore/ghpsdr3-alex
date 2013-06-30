@@ -252,7 +252,7 @@ extern const struct demod_param demod_ccir;
 
 
 /* ---------------------------------------------------------------------- */
-
+//TODO Switch to QtDebug
 /*
 void _verbprintf(int verb_level, const char *fmt, ...);
 #if !defined(MAX_VERBOSE_LEVEL)

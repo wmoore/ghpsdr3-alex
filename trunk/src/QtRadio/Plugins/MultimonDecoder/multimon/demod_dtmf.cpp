@@ -140,10 +140,9 @@ void DTMF::demod(float *buffer, int length)
             i = process_block(state);
             if (i != state->l1.dtmf.lastch && i >= 0)
             {
+                message = "";
                 //verbprintf(0, "DTMF: %c\n", dtmf_transl[i]);
-                message = "DTMF: ";
                 message.append(QChar(dtmf_transl[i]));
-                //qDebug() << message;
                 emit newMessage(message);
             }
             state->l1.dtmf.lastch = i;

@@ -38,6 +38,7 @@ namespace Ui {
 class MultimonDecoder : public QWidget
 {
     Q_OBJECT
+    QString AVAILABLE_DECODERS[3] = {"NONE", "APSK1200", "DTMF"};
 
 public:
     explicit MultimonDecoder(QWidget *parent = 0);
@@ -50,11 +51,13 @@ private slots:
     void on_actionDecode_toggled(bool enabled);
     void on_actionClear_triggered();
     void on_actionSave_triggered();
-    void on_actionAbout_triggered();
-    void on_actionAboutQt_triggered();
+
+    void formatMessage(QString message);
 
 private:
     Ui::MultimonDecoder *ui;
+
+    int currentDecoder;
 
     QLabel     *inputLabel;
     QComboBox  *inputSelector;  /*! Audio input delector. */
@@ -72,10 +75,8 @@ private:
     QVarLengthArray<float, 8192> tmpbuf;   /*! Needed to remember "overlap" smples. */
 
     void createDeviceSelector();
-    void initialiseAudio();
-
+    void initializeAudio();
     void process(QByteArray buff);
-
 };
 
 #endif // MultimonDecoder_H
