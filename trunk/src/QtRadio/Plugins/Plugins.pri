@@ -21,3 +21,5 @@ FORMS += \
     Plugins/Keypad.ui  \
     Plugins/LogBook.ui \
     Plugins/RBClient.ui
+
+include(Plugins/AFSK1200Decoder/AFSK1200Decoder.pri)
