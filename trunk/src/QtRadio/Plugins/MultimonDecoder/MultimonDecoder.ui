@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AFSK1200Decoder</class>
- <widget class="QWidget" name="AFSK1200Decoder">
+ <class>MultimonDecoder</class>
+ <widget class="QWidget" name="MultimonDecoder">
   <property name="minimumSize">
    <size>
     <width>500</width>

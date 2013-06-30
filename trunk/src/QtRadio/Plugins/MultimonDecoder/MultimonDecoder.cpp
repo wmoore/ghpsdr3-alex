@@ -23,12 +23,12 @@
 #include <QTextStream>
 #include <QtWidgets/QFileDialog>
 #include <QDir>
-#include "AFSK1200Decoder.h"
-#include "ui_AFSK1200Decoder.h"
+#include "MultimonDecoder.h"
+#include "ui_MultimonDecoder.h"
 
 
 
-AFSK1200Decoder::AFSK1200Decoder(QWidget *parent) : QWidget(parent), ui(new Ui::AFSK1200Decoder)
+MultimonDecoder::MultimonDecoder(QWidget *parent) : QWidget(parent), ui(new Ui::MultimonDecoder)
 {
     ui->setupUi(this);
 
@@ -61,7 +61,7 @@ AFSK1200Decoder::AFSK1200Decoder(QWidget *parent) : QWidget(parent), ui(new Ui::
     //ui->statusBar->showMessage(tr("Decoder ready - select and input source then press start"));
 }
 
-AFSK1200Decoder::~AFSK1200Decoder()
+MultimonDecoder::~MultimonDecoder()
 {
     if (ui->actionDecode->isChecked()) {
         audioBuffer->stop();
@@ -84,7 +84,7 @@ AFSK1200Decoder::~AFSK1200Decoder()
  * The device selector widget is a combo box on the main toolbar
  * listing all available input devices.
  */
-void AFSK1200Decoder::createDeviceSelector()
+void MultimonDecoder::createDeviceSelector()
 {
 
     /* Add audio device selector */
@@ -110,7 +110,7 @@ void AFSK1200Decoder::createDeviceSelector()
 
 
 /*! \brief Initialise audio related data. */
-void AFSK1200Decoder::initialiseAudio()
+void MultimonDecoder::initialiseAudio()
 {
     //audioFormat.setFrequency(22050);
     audioFormat.setSampleRate(22050);
@@ -135,7 +135,7 @@ void AFSK1200Decoder::initialiseAudio()
  * disable the decoder by toggling the "Decode" action, then we simply enable it by toggling
  * the action again.
  */
-void AFSK1200Decoder::inputSelectionChanged(int index)
+void MultimonDecoder::inputSelectionChanged(int index)
 {
     Q_UNUSED(index);
 
@@ -152,7 +152,7 @@ void AFSK1200Decoder::inputSelectionChanged(int index)
 /*! \brief Decoder status changed
  *  \param enabled True if the decoder has been enabled, false if it has been disabled.
  */
-void AFSK1200Decoder::on_actionDecode_toggled(bool enabled)
+void MultimonDecoder::on_actionDecode_toggled(bool enabled)
 {
     if (enabled) {
         //ui->statusBar->showMessage(tr("Starting decoder..."));
@@ -222,7 +222,7 @@ void AFSK1200Decoder::on_actionDecode_toggled(bool enabled)
  *
  * Calls the afsk1200 decoder.
  */
-void AFSK1200Decoder::samplesReceived(float *buffer, const int length)
+void MultimonDecoder::samplesReceived(float *buffer, const int length)
 {
     int overlap = 18;
     int i;
@@ -246,7 +246,7 @@ void AFSK1200Decoder::samplesReceived(float *buffer, const int length)
 /*! \brief Slot for audio input state changes.
  *  \param state The new state of the audio input.
  */
-void AFSK1200Decoder::audioStateChanged(QAudio::State state)
+void MultimonDecoder::audioStateChanged(QAudio::State state)
 {
     qDebug() << "Audio state change: " << state << " ERROR: " << audioInput->error();
 #ifdef Q_OS_MAC
@@ -265,7 +265,7 @@ void AFSK1200Decoder::audioStateChanged(QAudio::State state)
  * This slot is activated when the user clicks on the Clear button
  * on the main toolbar.
  */
-void AFSK1200Decoder::on_actionClear_triggered()
+void MultimonDecoder::on_actionClear_triggered()
 {
     ui->textView->clear();
 }
@@ -276,7 +276,7 @@ void AFSK1200Decoder::on_actionClear_triggered()
  * It asks for a file name, then saves the contents of the text viewer
  * to a plain text file.
  */
-void AFSK1200Decoder::on_actionSave_triggered()
+void MultimonDecoder::on_actionSave_triggered()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                                     QDir::homePath(),
@@ -303,7 +303,7 @@ void AFSK1200Decoder::on_actionSave_triggered()
  * This slot is called when the user activates the
  * Help|About menu item (or AFSK1200 Decoder|About on Mac)
  */
-void AFSK1200Decoder::on_actionAbout_triggered()
+void MultimonDecoder::on_actionAbout_triggered()
 {
     /*
     QMessageBox::about(this, tr("About AFSK1200 Decoder"),
@@ -324,7 +324,7 @@ void AFSK1200Decoder::on_actionAbout_triggered()
  * This slot is called when the user activates the
  * Help|About Qt menu item (or AFSK Decoder|About Qt on Mac)
  */
-void AFSK1200Decoder::on_actionAboutQt_triggered()
+void MultimonDecoder::on_actionAboutQt_triggered()
 {
     QMessageBox::aboutQt(this, tr("About Qt"));
 }

@@ -17,8 +17,8 @@
  *      along with this program; if not, write to the Free Software
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-#ifndef AFSK1200DECODER_H
-#define AFSK1200DECODER_H
+#ifndef MultimonDecoder_H
+#define MultimonDecoder_H
 
 #include <QtWidgets>
 #include <QtWidgets/QComboBox>
@@ -27,21 +27,21 @@
 #include <QList>
 #include "AudioBuffer.h"
 #include "Ssi.h"
-#include "multimon/cafsk12.h"
+#include "multimon/demod_afsk12.h"
 #include "multimon/demod_dtmf.h"
 
 
 namespace Ui {
-    class AFSK1200Decoder;
+    class MultimonDecoder;
 }
 
-class AFSK1200Decoder : public QWidget
+class MultimonDecoder : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit AFSK1200Decoder(QWidget *parent = 0);
-    ~AFSK1200Decoder();
+    explicit MultimonDecoder(QWidget *parent = 0);
+    ~MultimonDecoder();
 
 private slots:
     void samplesReceived(float *buffer, const int length);
@@ -54,7 +54,7 @@ private slots:
     void on_actionAboutQt_triggered();
 
 private:
-    Ui::AFSK1200Decoder *ui;
+    Ui::MultimonDecoder *ui;
 
     QLabel     *inputLabel;
     QComboBox  *inputSelector;  /*! Audio input delector. */
@@ -78,4 +78,4 @@ private:
 
 };
 
-#endif // AFSK1200DECODER_H
+#endif // MultimonDecoder_H

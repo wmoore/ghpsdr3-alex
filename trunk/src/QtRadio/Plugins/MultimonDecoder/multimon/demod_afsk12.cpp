@@ -27,7 +27,7 @@
 #include <stdarg.h>
 #include "multimon.h"
 #include "filter.h"
-#include "cafsk12.h"
+#include "demod_afsk12.h"
 
 
 

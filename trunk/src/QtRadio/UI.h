@@ -76,7 +76,7 @@
 #include "Plugins/Equalizer.h"
 #include "Plugins/RBClient.h"
 #include "Plugins/LogBook.h"
-#include "Plugins/AFSK1200Decoder/AFSK1200Decoder.h"
+#include "Plugins/MultimonDecoder/MultimonDecoder.h"
 
 #define DSPSERVER_BASE_PORT 8000
 
@@ -416,7 +416,7 @@ private:
     Servers *servers;
     RBClient *rbclient;
     LogBook *logbook;
-    AFSK1200Decoder *afsk1200decoder;
+    MultimonDecoder *afsk1200decoder;
 
     int sampleRate;
 

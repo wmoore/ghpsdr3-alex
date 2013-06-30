@@ -24,4 +24,4 @@ FORMS += \
     Plugins/LogBook.ui \
     Plugins/RBClient.ui
 
-include(AFSK1200Decoder/AFSK1200Decoder.pri)
+include(MultimonDecoder/MultimonDecoder.pri)

@@ -66,7 +66,7 @@
 #include "Plugins/Equalizer.h"
 #include "Plugins/RBClient.h"
 #include "Plugins/LogBook.h"
-#include "Plugins/AFSK1200Decoder/AFSK1200Decoder.h"
+#include "Plugins/MultimonDecoder/MultimonDecoder.h"
 
 UI::UI(const QString server) {
 
@@ -1251,7 +1251,7 @@ void UI::actionKeypad() {
     keypad->clear();
     keypad->show();
 
-    afsk1200decoder = new AFSK1200Decoder();
+    afsk1200decoder = new MultimonDecoder();
     QDockWidget *dw3 = new QDockWidget;
     dw3->setObjectName("dockAFSK1200Decoder");
     dw3->setWindowTitle("Multimon Decoder");
