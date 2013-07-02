@@ -7,6 +7,7 @@ SOURCES += \
     Plugins/MultimonDecoder/AudioBuffer.cpp     \
     Plugins/MultimonDecoder/Ssi.cpp             \
     Plugins/MultimonDecoder/multimon/costabf.c  \
+    Plugins/MultimonDecoder/multimon/costabi.c  \
     Plugins/MultimonDecoder/multimon/demod_dtmf.cpp \
     Plugins/MultimonDecoder/MultimonDecoder.cpp \
     Plugins/MultimonDecoder/multimon/demod_afsk12.cpp

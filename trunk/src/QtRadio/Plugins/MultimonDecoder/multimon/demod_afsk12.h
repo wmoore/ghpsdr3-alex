@@ -66,7 +66,7 @@ private:
     /* HDLC functions */
     void hdlc_init(struct demod_state *s);
     void hdlc_rxbit(struct demod_state *s, int bit);
-    void verbprintf(int verb_level, const char *fmt, ...);
+    //void verbprintf(int verb_level, const char *fmt, ...);
     void ax25_disp_packet(unsigned char *bp, unsigned int len);
 };
 
