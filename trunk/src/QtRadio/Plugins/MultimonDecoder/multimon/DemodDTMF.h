@@ -17,12 +17,12 @@ static const unsigned int dtmf_phinc[8] = {
 #include <QObject>
 #include "multimon.h"
 
-class DTMF : public QObject
+class DemodDTMF : public QObject
 {
     Q_OBJECT
 public:
-    explicit DTMF(QObject *parent = 0);
-    ~DTMF();
+    explicit DemodDTMF(QObject *parent = 0);
+    ~DemodDTMF();
 
     void demod(float *buffer, int length);
     void reset();

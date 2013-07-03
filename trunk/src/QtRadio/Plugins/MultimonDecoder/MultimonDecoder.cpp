@@ -60,10 +60,10 @@ MultimonDecoder::MultimonDecoder(QWidget *parent) : QWidget(parent), ui(new Ui::
 
     /* initialize decoders */
 
-    afsk12 = new CAfsk12();
+    afsk12 = new DemodAFSK12();
     formatMessage("Decoder: AFSK1200 / APRS / AX.25");
 
-    dtmf = new DTMF();
+    dtmf = new DemodDTMF();
     formatMessage("Decoder: DTMF Decoder");
 
     // Set Decoder

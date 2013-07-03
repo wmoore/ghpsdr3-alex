@@ -22,7 +22,7 @@
 /* ---------------------------------------------------------------------- */
 #include <QDebug>
 #include "multimon.h"
-#include "demod_dtmf.h"
+#include "DemodDTMF.h"
 #include "filter.h"
 #include <math.h>
 #include <string.h>
@@ -43,20 +43,20 @@
 
 /* ---------------------------------------------------------------------- */
 	
-DTMF::DTMF(QObject *parent) :
+DemodDTMF::DemodDTMF(QObject *parent) :
     QObject(parent)
 {
     state = (demod_state *) malloc(sizeof(demod_state));
     reset();
 }
 
-DTMF::~DTMF()
+DemodDTMF::~DemodDTMF()
 {
     free(state);
 }
 
 /*! \brief Reset the decoder. */
-void DTMF::reset()
+void DemodDTMF::reset()
 {
     memset(&state->l1.dtmf, 0, sizeof(state->l1.dtmf));
 }
@@ -121,7 +121,7 @@ static inline int process_block(struct demod_state *s)
 
 /* ---------------------------------------------------------------------- */
 
-void DTMF::demod(float *buffer, int length)
+void DemodDTMF::demod(float *buffer, int length)
 {
 	float s_in;
 	int i;

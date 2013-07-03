@@ -27,8 +27,8 @@
 #include <QList>
 #include "AudioBuffer.h"
 #include "Ssi.h"
-#include "multimon/demod_afsk12.h"
-#include "multimon/demod_dtmf.h"
+#include "multimon/DemodAFSK12.h"
+#include "multimon/DemodDTMF.h"
 
 
 namespace Ui {
@@ -69,8 +69,8 @@ private:
     QAudioFormat  audioFormat;              /*! Audio format info. */
     CAudioBuffer *audioBuffer;              /*! Audio buffer. */
 
-    CAfsk12      *afsk12;
-    DTMF         *dtmf;
+    DemodAFSK12      *afsk12;
+    DemodDTMF         *dtmf;
 
     QVarLengthArray<float, 8192> tmpbuf;   /*! Needed to remember "overlap" smples. */
 

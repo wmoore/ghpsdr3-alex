@@ -20,8 +20,8 @@
  *      along with this program; if not, write to the Free Software
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-#ifndef CAFSK12_H
-#define CAFSK12_H
+#ifndef DEMOD_AFSK12_H
+#define DEMOD_AFSK12_H
 
 #include <QObject>
 #include "multimon.h"
@@ -40,12 +40,12 @@
 #define CORRLEN ((int)(FREQ_SAMP/BAUD))
 #define SPHASEINC (0x10000u*BAUD*SUBSAMP/FREQ_SAMP)
 
-class CAfsk12 : public QObject
+class DemodAFSK12 : public QObject
 {
     Q_OBJECT
 public:
-    explicit CAfsk12(QObject *parent = 0);
-    ~CAfsk12();
+    explicit DemodAFSK12(QObject *parent = 0);
+    ~DemodAFSK12();
 
     void demod(float *buffer, int length);
     void reset();
@@ -62,12 +62,6 @@ private:
     float corr_space_q[CORRLEN];
 
     struct demod_state *state;
-
-    /* HDLC functions */
-    void hdlc_init(struct demod_state *s);
-    void hdlc_rxbit(struct demod_state *s, int bit);
-    //void verbprintf(int verb_level, const char *fmt, ...);
-    void ax25_disp_packet(unsigned char *bp, unsigned int len);
 };
 
-#endif // CAFSK12_H
+#endif // DEMOD_AFSK12_H
