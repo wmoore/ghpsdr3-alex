@@ -23,6 +23,9 @@
 
 #include "multimon.h"
 #include <string.h>
+#include <QDebug>
+#include <QTime>
+#include <QString>
 
 /* ---------------------------------------------------------------------- */
 
@@ -83,19 +86,29 @@ int aprs_mode = 0;
 
 static void aprs_print_ax25call(unsigned char *call, int is_repeater)
 {
+    QString message;
 	int i;
 	for (i = 0; i < 6; i++)
 		if ((call[i] &0xfe) != 0x40)
-			verbprintf(0, "%c",call[i] >> 1);
+            //verbprintf(0, "%c",call[i] >> 1);
+            message.append("%1").args(call[i] >> 1);
 	int ssid = (call[6] >> 1) & 0xf;
 	if (ssid)
-		verbprintf(0, "-%u",ssid);
+        //verbprintf(0, "-%u",ssid);
+        message.append(-%1).args(ssid);
 	// hack: only display "*" on the last repeater, as opposed to all that already repeated
 	if (is_repeater && (call[6] & 0x80))
-			verbprintf(0, "*");
+        //verbprintf(0, "*");
+        message.append("*");
+
+    finished:
+    if (message.size() > 0) {
+        emit newMessage(message);
+    }
 }
 static void aprs_disp_packet(unsigned char *bp, unsigned int len)
 {
+    QString message;
 	unsigned char *hdr = bp + 14;
 	unsigned int hlen = len - 14;
 	// skip address fields
@@ -108,38 +121,51 @@ static void aprs_disp_packet(unsigned char *bp, unsigned int len)
 	if (*hdr++ != 0xf0) // PID 0xf0 = no layer 3 protocol
 		return;
 
-	verbprintf(0, "APRS: ");
+    //verbprintf(0, "APRS: ");
+    message.append("APRS : ");
+
 	// source call
 	aprs_print_ax25call(&bp[7], 0);
-	verbprintf(0, ">");
-	// tocall
+
+    //verbprintf(0, ">");
+    message.append(">");
+
+    // tocall
 	aprs_print_ax25call(&bp[0], 0);
 	bp += 14;
 	len -= 14;
 	// via callsigns
 	while ((!(bp[-1] & 1)) && (len >= 7)) {
 		if ((!(bp[-1] & 1)) && (len >= 7))
-			verbprintf(0, ",");
+            //verbprintf(0, ",");
+            message.append(",");
 		aprs_print_ax25call(&bp[0], 1);
 		bp += 7;
 		len -= 7;
 	}
-	verbprintf(0, ":");
+    //verbprintf(0, ":");
+    message.append(":");
 	// end of header
 	bp += 2;
 	len -= 2;
 	if(!len)
 		return;
 	while (len) {
-		verbprintf(0, "%c",*bp++);
+        //verbprintf(0, "%c",*bp++);
+        i = *bp++;
+        message.append(QString("%1              ").arg(i,0,16).toUpper());
 		len--;
 	}
-	verbprintf(0, "\n");
+    //verbprintf(0, "\n");
 }
 
 static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned int len)
 {
-        unsigned char v1=1,cmd=0;
+    QString message;
+    /* get current time that will be prepended to packet display */
+    QTime time = QTime::currentTime();
+
+    unsigned char v1=1,cmd=0;
         unsigned char i,j;
 
         if (!bp || len < 10) 
@@ -155,26 +181,34 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
                  */
                 v1 = 0;
                 cmd = (bp[1] & 2) != 0;
-                verbprintf(0, "%s: fm ? to ", s->dem_par->name);
+                //verbprintf(0, "%s: fm ? to ", s->dem_par->name);
+                message.append(QString("%1$ fm ? to ").arg(time.toString("hh:mm:ss")));
                 i = (bp[2] >> 2) & 0x3f;
                 if (i) 
-			verbprintf(0, "%c",i+0x20);
+            //verbprintf(0, "%c",i+0x20);
+            message.append(QChar(i+0x20));
                 i = ((bp[2] << 4) | ((bp[3] >> 4) & 0xf)) & 0x3f;
                 if (i) 
-			verbprintf(0, "%c",i+0x20);
+            //verbprintf(0, "%c",i+0x20);
+            message.append(QChar(i+0x20));
                 i = ((bp[3] << 2) | ((bp[4] >> 6) & 3)) & 0x3f;
                 if (i) 
-			verbprintf(0, "%c",i+0x20);
+            //verbprintf(0, "%c",i+0x20);
+            message.append(QChar(i+0x20));
                 i = bp[4] & 0x3f;
                 if (i) 
-			verbprintf(0, "%c",i+0x20);
+            //verbprintf(0, "%c",i+0x20);
+            message.append(QChar(i+0x20));
                 i = (bp[5] >> 2) & 0x3f;
                 if (i) 
-			verbprintf(0, "%c",i+0x20);
+            //verbprintf(0, "%c",i+0x20);
+            message.append(QChar(i+0x20));
                 i = ((bp[5] << 4) | ((bp[6] >> 4) & 0xf)) & 0x3f;
                 if (i) 
-			verbprintf(0, "%c",i+0x20);
-                verbprintf(0, "-%u QSO Nr %u", bp[6] & 0xf, (bp[0] << 6) | (bp[1] >> 2));
+            //verbprintf(0, "%c",i+0x20);
+            message.append(QChar(i+0x20));
+                //verbprintf(0, "-%u QSO Nr %u", bp[6] & 0xf, (bp[0] << 6) | (bp[1] >> 2));
+                message.append(QString("-%1 QSO Nr %1").arg(bp[6] & 0xf).arg((bp[0] << 6) | (bp[1] >> 2)));
                 bp += 7;
                 len -= 7;
         } else {
@@ -191,28 +225,37 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
                         v1 = 0;
                         cmd = (bp[6] & 0x80);
                 }
-                verbprintf(0, "%s: fm ", s->dem_par->name);
+                //verbprintf(0, "%s: fm ", s->dem_par->name);
+                message.append(QString("%1$ fm ").arg(time.toString("hh:mm:ss")));
 		for(i = 7; i < 13; i++) 
                         if ((bp[i] &0xfe) != 0x40) 
-                                verbprintf(0, "%c",bp[i] >> 1);
-                verbprintf(0, "-%u to ",(bp[13] >> 1) & 0xf);
+                            //verbprintf(0, "%c",bp[i] >> 1);
+                            message.append(QChar(bp[i] >> 1));
+                //verbprintf(0, "-%u to ",(bp[13] >> 1) & 0xf);
+                message.append(QString("-%1 to ").arg((bp[13] >> 1) & 0xf));
                 for(i = 0; i < 6; i++) 
                         if ((bp[i] &0xfe) != 0x40) 
-                                verbprintf(0, "%c",bp[i] >> 1);
-                verbprintf(0, "-%u",(bp[6] >> 1) & 0xf);
+                            //verbprintf(0, "%c",bp[i] >> 1);
+                            message.append(QChar(bp[i] >> 1));
+                //verbprintf(0, "-%u",(bp[6] >> 1) & 0xf);
+                message.append(QString("-%1").arg((bp[6] >> 1) & 0xf));
                 bp += 14;
                 len -= 14;
                 if ((!(bp[-1] & 1)) && (len >= 7)) 
-			verbprintf(0, " via ");
+                    //verbprintf(0, " via ");
+                    message.append(" via ");
                 while ((!(bp[-1] & 1)) && (len >= 7)) {
                         for(i = 0; i < 6; i++) 
                                 if ((bp[i] &0xfe) != 0x40) 
-                                        verbprintf(0, "%c",bp[i] >> 1);
-                        verbprintf(0, "-%u",(bp[6] >> 1) & 0xf);
+                                    //verbprintf(0, "%c",bp[i] >> 1);
+                                    message.append(QChar(bp[i] >> 1));
+                        //verbprintf(0, "-%u",(bp[6] >> 1) & 0xf);
+                        message.append(QString("-%1").arg((bp[6] >> 1) & 0xf));
                         bp += 7;
                         len -= 7;
                         if ((!(bp[-1] & 1)) && (len >= 7)) 
-                                verbprintf(0, ",");
+                            //verbprintf(0, ",");
+                            message.append(",");
                 }
         }
         if(!len) 
@@ -226,31 +269,39 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
                  * Info frame
                  */
                 verbprintf(0, " I%u%u%c",(i >> 5) & 7,(i >> 1) & 7,j);
+                message.append(QString(" I%1%2%3").arg((i >> 5) & 7).arg((i >> 1) & 7).arg(j));
         } else if (i & 2) {
                 /*
                  * U frame
                  */
                 switch (i & (~0x10)) {
                 case 0x03:
-                        verbprintf(0, " UI%c",j);
+                        //verbprintf(0, " UI%c",j);
+                        message.append(" UI%1").arg(QChar(j));
                         break;
                 case 0x2f:
-                        verbprintf(0, " SABM%c",j);
+                        //verbprintf(0, " SABM%c",j);
+                        message.append(" SAM%1").arg(QChar(j));
                         break;
                 case 0x43:
-                        verbprintf(0, " DISC%c",j);
+                        //verbprintf(0, " DISC%c",j);
+                        message.append(" DISC%1").arg(QChar(j));
                         break;
                 case 0x0f:
-                        verbprintf(0, " DM%c",j);
+                        //verbprintf(0, " DM%c",j);
+                        message.append(" DM%1").arg(QChar(j));
                         break;
                 case 0x63:
-                        verbprintf(0, " UA%c",j);
+                        //verbprintf(0, " UA%c",j);
+                        message.append(" UA%1").arg(QChar(j));
                         break;
                 case 0x87:
-                        verbprintf(0, " FRMR%c",j);
+                        //verbprintf(0, " FRMR%c",j);
+                        message.append(" FRMR%1").arg(QChar(j));
                         break;
                 default:
-                        verbprintf(0, " unknown U (0x%x)%c",i & (~0x10),j);
+                        //verbprintf(0, " unknown U (0x%x)%c",i & (~0x10),j);
+                        message.append(QString(" unknown U (0x%1)%2").arg(i & (~0x10),0,16).arg(QChar(j)));
                         break;
                 }
         } else {
@@ -259,43 +310,58 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
                  */
                 switch (i & 0xf) {
                 case 0x1:
-                        verbprintf(0, " RR%u%c",(i >> 5) & 7,j);
+                        //verbprintf(0, " RR%u%c",(i >> 5) & 7,j);
+                        message.append(QString(" RR%1%2").arg((i >> 5) & 7).arg(QChar(j)));
                         break;
                 case 0x5:
-                        verbprintf(0, " RNR%u%c",(i >> 5) & 7,j);
+                        //verbprintf(0, " RNR%u%c",(i >> 5) & 7,j);
+                        message.append(QString(" RNR%1%2").arg((i >> 5) & 7).arg(QChar(j)));
                         break;
                 case 0x9:
-                        verbprintf(0, " REJ%u%c",(i >> 5) & 7,j);
+                        //verbprintf(0, " REJ%u%c",(i >> 5) & 7,j);
+                        message.append(QString(" REJ%1%2").arg((i >> 5) & 7).arg(QChar(j)));
                         break;
                 default:
-                        verbprintf(0, " unknown S (0x%x)%u%c", i & 0xf, 
-                               (i >> 5) & 7, j);
+                        //verbprintf(0, " unknown S (0x%x)%u%c", i & 0xf,(i >> 5) & 7, j);
+                        message.append(QString(" unknown S (0x%1)%2%3").arg(i & 0xf,0,16).arg((i >> 5) & 7).arg(QChar(j)));
                         break;
                 }
         }
         if (!len) {
-                verbprintf(0, "\n");
+                //verbprintf(0, "\n");
                 return;
         }
-        verbprintf(0, " pid=%02X\n", *bp++);
+        //verbprintf(0, " pid=%02X\n", *bp++);
+        i = *bp++;
+        message.append(QString(" pid=%1\n          ").arg(i,0,16).toUpper());
         len--;
         j = 0;
         while (len) {
                 i = *bp++;
                 if ((i >= 32) && (i < 128)) 
-                        verbprintf(0, "%c",i);
+                        //verbprintf(0, "%c",i);
+                        message.append(QChar(i));
                 else if (i == 13) {
                         if (j) 
-                                verbprintf(0, "\n");
+                                //verbprintf(0, "\n");
                         j = 0;
                 } else 
-                        verbprintf(0, ".");
+                        //verbprintf(0, ".");
+                        message.append(".");
                 if (i >= 32) 
                         j = 1;
                 len--;
         }
-        if (j) 
-                verbprintf(0, "\n");
+        if (j) {
+                //verbprintf(0, "\n");
+        }
+
+        /* I just secured myself a ticket to hell */
+        // Me too... KD0NUZ //
+        finished:
+        if (message.size() > 0) {
+            emit newMessage(message);
+        }
 }
 
 /* ---------------------------------------------------------------------- */
@@ -332,7 +398,7 @@ void hdlc_rxbit(struct demod_state *s, int bit)
 	if (s->l2.hdlc.rxbitbuf & 1) {
 		if (s->l2.hdlc.rxptr >= s->l2.hdlc.rxbuf+sizeof(s->l2.hdlc.rxbuf)) {
 			s->l2.hdlc.rxstate = 0;
-			verbprintf(1, "Error: packet size too large\n");
+            //verbprintf(1, "Error: packet size too large\n");
 			return;
 		}
 		*s->l2.hdlc.rxptr++ = s->l2.hdlc.rxbitbuf >> 1;
