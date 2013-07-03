@@ -103,7 +103,11 @@ void DemodAFSK12::demod(float *buffer, int length)
             curbit = (state->l1.afsk12.lasts ^
                   (state->l1.afsk12.lasts >> 1) ^ 1) & 1;
             //verbprintf(9, " %c ", '0'+curbit);
-            hdlc.hdlc_rxbit(state, curbit);
+            QString message = hdlc.hdlc_rxbit(state, curbit);
+            if(message.length() > 0)
+            {
+                emit newMessage(message);
+            }
         }
     }
     state->l1.afsk12.subsamp = length;
