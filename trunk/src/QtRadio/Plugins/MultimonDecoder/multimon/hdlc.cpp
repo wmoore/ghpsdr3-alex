@@ -360,7 +360,7 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
         // Me too... KD0NUZ //
         finished:
         if (message.size() > 0) {
-            emit newMessage(message);
+            //emit newMessage(message);
         }
 }
 

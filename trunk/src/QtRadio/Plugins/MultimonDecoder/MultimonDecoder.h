@@ -38,7 +38,6 @@ namespace Ui {
 class MultimonDecoder : public QWidget
 {
     Q_OBJECT
-    QString AVAILABLE_DECODERS[3] = {"NONE", "APSK1200", "DTMF"};
 
 public:
     explicit MultimonDecoder(QWidget *parent = 0);

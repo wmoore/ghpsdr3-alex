@@ -26,6 +26,7 @@
 #include "MultimonDecoder.h"
 #include "ui_MultimonDecoder.h"
 
+static const QString AVAILABLE_DECODERS[3] = {"NONE", "APSK1200", "DTMF"};
 
 MultimonDecoder::MultimonDecoder(QWidget *parent) : QWidget(parent), ui(new Ui::MultimonDecoder)
 {
