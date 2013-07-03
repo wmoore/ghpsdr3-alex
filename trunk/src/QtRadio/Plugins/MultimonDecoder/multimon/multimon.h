@@ -282,9 +282,6 @@ void _verbprintf(int verb_level, const char *fmt, ...);
 //}\
 //     } while (0) \
 
-//signals:
-    void newMessage(const QString &message);
-
 void hdlc_init(struct demod_state *s);
 void hdlc_rxbit(struct demod_state *s, int bit);
 

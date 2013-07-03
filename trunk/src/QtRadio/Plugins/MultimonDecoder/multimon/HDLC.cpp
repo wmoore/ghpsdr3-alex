@@ -26,6 +26,7 @@
 #include <QDebug>
 #include <QTime>
 #include <QString>
+#include "HDLC.h"
 
 /* ---------------------------------------------------------------------- */
 
@@ -82,6 +83,18 @@ static inline int check_crc_ccitt(const unsigned char *buf, int cnt)
 
 /* ---------------------------------------------------------------------- */
 
+HDLC::HDLC(QObject *parent) :
+    QObject(parent)
+{
+    //state = (demod_state *) malloc(sizeof(demod_state));
+    //reset();
+}
+
+HDLC::~HDLC()
+{
+    //free(state);
+}
+
 int aprs_mode = 0;
 
 static void aprs_print_ax25call(unsigned char *call, int is_repeater)
@@ -89,20 +102,18 @@ static void aprs_print_ax25call(unsigned char *call, int is_repeater)
     QString message;
 	int i;
 	for (i = 0; i < 6; i++)
-		if ((call[i] &0xfe) != 0x40)
-            //verbprintf(0, "%c",call[i] >> 1);
+        if ((call[i] &0xfe) != 0x40)
             message.append(QString("%1").arg(call[i] >> 1));
 	int ssid = (call[6] >> 1) & 0xf;
-	if (ssid)
-        //verbprintf(0, "-%u",ssid);
+    if (ssid)
         message.append(QString("-%1").arg(ssid));
 	// hack: only display "*" on the last repeater, as opposed to all that already repeated
-	if (is_repeater && (call[6] & 0x80))
-        //verbprintf(0, "*");
+    if (is_repeater && (call[6] & 0x80))
         message.append("*");
 
     finished:
     if (message.size() > 0) {
+        qDebug() << message;
         //emit newMessage(message);
     }
 }
@@ -121,13 +132,11 @@ static void aprs_disp_packet(unsigned char *bp, unsigned int len)
 	if (*hdr++ != 0xf0) // PID 0xf0 = no layer 3 protocol
 		return;
 
-    //verbprintf(0, "APRS: ");
     message.append("APRS : ");
 
 	// source call
 	aprs_print_ax25call(&bp[7], 0);
 
-    //verbprintf(0, ">");
     message.append(">");
 
     // tocall
@@ -136,14 +145,12 @@ static void aprs_disp_packet(unsigned char *bp, unsigned int len)
 	len -= 14;
 	// via callsigns
 	while ((!(bp[-1] & 1)) && (len >= 7)) {
-		if ((!(bp[-1] & 1)) && (len >= 7))
-            //verbprintf(0, ",");
+        if ((!(bp[-1] & 1)) && (len >= 7))
             message.append(",");
 		aprs_print_ax25call(&bp[0], 1);
 		bp += 7;
 		len -= 7;
-	}
-    //verbprintf(0, ":");
+    }
     message.append(":");
 	// end of header
 	bp += 2;
@@ -155,8 +162,8 @@ static void aprs_disp_packet(unsigned char *bp, unsigned int len)
         int i = *bp++;
         message.append(QString("%1              ").arg(i,0,16).toUpper());
 		len--;
-	}
-    //verbprintf(0, "\n");
+    }
+    qDebug() << message;
 }
 
 static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned int len)
@@ -164,7 +171,7 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
     QString message;
     /* get current time that will be prepended to packet display */
     QTime time = QTime::currentTime();
-
+    qDebug() << "Decoding ax.25 packet...";
     unsigned char v1=1,cmd=0;
         unsigned char i,j;
 
@@ -215,11 +222,14 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
                 /*
                  * normal header
                  */
-                if (len < 15) 
-			return;
+                if (len < 15) {
+                    qDebug() << "test2";
+                    goto finished;
+                }
 		if (aprs_mode) {
 			aprs_disp_packet(bp, len);
-			return;
+            qDebug() << "test3";
+            goto finished;
 		}
                 if ((bp[6] & 0x80) != (bp[13] & 0x80)) {
                         v1 = 0;
@@ -259,7 +269,7 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
                 }
         }
         if(!len) 
-                return;
+                goto finished;
         i = *bp++;
         len--;
         j = v1 ? ((i & 0x10) ? '!' : ' ') : 
@@ -268,7 +278,7 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
                 /*
                  * Info frame
                  */
-                verbprintf(0, " I%u%u%c",(i >> 5) & 7,(i >> 1) & 7,j);
+                //verbprintf(0, " I%u%u%c",(i >> 5) & 7,(i >> 1) & 7,j);
                 message.append(QString(" I%1%2%3").arg((i >> 5) & 7).arg((i >> 1) & 7).arg(j));
         } else if (i & 2) {
                 /*
@@ -329,7 +339,7 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
         }
         if (!len) {
                 //verbprintf(0, "\n");
-                return;
+                goto finished;
         }
         //verbprintf(0, " pid=%02X\n", *bp++);
         i = *bp++;
@@ -355,30 +365,32 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
         if (j) {
                 //verbprintf(0, "\n");
         }
-
+        qDebug() << message;
         /* I just secured myself a ticket to hell */
         // Me too... KD0NUZ //
         finished:
         if (message.size() > 0) {
+            qDebug() << message;
             //emit newMessage(message);
         }
 }
 
 /* ---------------------------------------------------------------------- */
 
-void hdlc_init(struct demod_state *s)
+void HDLC::hdlc_init(struct demod_state *s)
 {
 	memset(&s->l2.hdlc, 0, sizeof(s->l2.hdlc));
 }
 
 /* ---------------------------------------------------------------------- */
 
-void hdlc_rxbit(struct demod_state *s, int bit)
+void HDLC::hdlc_rxbit(struct demod_state *s, int bit)
 {
 	s->l2.hdlc.rxbitstream <<= 1;
 	s->l2.hdlc.rxbitstream |= !!bit;
 	if ((s->l2.hdlc.rxbitstream & 0xff) == 0x7e) {
 		if (s->l2.hdlc.rxstate && (s->l2.hdlc.rxptr - s->l2.hdlc.rxbuf) > 2)
+            qDebug() << "Got packet";
 			ax25_disp_packet(s, s->l2.hdlc.rxbuf, s->l2.hdlc.rxptr - s->l2.hdlc.rxbuf);
 		s->l2.hdlc.rxstate = 1;
 		s->l2.hdlc.rxptr = s->l2.hdlc.rxbuf;
@@ -399,6 +411,7 @@ void hdlc_rxbit(struct demod_state *s, int bit)
 		if (s->l2.hdlc.rxptr >= s->l2.hdlc.rxbuf+sizeof(s->l2.hdlc.rxbuf)) {
 			s->l2.hdlc.rxstate = 0;
             //verbprintf(1, "Error: packet size too large\n");
+            qDebug() << "Error: packet size too large";
 			return;
 		}
 		*s->l2.hdlc.rxptr++ = s->l2.hdlc.rxbitbuf >> 1;

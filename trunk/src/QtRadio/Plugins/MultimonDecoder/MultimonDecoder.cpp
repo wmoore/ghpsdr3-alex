@@ -269,13 +269,11 @@ void MultimonDecoder::samplesReceived(float *buffer, const int length)
     //TODO Support multiple decoders here
     if (currentDecoder == 1)
     {
-        //afsk12->demod(tmpbuf.data(), length);
         afsk12->demod(tmpbuf.data(), length);
     }
 
     if (currentDecoder == 2)
     {
-        //afsk12->demod(tmpbuf.data(), length);
         dtmf->demod(tmpbuf.data(), length);
     }
 

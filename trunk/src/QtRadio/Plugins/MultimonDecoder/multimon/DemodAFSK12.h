@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include "multimon.h"
+#include "HDLC.h"
 
 /*
  * Standard TCM3105 clock frequency: 4.4336MHz
@@ -62,6 +63,7 @@ private:
     float corr_space_q[CORRLEN];
 
     struct demod_state *state;
+    HDLC hdlc;
 };
 
 #endif // DEMOD_AFSK12_H

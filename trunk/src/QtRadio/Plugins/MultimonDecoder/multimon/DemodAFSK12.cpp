@@ -47,7 +47,7 @@ void DemodAFSK12::reset()
     float f;
     int i;
 
-    hdlc_init(state);
+    hdlc.hdlc_init(state);
     memset(&state->l1.afsk12, 0, sizeof(state->l1.afsk12));
     for (f = 0, i = 0; i < CORRLEN; i++) {
         corr_mark_i[i] = cos(f);
@@ -103,7 +103,7 @@ void DemodAFSK12::demod(float *buffer, int length)
             curbit = (state->l1.afsk12.lasts ^
                   (state->l1.afsk12.lasts >> 1) ^ 1) & 1;
             //verbprintf(9, " %c ", '0'+curbit);
-            hdlc_rxbit(state, curbit);
+            hdlc.hdlc_rxbit(state, curbit);
         }
     }
     state->l1.afsk12.subsamp = length;
