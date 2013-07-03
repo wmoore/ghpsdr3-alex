@@ -91,11 +91,11 @@ static void aprs_print_ax25call(unsigned char *call, int is_repeater)
 	for (i = 0; i < 6; i++)
 		if ((call[i] &0xfe) != 0x40)
             //verbprintf(0, "%c",call[i] >> 1);
-            message.append("%1").args(call[i] >> 1);
+            message.append(QString("%1").arg(call[i] >> 1));
 	int ssid = (call[6] >> 1) & 0xf;
 	if (ssid)
         //verbprintf(0, "-%u",ssid);
-        message.append(-%1).args(ssid);
+        message.append(QString("-%1").arg(ssid));
 	// hack: only display "*" on the last repeater, as opposed to all that already repeated
 	if (is_repeater && (call[6] & 0x80))
         //verbprintf(0, "*");
@@ -103,7 +103,7 @@ static void aprs_print_ax25call(unsigned char *call, int is_repeater)
 
     finished:
     if (message.size() > 0) {
-        emit newMessage(message);
+        //emit newMessage(message);
     }
 }
 static void aprs_disp_packet(unsigned char *bp, unsigned int len)
@@ -152,7 +152,7 @@ static void aprs_disp_packet(unsigned char *bp, unsigned int len)
 		return;
 	while (len) {
         //verbprintf(0, "%c",*bp++);
-        i = *bp++;
+        int i = *bp++;
         message.append(QString("%1              ").arg(i,0,16).toUpper());
 		len--;
 	}

@@ -30,6 +30,7 @@
 #define _MULTIMON_H
 
 #include <stdint.h>
+#include <QString>
 
 #ifdef _MSC_VER
 #include "msvc_support.h"
@@ -280,6 +281,9 @@ void _verbprintf(int verb_level, const char *fmt, ...);
 //  _verbprintf(level, ""); \
 //}\
 //     } while (0) \
+
+//signals:
+    void newMessage(const QString &message);
 
 void hdlc_init(struct demod_state *s);
 void hdlc_rxbit(struct demod_state *s, int bit);
