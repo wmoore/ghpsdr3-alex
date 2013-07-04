@@ -77,6 +77,7 @@
 #include "Plugins/RBClient.h"
 #include "Plugins/LogBook.h"
 #include "Plugins/MultimonDecoder/MultimonDecoder.h"
+#include "Plugins/WebBrowser.h"
 
 #define DSPSERVER_BASE_PORT 8000
 
@@ -417,6 +418,7 @@ private:
     RBClient *rbclient;
     LogBook *logbook;
     MultimonDecoder *afsk1200decoder;
+    WebBrowser *webbrowser;
 
     int sampleRate;
 

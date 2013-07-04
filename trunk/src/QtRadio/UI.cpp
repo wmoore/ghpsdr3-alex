@@ -76,6 +76,7 @@ UI::UI(const QString server) {
     logbook = 0;
     keypad = 0;
     afsk1200decoder = 0;
+    webbrowser = 0;
     pHwDlg = 0;
     meter = -121;
     initRigCtl();
@@ -1258,6 +1259,15 @@ void UI::actionKeypad() {
     dw3->setWidget(afsk1200decoder);
     addDockWidget(Qt::RightDockWidgetArea, dw3);
     afsk1200decoder->show();
+
+    webbrowser = new WebBrowser();
+    QDockWidget *dw4 = new QDockWidget;
+    dw4->setObjectName("dockBrowser");
+    dw4->setWindowTitle("Browser");
+    dw4->setWidget(webbrowser);
+    addDockWidget(Qt::RightDockWidgetArea, dw4);
+    webbrowser->show();
+
 }
 void UI::setKeypadFrequency(long long f) {
     frequencyChanged(f);

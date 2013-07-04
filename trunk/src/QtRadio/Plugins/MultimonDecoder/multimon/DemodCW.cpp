@@ -55,22 +55,28 @@
         state->l1.demodcw.lbit = 0;
         state->l1.demodcw.pass = 0;
         state->l1.demodcw.run = 1;
+        state->l1.demodcw.bp = 0;
+        state->l1.demodcw.tt = 0;
+        state->l1.demodcw.run1 = 1;
     }
 
     void DemodCW::demod(float *buffer, int length)
     {
-      int i, d, bp=0, bit, nsamp, ditlength, range;
-      int *subsamp, s, tt=0, thres, run1=1;
+      //OK
+      int i, nsamp, ditlength, range, *subsamp;
+      int d;
+      int s;
 
-      char line[80], *lp;
+      // d i subsamp s
+
+      char *lp;
       QString message;
 
-      lp = line;
+      lp = state->l1.demodcw.line;
       /* gives a rough number of measurements needed to make SUBSAMP samples
        * per dit. apparently there's 5/12 dits per second at 1 WPM */
       nsamp = (SAMP*5) / (EST_WPM*12*SUBSAMP);
       ditlength = SUBSAMP;
-
       range = (8*12*EST_WPM*SUBSAMP) / 5; /* 8 seconds' worth */
       subsamp = (int*)calloc (range, sizeof(int));
 
@@ -79,22 +85,22 @@
           //s_in = *buffer;
           for (s = 0, i=0; i < nsamp; i++)
             s += *buffer;
-          tt = tt + s - subsamp[bp];
-          subsamp[bp] = s;
-          bp = (bp+1) % range;
+          state->l1.demodcw.tt = state->l1.demodcw.tt + s - subsamp[state->l1.demodcw.bp];
+          subsamp[state->l1.demodcw.bp] = s;
+          state->l1.demodcw.bp = (state->l1.demodcw.bp+1) % range;
 
           /* wait until we have an idea of the average signal level */
           if (++state->l1.demodcw.pass < range)
         {
           //fprintf (stderr, "%d \r", range-pass);
-          qDebug() << "Range pass";
+          //qDebug() << "Range pass";
           continue;
         }
 
-          thres = tt / range;
-          bit = (10*s) > (12*thres) ? 1 : 0;
+          state->l1.demodcw.thres = state->l1.demodcw.tt / range;
+          state->l1.demodcw.bit = (10*s) > (12*state->l1.demodcw.thres) ? 1 : 0;
 
-          if (bit == state->l1.demodcw.lbit)
+          if (state->l1.demodcw.bit == state->l1.demodcw.lbit)
         {
           state->l1.demodcw.run++;
           //qDebug() << "run++";
@@ -110,20 +116,20 @@
           if ((d >= 20) && (d < 40))
             *lp++ = '-';
           *lp = '\0';
-          run1 = state->l1.demodcw.run;
-          if (lp == &line[79]) lp--; /* prevent overflow */
+          state->l1.demodcw.run1 = state->l1.demodcw.run;
+          if (lp == &state->l1.demodcw.line[79]) lp--; /* prevent overflow */
         }
 
-          if ((state->l1.demodcw.lbit == 0) && (lp != line))
+          if ((state->l1.demodcw.lbit == 0) && (lp != state->l1.demodcw.line))
         {
           if (d >= 20)
             {
               for (i=0; *morse[i+1] != '?'; i += 2)
-            if (strcmp (morse[i+1], line) == 0)
+            if (strcmp (morse[i+1], state->l1.demodcw.line) == 0)
               break;
               if (*morse[i+1] == '?')
                {
-                  message.append(line);
+                  message.append(state->l1.demodcw.line);
                   //qDebug() << message;
               }
               else
@@ -138,12 +144,12 @@
                   emit newMessage(message);
                   //fflush (stdout);
               }
-              lp = line;
+              lp = state->l1.demodcw.line;
             }
           /* check if a "dah-do" */
-          if ((run1 > 2) && ((run1) > (2*state->l1.demodcw.run)))
+          if ((state->l1.demodcw.run1 > 2) && ((state->l1.demodcw.run1) > (2*state->l1.demodcw.run)))
             {
-              d = (state->l1.demodcw.run+run1) / 4;
+              d = (state->l1.demodcw.run+state->l1.demodcw.run1) / 4;
               if ((d > (SUBSAMP/2)) &&
               ((3*d) > (2*ditlength)) && ((2*d) < (3*ditlength)))
             {
@@ -151,10 +157,10 @@
               //fprintf (stderr, "<%d>",ditlength);
               qDebug() << ditlength;
             }
-              run1=0;
+              state->l1.demodcw.run1=0;
             }
         }
-          state->l1.demodcw.lbit = bit;
+          state->l1.demodcw.lbit = state->l1.demodcw.bit;
           state->l1.demodcw.run = 1;
         }
 

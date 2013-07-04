@@ -197,7 +197,11 @@ struct demod_state {
             int bit;
             int lbit;
             int run;
+            int run1;
             int pass;
+            int bp;
+            int tt;
+            int thres;
         } demodcw;
 
         struct l1_state_selcall {
