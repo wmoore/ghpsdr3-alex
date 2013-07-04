@@ -192,6 +192,14 @@ struct demod_state {
             int lastch;
         } dtmf;
 
+        struct l1_state_demodcw {
+            char line[80];
+            int bit;
+            int lbit;
+            int run;
+            int pass;
+        } demodcw;
+
         struct l1_state_selcall {
             unsigned int ph[16];
             float energy[4];

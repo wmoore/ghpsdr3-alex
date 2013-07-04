@@ -27,26 +27,17 @@
 #include "multimon.h"
 #include "HDLC.h"
 
-/*
- * Standard TCM3105 clock frequency: 4.4336MHz
- * Mark frequency: 2200 Hz
- * Space frequency: 1200 Hz
- */
-#define FREQ_MARK  1200
-#define FREQ_SPACE 2200
 #define FREQ_SAMP  22050
-#define BAUD       1200
-#define SUBSAMP    2
+#define BAUD       4800
 
-#define CORRLEN ((int)(FREQ_SAMP/BAUD))
-#define SPHASEINC (0x10000u*BAUD*SUBSAMP/FREQ_SAMP)
+#define SPHASEINC (0x10000u*BAUD/FREQ_SAMP)
 
-class DemodAFSK12 : public QObject
+class DemodHAPN48 : public QObject
 {
     Q_OBJECT
 public:
-    explicit DemodAFSK12(QObject *parent = 0);
-    ~DemodAFSK12();
+    explicit DemodHAPN48(QObject *parent = 0);
+    ~DemodHAPN48();
 
     void demod(float *buffer, int length);
     void reset();
@@ -57,11 +48,6 @@ signals:
 public slots:
 
 private:
-    float corr_mark_i[CORRLEN];
-    float corr_mark_q[CORRLEN];
-    float corr_space_i[CORRLEN];
-    float corr_space_q[CORRLEN];
-
     struct demod_state *state;
     HDLC hdlc;
 };

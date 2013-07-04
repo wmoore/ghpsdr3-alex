@@ -83,6 +83,21 @@
            <string>FSK 9600</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>HAPN 4800</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>UFSK 1200</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>CW</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item>

@@ -25,77 +25,85 @@
 #include "filter.h"
 #include <math.h>
 #include <string.h>
-
-/* ---------------------------------------------------------------------- */
-
-#define FREQ_SAMP  22050
-#define BAUD       4800
-
-/* ---------------------------------------------------------------------- */
-
-#define SPHASEINC (0x10000u*BAUD/FREQ_SAMP)
+#include "DemodHAPN48.h"
 
 /* ---------------------------------------------------------------------- */
 	
-static void hapn48_init(struct demod_state *s)
+
+DemodHAPN48::DemodHAPN48(QObject *parent) :
+    QObject(parent)
 {
-	hdlc_init(s);
-	memset(&s->l1.hapn48, 0, sizeof(s->l1.hapn48));
+    state = (demod_state *) malloc(sizeof(demod_state));
+    reset();
+}
+
+DemodHAPN48::~DemodHAPN48()
+{
+    free(state);
+}
+
+/*! \brief Reset the decoder. */
+void DemodHAPN48::reset()
+{
+    hdlc.hdlc_init(state);
+    memset(&state->l1.hapn48, 0, sizeof(state->l1.hapn48));
 }
 
 /* ---------------------------------------------------------------------- */
 
-static void hapn48_demod(struct demod_state *s, float *buffer, int length)
+void DemodHAPN48::demod(float *buffer, int length)
 {
 	int cursync;
 	unsigned int curbit;
 
 	for (; length > 0; length--, buffer++) {
-		s->l1.hapn48.lvlhi *= 0.999;
-		s->l1.hapn48.lvllo *= 0.999;
-		if (buffer[1] > s->l1.hapn48.lvlhi)
-			s->l1.hapn48.lvlhi = buffer[1];
-		if (buffer[1] < s->l1.hapn48.lvllo)
-			s->l1.hapn48.lvllo = buffer[1];
+        state->l1.hapn48.lvlhi *= 0.999;
+        state->l1.hapn48.lvllo *= 0.999;
+        if (buffer[1] > state->l1.hapn48.lvlhi)
+            state->l1.hapn48.lvlhi = buffer[1];
+        if (buffer[1] < state->l1.hapn48.lvllo)
+            state->l1.hapn48.lvllo = buffer[1];
 		cursync = 0;
-		s->l1.hapn48.shreg = (s->l1.hapn48.shreg << 1) | 
-			(s->l1.hapn48.shreg & 1);
-		if (buffer[1] > s->l1.hapn48.lvlhi * 0.5) {
-			s->l1.hapn48.shreg |= 1;
+        state->l1.hapn48.shreg = (state->l1.hapn48.shreg << 1) |
+            (state->l1.hapn48.shreg & 1);
+        if (buffer[1] > state->l1.hapn48.lvlhi * 0.5) {
+            state->l1.hapn48.shreg |= 1;
 			cursync = (buffer[1] > buffer[0] && buffer[1] > buffer[2]);
-		} else if (buffer[1] < s->l1.hapn48.lvllo * 0.5) {
-			s->l1.hapn48.shreg &= ~1;
+        } else if (buffer[1] < state->l1.hapn48.lvllo * 0.5) {
+            state->l1.hapn48.shreg &= ~1;
 			cursync = (buffer[1] < buffer[0] && buffer[1] < buffer[2]);
 		}
-		verbprintf(10, "%c", '0' + (s->l1.hapn48.shreg & 1));
-		s->l1.hapn48.sphase += SPHASEINC;
-		if (((s->l1.hapn48.shreg >> 1) ^ s->l1.hapn48.shreg) & 1) {
-			if (s->l1.hapn48.sphase >= 0x8000+SPHASEINC/2)
-				s->l1.hapn48.sphase -= 0x800;
+        //verbprintf(10, "%c", '0' + (state->l1.hapn48.shreg & 1));
+        state->l1.hapn48.sphase += SPHASEINC;
+        if (((state->l1.hapn48.shreg >> 1) ^ state->l1.hapn48.shreg) & 1) {
+            if (state->l1.hapn48.sphase >= 0x8000+SPHASEINC/2)
+                state->l1.hapn48.sphase -= 0x800;
 			else
-				s->l1.hapn48.sphase += 0x800;
+                state->l1.hapn48.sphase += 0x800;
 		}
 #if 0
 		if (cursync) {
-			if (((s->l1.hapn48.sphase-0x8000)&0xffffu) >= 0x8000+SPHASEINC/2)
-				s->l1.hapn48.sphase -= 0x800;
+            if (((state->l1.hapn48.sphase-0x8000)&0xffffu) >= 0x8000+SPHASEINC/2)
+                state->l1.hapn48.sphase -= 0x800;
 			else
-				s->l1.hapn48.sphase += 0x800;
+                state->l1.hapn48.sphase += 0x800;
 		}
 #endif
-		if (s->l1.hapn48.sphase >= 0x10000) {
-			s->l1.hapn48.sphase &= 0xffff;
-			curbit = ((s->l1.hapn48.shreg >> 4) ^ s->l1.hapn48.shreg ^ 1) & 1;
-			verbprintf(9, " %c ", '0'+curbit);
-			hdlc_rxbit(s, curbit);
+        if (state->l1.hapn48.sphase >= 0x10000) {
+            state->l1.hapn48.sphase &= 0xffff;
+            curbit = ((state->l1.hapn48.shreg >> 4) ^ state->l1.hapn48.shreg ^ 1) & 1;
+            //verbprintf(9, " %c ", '0'+curbit);
+            QString message = hdlc.hdlc_rxbit(state, curbit);
+            if(message.length() > 0)
+                emit newMessage(message);
 		}
 	}
 }
 
 /* ---------------------------------------------------------------------- */
 
-const struct demod_param demod_hapn4800 = {
-    "HAPN4800", FREQ_SAMP, 3, hapn48_init, hapn48_demod, NULL
-};
+//const struct demod_param demod_hapn4800 = {
+//    "HAPN4800", FREQ_SAMP, 3, hapn48_init, hapn48_demod, NULL
+//};
 
 /* ---------------------------------------------------------------------- */

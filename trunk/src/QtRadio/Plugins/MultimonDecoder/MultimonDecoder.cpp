@@ -26,7 +26,8 @@
 #include "MultimonDecoder.h"
 #include "ui_MultimonDecoder.h"
 
-static const QString AVAILABLE_DECODERS[4] = {"NONE", "APSK1200", "DTMF", "FSK9600"};
+static const QString AVAILABLE_DECODERS[7] = {"NONE", "APSK1200", "DTMF", "FSK9600", "HAPN4800", \
+                                              "UFSK1200", "CW"};
 
 MultimonDecoder::MultimonDecoder(QWidget *parent) : QWidget(parent), ui(new Ui::MultimonDecoder)
 {
@@ -62,6 +63,14 @@ MultimonDecoder::MultimonDecoder(QWidget *parent) : QWidget(parent), ui(new Ui::
     fsk96 = new DemodFSK96();
     formatMessage("Decoder: FSK9600 Decoder");
 
+    hapn48 = new DemodHAPN48();
+    formatMessage("Decoder: HAPN4800 Decoder");
+
+    ufsk12 = new DemodUFSK12();
+    formatMessage("Decoder: UFSK1200 Decoder");
+
+    demodcw = new DemodCW();
+    formatMessage("Decoder: CW Decoder");
 }
 
 MultimonDecoder::~MultimonDecoder()
@@ -81,6 +90,9 @@ MultimonDecoder::~MultimonDecoder()
     delete afsk12;
     delete dtmf;
     delete fsk96;
+    delete ufsk12;
+    delete hapn48;
+    delete demodcw;
 
     delete ui;
 
@@ -179,7 +191,7 @@ void MultimonDecoder::on_actionDecode_toggled(bool enabled)
             qWarning() << "Default format not supported - trying to use nearest";
             audioFormat = info.nearestFormat(audioFormat);
         }
-/*
+
         qDebug() << "----------------------------------------------------";
         qDebug() << "Input device: " << inputDevices.at(inputSelector->currentIndex()).deviceName();
         qDebug() << "      Codecs: " << inputDevices.at(inputSelector->currentIndex()).supportedCodecs();
@@ -197,12 +209,15 @@ void MultimonDecoder::on_actionDecode_toggled(bool enabled)
         qDebug() << "Sample type: " << audioFormat.sampleType();
         qDebug() << "   Channels: " << audioFormat.channelCount();
         qDebug() << "----------------------------------------------------";
-*/
+
         //TODO support multiple widgets here
         /* initialise decoder; looks weird but dmeods were organised in array in multimon */
         afsk12->reset();
         dtmf->reset();
         fsk96->reset();
+        demodcw->reset();
+        hapn48->reset();
+        ufsk12->reset();
 
         audioInput = new QAudioInput(inputDevices.at(inputSelector->currentIndex()), audioFormat, this);
 
@@ -265,6 +280,25 @@ void MultimonDecoder::samplesReceived(float *buffer, const int length)
     {
         overlap = 24;
         fsk96->demod(tmpbuf.data(), length);
+    }
+
+    if (currentDecoder == 4)
+    {
+        //HAPN
+        overlap = 3;
+        hapn48->demod(tmpbuf.data(), length);
+    }
+
+    if (currentDecoder == 5)
+    {
+        overlap = 24;
+        ufsk12->demod(tmpbuf.data(), length);
+    }
+
+    if (currentDecoder == 6)
+    {
+        overlap = 24;
+        demodcw->demod(tmpbuf.data(), length);
     }
     //TODO Overlap?  Was not working left buffer with junk?
     /* clear tmpbuf and store "overlap" */
@@ -398,14 +432,38 @@ void MultimonDecoder::on_selectDecoder_currentIndexChanged(int index)
             break;
         };
 
-        case(4):
-        {
-            currentDecoder = 3;
-            formatMessage("Mode Selected: FSK9600");
-            disconnect(this, SLOT(formatMessage(QString)));
-            connect(fsk96, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
-            break;
-        };
+    case(4):
+    {
+        currentDecoder = 3;
+        formatMessage("Mode Selected: FSK9600");
+        disconnect(this, SLOT(formatMessage(QString)));
+        connect(fsk96, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
+        break;
+    };
+    case(5):
+    {
+        currentDecoder = 4;
+        formatMessage("Mode Selected: HAPN4800");
+        disconnect(this, SLOT(formatMessage(QString)));
+        connect(hapn48, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
+        break;
+    };
+    case(6):
+    {
+        currentDecoder = 5;
+        formatMessage("Mode Selected: UFSK1200");
+        disconnect(this, SLOT(formatMessage(QString)));
+        connect(ufsk12, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
+        break;
+    };
+    case(7):
+    {
+        currentDecoder = 6;
+        formatMessage("Mode Selected: CW");
+        disconnect(this, SLOT(formatMessage(QString)));
+        connect(demodcw, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
+        break;
+    };
         default:
         {
             currentDecoder = 1;

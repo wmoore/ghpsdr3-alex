@@ -30,7 +30,9 @@
 #include "multimon/DemodAFSK12.h"
 #include "multimon/DemodDTMF.h"
 #include "multimon/DemodFSK96.h"
-
+#include "multimon/DemodUFSK12.h"
+#include "multimon/DemodHAPN48.h"
+#include "multimon/DemodCW.h"
 
 namespace Ui {
     class MultimonDecoder;
@@ -74,6 +76,9 @@ private:
     DemodAFSK12      *afsk12;
     DemodDTMF         *dtmf;
     DemodFSK96      *fsk96;
+    DemodHAPN48   *hapn48;
+    DemodUFSK12   *ufsk12;
+    DemodCW   *demodcw;
 
     QVarLengthArray<float, 8192> tmpbuf;   /*! Needed to remember "overlap" smples. */
 
