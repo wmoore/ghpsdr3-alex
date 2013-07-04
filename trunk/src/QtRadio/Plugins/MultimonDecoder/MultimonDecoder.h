@@ -26,9 +26,10 @@
 #include <QAudioInput>
 #include <QList>
 #include "AudioBuffer.h"
-#include "Ssi.h"
+
 #include "multimon/DemodAFSK12.h"
 #include "multimon/DemodDTMF.h"
+#include "multimon/DemodFSK96.h"
 
 
 namespace Ui {
@@ -47,11 +48,15 @@ private slots:
     void samplesReceived(float *buffer, const int length);
     void audioStateChanged(QAudio::State state);
     void inputSelectionChanged(int index);
+    void updateLevel(qreal);  // updates ui level indicator
     void on_actionDecode_toggled(bool enabled);
-    void on_actionClear_triggered();
-    void on_actionSave_triggered();
+    void on_actionClear_clicked();
+    void on_actionSave_clicked();
 
     void formatMessage(QString message);
+
+
+    void on_selectDecoder_currentIndexChanged(int index);
 
 private:
     Ui::MultimonDecoder *ui;
@@ -60,8 +65,6 @@ private:
 
     QLabel     *inputLabel;
     QComboBox  *inputSelector;  /*! Audio input delector. */
-    QWidget    *ssiSpacer;      /*! Spacer used to right align ssi. */
-    CSsi       *ssi;            /*! Input level indicator. */
 
     QList<QAudioDeviceInfo> inputDevices;  /*! List of available audio input devices. */
     QAudioInput  *audioInput;               /*! Audio input object. */
@@ -70,12 +73,16 @@ private:
 
     DemodAFSK12      *afsk12;
     DemodDTMF         *dtmf;
+    DemodFSK96      *fsk96;
 
     QVarLengthArray<float, 8192> tmpbuf;   /*! Needed to remember "overlap" smples. */
 
     void createDeviceSelector();
     void initializeAudio();
     void process(QByteArray buff);
+
+    qreal m_alpha;
+    void setAlpha(qreal value);
 };
 
 #endif // MultimonDecoder_H

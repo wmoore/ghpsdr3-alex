@@ -26,11 +26,12 @@
 #include "MultimonDecoder.h"
 #include "ui_MultimonDecoder.h"
 
-static const QString AVAILABLE_DECODERS[3] = {"NONE", "APSK1200", "DTMF"};
+static const QString AVAILABLE_DECODERS[4] = {"NONE", "APSK1200", "DTMF", "FSK9600"};
 
 MultimonDecoder::MultimonDecoder(QWidget *parent) : QWidget(parent), ui(new Ui::MultimonDecoder)
 {
-    currentDecoder = 0;
+    currentDecoder = 1;
+    m_alpha = 0.55;
     ui->setupUi(this);
 
     /* select font for text viewer */
@@ -43,16 +44,7 @@ MultimonDecoder::MultimonDecoder(QWidget *parent) : QWidget(parent), ui(new Ui::
     initializeAudio();
     createDeviceSelector();
 
-    /* create SSI and to toolbar */
-/*
-    ssiSpacer = new QWidget();
-    ssiSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    ui->mainToolBar->addWidget(ssiSpacer);
-    ssi = new CSsi(this);
-    ui->mainToolBar->addWidget(ssi);
-
-    connect(audioBuffer, SIGNAL(update(qreal)), ssi, SLOT(setLevel(qreal)));
-*/
+    connect(audioBuffer, SIGNAL(update(qreal)), this, SLOT(updateLevel(qreal)));
     connect(audioBuffer, SIGNAL(newData(float*,int)), this, SLOT(samplesReceived(float*,int)));
 
     /** TODO Support multiple decoders here */
@@ -67,21 +59,8 @@ MultimonDecoder::MultimonDecoder(QWidget *parent) : QWidget(parent), ui(new Ui::
     dtmf = new DemodDTMF();
     formatMessage("Decoder: DTMF Decoder");
 
-    // Set Decoder
-    currentDecoder = 1;
-
-    //TODO Choose Decoder via dropdown
-    if (currentDecoder == 1)
-    {
-        formatMessage("Mode Selected: APSK1200 / APRS / AX.25");
-        connect(afsk12, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
-    }
-
-    if (currentDecoder == 2)
-    {
-        formatMessage("Mode Selected: DTMF");
-        connect(dtmf, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
-    }
+    fsk96 = new DemodFSK96();
+    formatMessage("Decoder: FSK9600 Decoder");
 
 }
 
@@ -96,12 +75,12 @@ MultimonDecoder::~MultimonDecoder()
 
     delete inputLabel;
     delete inputSelector;
-    delete ssi;
 
     /** TODO support multiple decoders here */
 
     delete afsk12;
     delete dtmf;
+    delete fsk96;
 
     delete ui;
 
@@ -113,10 +92,10 @@ void MultimonDecoder::formatMessage(QString message)
     /* get current time that will be prepended to packet display */
     QDateTime dateTime = QDateTime::currentDateTime();
     QString dateString = dateTime.toString("yyyy.MM.dd hh:mm:ss:zzz");
-    message.prepend(" ");
-    message.prepend(AVAILABLE_DECODERS[currentDecoder]);
-    message.prepend(" ");
-    message.prepend(dateString);
+    //message.prepend("-");
+    //message.prepend(AVAILABLE_DECODERS[currentDecoder]);
+    //message.prepend(" ");
+    //message.prepend(dateString);
     ui->textView->appendPlainText(message);
 }
 
@@ -142,8 +121,8 @@ void MultimonDecoder::createDeviceSelector()
     }
 
     inputLabel = new QLabel(tr(" Input:"), this);
-    ui->mainToolBar->insertWidget(ui->actionDecode, inputLabel);
-    ui->mainToolBar->insertWidget(ui->actionDecode, inputSelector);
+    ui->mainToolBar->addWidget(inputLabel);
+    ui->mainToolBar->addWidget(inputSelector);
 
     ui->actionDecode->setToolTip(tr("Start decoder"));
 
@@ -223,6 +202,7 @@ void MultimonDecoder::on_actionDecode_toggled(bool enabled)
         /* initialise decoder; looks weird but dmeods were organised in array in multimon */
         afsk12->reset();
         dtmf->reset();
+        fsk96->reset();
 
         audioInput = new QAudioInput(inputDevices.at(inputSelector->currentIndex()), audioFormat, this);
 
@@ -243,9 +223,11 @@ void MultimonDecoder::on_actionDecode_toggled(bool enabled)
 
         //TODO use regular widget instead of ssi
         /* reset input level indicator */
-        ssi->setLevel(0.0);
+        //ssi->setLevel(0.0);
+        ui->progressBar->setValue(0);
+        ui->progressBar->update();
 
-        currentDecoder = 0;
+        currentDecoder = 1;
 
     }
 }
@@ -255,11 +237,11 @@ void MultimonDecoder::on_actionDecode_toggled(bool enabled)
  *  \param data The sample buffer.
  *  \param length The number of samples in the buffer.
  *
- * Calls the afsk1200 decoder.
+ * Calls the decoder.
  */
 void MultimonDecoder::samplesReceived(float *buffer, const int length)
 {
-    int overlap = 18;
+    int overlap = 0;
     int i;
 
     for (i = 0; i < length/*-overlap*/; i++) {
@@ -269,14 +251,21 @@ void MultimonDecoder::samplesReceived(float *buffer, const int length)
     //TODO Support multiple decoders here
     if (currentDecoder == 1)
     {
+        overlap = 18;
         afsk12->demod(tmpbuf.data(), length);
     }
 
     if (currentDecoder == 2)
     {
+        overlap = 0;
         dtmf->demod(tmpbuf.data(), length);
     }
 
+    if (currentDecoder == 3)
+    {
+        overlap = 24;
+        fsk96->demod(tmpbuf.data(), length);
+    }
     //TODO Overlap?  Was not working left buffer with junk?
     /* clear tmpbuf and store "overlap" */
     tmpbuf.clear();
@@ -304,13 +293,37 @@ void MultimonDecoder::audioStateChanged(QAudio::State state)
 #endif
 }
 
+void MultimonDecoder::setAlpha(qreal value)
+{
+    if ((value > 1.0) || (value < 0.0))
+        return;
+    m_alpha = value;
+}
+
+void MultimonDecoder::updateLevel(qreal value)
+{
+    if ((value > 1.0) || (value < 0.0))
+        return;
+
+    if (value > ui->progressBar->value()/100) {
+        ui->progressBar->setValue(value*100);
+        ui->progressBar->update();
+    }
+    else {
+        /* apply exponential filter */
+        ui->progressBar->setValue((m_alpha*value + (1.0-m_alpha)*ui->progressBar->value()/100)*100);
+        if (ui->progressBar->value() > 100.0)
+            ui->progressBar->setValue(100.0);
+        ui->progressBar->update();
+    }
+}
 
 /*! \brief Action: Clear the text view.
  *
  * This slot is activated when the user clicks on the Clear button
  * on the main toolbar.
  */
-void MultimonDecoder::on_actionClear_triggered()
+void MultimonDecoder::on_actionClear_clicked()
 {
     ui->textView->clear();
 }
@@ -321,7 +334,7 @@ void MultimonDecoder::on_actionClear_triggered()
  * It asks for a file name, then saves the contents of the text viewer
  * to a plain text file.
  */
-void MultimonDecoder::on_actionSave_triggered()
+void MultimonDecoder::on_actionSave_clicked()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                                     QDir::homePath(),
@@ -354,3 +367,51 @@ void MultimonDecoder::on_actionSave_triggered()
         QMessageBox::aboutQt(this, tr("About Qt"));
     }
 */
+
+void MultimonDecoder::on_selectDecoder_currentIndexChanged(int index)
+{
+    //TODO Choose Decoder via dropdown
+    switch(index) {
+        case(1):
+        {
+            currentDecoder = 1;
+            formatMessage("Mode Selected: APSK1200 / APRS / AX.25");
+            disconnect(this, SLOT(formatMessage(QString)));
+            connect(afsk12, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
+            break;
+        };
+        case(2):
+        {
+            currentDecoder = 1;
+            formatMessage("Mode Selected: APSK1200 / APRS / AX.25");
+            disconnect(this, SLOT(formatMessage(QString)));
+            connect(afsk12, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
+            break;
+        };
+
+        case(3):
+        {
+            currentDecoder = 2;
+            formatMessage("Mode Selected: DTMF");
+            disconnect(this, SLOT(formatMessage(QString)));
+            connect(dtmf, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
+            break;
+        };
+
+        case(4):
+        {
+            currentDecoder = 3;
+            formatMessage("Mode Selected: FSK9600");
+            disconnect(this, SLOT(formatMessage(QString)));
+            connect(fsk96, SIGNAL(newMessage(QString)), this, SLOT(formatMessage(QString)));
+            break;
+        };
+        default:
+        {
+            currentDecoder = 1;
+            formatMessage("Mode Selected: NONE");
+            disconnect(this, SLOT(formatMessage(QString)));
+            break;
+        };
+    }
+}

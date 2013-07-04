@@ -328,7 +328,6 @@ void CAfsk12::ax25_disp_packet(unsigned char *bp, unsigned int len)
         bp += 14;
         len -= 14;
         if ((!(bp[-1] & 1)) && (len >= 7)) {
-            //verbprintf(0, " via ");
             message.append(" via ");
         }
 

@@ -95,7 +95,7 @@ HDLC::~HDLC()
     //free(state);
 }
 
-int aprs_mode = 1;
+int aprs_mode = 0;
 
 QString HDLC::aprs_print_ax25call(unsigned char *call, int is_repeater)
 {
@@ -131,19 +131,19 @@ QString HDLC::aprs_disp_packet(unsigned char *bp, unsigned int len)
     packet.append("APRS : ");
 
 	// source call
-	aprs_print_ax25call(&bp[7], 0);
+    packet.append(aprs_print_ax25call(&bp[7], 0));
 
     packet.append(">");
 
     // tocall
-	aprs_print_ax25call(&bp[0], 0);
+    packet.append(aprs_print_ax25call(&bp[0], 0));
 	bp += 14;
 	len -= 14;
 	// via callsigns
 	while ((!(bp[-1] & 1)) && (len >= 7)) {
         if ((!(bp[-1] & 1)) && (len >= 7))
             packet.append(",");
-		aprs_print_ax25call(&bp[0], 1);
+        packet.append(aprs_print_ax25call(&bp[0], 1));
 		bp += 7;
 		len -= 7;
     }
@@ -156,9 +156,9 @@ QString HDLC::aprs_disp_packet(unsigned char *bp, unsigned int len)
 	while (len) {
         //verbprintf(0, "%c",*bp++);
         //int i = *bp++;
-        //packet.append(QString("%1              ").arg(i,0,16).toUpper());
-        bp++;
-        packet.append(QChar(*bp));
+        packet.append(QString("%1").arg(QChar(*bp++),0,16).toUpper());
+
+        //packet.append(QChar(*bp));
 		len--;
     }
     //qDebug() << packet;
@@ -175,10 +175,13 @@ QString HDLC::ax25_disp_packet(unsigned char *bp, unsigned int len)
         unsigned char i,j;
 
     if (!bp || len < 10)
+    {
         return packet;
+        //qDebug() << "Oops...";
+    }
 #if 1
     if (!check_crc_ccitt(bp, len)) {
-        //qDebug() << "CRC Failed";
+        qDebug() << "CRC Failed";
         return packet;
     }
 #endif
@@ -219,6 +222,8 @@ QString HDLC::ax25_disp_packet(unsigned char *bp, unsigned int len)
                 packet.append(QString("-%1 QSO Nr %1").arg(bp[6] & 0xf).arg((bp[0] << 6) | (bp[1] >> 2)));
                 bp += 7;
                 len -= 7;
+                //qDebug() << "Got here 1";
+                //qDebug() << packet;
         } else {
                 /*
                  * normal header
@@ -226,37 +231,33 @@ QString HDLC::ax25_disp_packet(unsigned char *bp, unsigned int len)
                 if (len < 15) {
                     return packet;
                 }
-		if (aprs_mode) {
-            packet.append(aprs_disp_packet(bp, len));
-            return packet;
-		}
+                if (aprs_mode) {
+                    packet.append(aprs_disp_packet(bp, len));
+                    return packet;
+                }
                 if ((bp[6] & 0x80) != (bp[13] & 0x80)) {
-                        v1 = 0;
-                        cmd = (bp[6] & 0x80);
+                    v1 = 0;
+                    cmd = (bp[6] & 0x80);
                 }
                 //verbprintf(0, "%s: fm ", s->dem_par->name);
                 packet.append(QString("%1$ fm ").arg(time.toString("hh:mm:ss")));
-		for(i = 7; i < 13; i++) 
-                        if ((bp[i] &0xfe) != 0x40) 
-                            //verbprintf(0, "%c",bp[i] >> 1);
-                            packet.append(QChar(bp[i] >> 1));
+                for(i = 7; i < 13; i++)
+                    if ((bp[i] &0xfe) != 0x40)
+                        packet.append(QChar(bp[i] >> 1));
                 //verbprintf(0, "-%u to ",(bp[13] >> 1) & 0xf);
                 packet.append(QString("-%1 to ").arg((bp[13] >> 1) & 0xf));
                 for(i = 0; i < 6; i++) 
-                        if ((bp[i] &0xfe) != 0x40) 
-                            //verbprintf(0, "%c",bp[i] >> 1);
-                            packet.append(QChar(bp[i] >> 1));
+                    if ((bp[i] &0xfe) != 0x40)
+                        packet.append(QChar(bp[i] >> 1));
                 //verbprintf(0, "-%u",(bp[6] >> 1) & 0xf);
                 packet.append(QString("-%1").arg((bp[6] >> 1) & 0xf));
                 bp += 14;
                 len -= 14;
-                if ((!(bp[-1] & 1)) && (len >= 7)) 
-                    //verbprintf(0, " via ");
+                if ((!(bp[-1] & 1)) && (len >= 7))
                     packet.append(" via ");
                 while ((!(bp[-1] & 1)) && (len >= 7)) {
                         for(i = 0; i < 6; i++) 
-                                if ((bp[i] &0xfe) != 0x40) 
-                                    //verbprintf(0, "%c",bp[i] >> 1);
+                                if ((bp[i] &0xfe) != 0x40)
                                     packet.append(QChar(bp[i] >> 1));
                         //verbprintf(0, "-%u",(bp[6] >> 1) & 0xf);
                         packet.append(QString("-%1").arg((bp[6] >> 1) & 0xf));
@@ -267,6 +268,8 @@ QString HDLC::ax25_disp_packet(unsigned char *bp, unsigned int len)
                             packet.append(",");
                 }
         }
+        //qDebug() << "Got here 2";
+        //qDebug() << packet;
         if(!len) 
                 return packet;
         i = *bp++;
@@ -382,7 +385,7 @@ QString HDLC::hdlc_rxbit(struct demod_state *s, int bit)
 	s->l2.hdlc.rxbitstream |= !!bit;
 	if ((s->l2.hdlc.rxbitstream & 0xff) == 0x7e) {
 		if (s->l2.hdlc.rxstate && (s->l2.hdlc.rxptr - s->l2.hdlc.rxbuf) > 2)
-            qDebug() << "Got packet";
+            //qDebug() << "Got packet";
             packet = ax25_disp_packet(s->l2.hdlc.rxbuf, s->l2.hdlc.rxptr - s->l2.hdlc.rxbuf);
 		s->l2.hdlc.rxstate = 1;
 		s->l2.hdlc.rxptr = s->l2.hdlc.rxbuf;
