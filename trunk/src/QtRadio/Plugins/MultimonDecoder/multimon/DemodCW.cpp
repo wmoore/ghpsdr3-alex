@@ -70,7 +70,10 @@
       // d i subsamp s
 
       char *lp;
-      QString message;
+      QString message = "";
+
+      ////
+      ////Not sure about this part...
 
       lp = state->l1.demodcw.line;
       /* gives a rough number of measurements needed to make SUBSAMP samples
@@ -79,6 +82,8 @@
       ditlength = SUBSAMP;
       range = (8*12*EST_WPM*SUBSAMP) / 5; /* 8 seconds' worth */
       subsamp = (int*)calloc (range, sizeof(int));
+      ////
+
 
       /* main decoding loop */
       for (; length > 0; length--, buffer++) {
