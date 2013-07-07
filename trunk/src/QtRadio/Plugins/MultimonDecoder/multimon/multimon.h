@@ -202,6 +202,13 @@ struct demod_state {
             int bp;
             int tt;
             int thres;
+            int *subsamp;
+            int nsamp;
+            int ditlength;
+            int range;
+            char *lp;
+            int d;
+            int s;
         } demodcw;
 
         struct l1_state_selcall {

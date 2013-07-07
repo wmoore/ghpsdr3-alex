@@ -297,7 +297,7 @@ void MultimonDecoder::samplesReceived(float *buffer, const int length)
 
     if (currentDecoder == 6)
     {
-        overlap = 24;
+        overlap = 0;
         demodcw->demod(tmpbuf.data(), length);
     }
     //TODO Overlap?  Was not working left buffer with junk?

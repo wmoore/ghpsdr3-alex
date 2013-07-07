@@ -56,78 +56,73 @@
         state->l1.demodcw.pass = 0;
         state->l1.demodcw.run = 1;
         state->l1.demodcw.bp = 0;
-        state->l1.demodcw.tt = 0;
+        //state->l1.demodcw.tt = 0;
         state->l1.demodcw.run1 = 1;
+
+        state->l1.demodcw.nsamp = (SAMP*5) / (EST_WPM*12*SUBSAMP);
+        state->l1.demodcw.ditlength = SUBSAMP;
+        state->l1.demodcw.range = (8*12*EST_WPM*SUBSAMP) / 5; /* 8 seconds' worth */
+        /* gives a rough number of measurements needed to make SUBSAMP samples
+         * per dit. apparently there's 5/12 dits per second at 1 WPM */
+        state->l1.demodcw.subsamp = (int*)calloc (state->l1.demodcw.range, sizeof(int));
+        qDebug()<< state->l1.demodcw.nsamp;
     }
 
     void DemodCW::demod(float *buffer, int length)
     {
       //OK
-      int i, nsamp, ditlength, range, *subsamp;
-      int d;
-      int s;
-
-      // d i subsamp s
-
-      char *lp;
+      int i;
+      int c;
       QString message = "";
-
-      ////
-      ////Not sure about this part...
-
-      lp = state->l1.demodcw.line;
-      /* gives a rough number of measurements needed to make SUBSAMP samples
-       * per dit. apparently there's 5/12 dits per second at 1 WPM */
-      nsamp = (SAMP*5) / (EST_WPM*12*SUBSAMP);
-      ditlength = SUBSAMP;
-      range = (8*12*EST_WPM*SUBSAMP) / 5; /* 8 seconds' worth */
-      subsamp = (int*)calloc (range, sizeof(int));
-      ////
+      state->l1.demodcw.s = 0;
 
 
       /* main decoding loop */
       for (; length > 0; length--, buffer++) {
-          //s_in = *buffer;
-          for (s = 0, i=0; i < nsamp; i++)
-            s += *buffer;
-          state->l1.demodcw.tt = state->l1.demodcw.tt + s - subsamp[state->l1.demodcw.bp];
-          subsamp[state->l1.demodcw.bp] = s;
-          state->l1.demodcw.bp = (state->l1.demodcw.bp+1) % range;
+          //for (state->l1.demodcw.s = 0, i=0; i < state->l1.demodcw.nsamp; i++) {
+            c = *buffer;
+            if (c > 32767) c = 65536 - c;
+            state->l1.demodcw.s += c;
+
+          state->l1.demodcw.tt = state->l1.demodcw.tt + state->l1.demodcw.s - state->l1.demodcw.subsamp[state->l1.demodcw.bp];
+          state->l1.demodcw.subsamp[state->l1.demodcw.bp] = state->l1.demodcw.s;
+          state->l1.demodcw.bp = (state->l1.demodcw.bp+1) % state->l1.demodcw.range;
 
           /* wait until we have an idea of the average signal level */
-          if (++state->l1.demodcw.pass < range)
+          if (++state->l1.demodcw.pass < state->l1.demodcw.range)
         {
           //fprintf (stderr, "%d \r", range-pass);
           //qDebug() << "Range pass";
-          continue;
+          return;
         }
 
-          state->l1.demodcw.thres = state->l1.demodcw.tt / range;
-          state->l1.demodcw.bit = (10*s) > (12*state->l1.demodcw.thres) ? 1 : 0;
+          state->l1.demodcw.thres = state->l1.demodcw.tt / state->l1.demodcw.range;
+          state->l1.demodcw.bit = (10*state->l1.demodcw.s) > (12*state->l1.demodcw.thres) ? 1 : 0;
 
           if (state->l1.demodcw.bit == state->l1.demodcw.lbit)
         {
           state->l1.demodcw.run++;
           //qDebug() << "run++";
-          continue;
+          //continue;
+          return;
         }
 
-          d = (10*state->l1.demodcw.run) / ditlength;
+          state->l1.demodcw.d = (10*state->l1.demodcw.run) / state->l1.demodcw.ditlength;
 
           if (state->l1.demodcw.lbit == 1)
         {
-          if ((d > 5) && (d < 20))
-            *lp++ = '.';
-          if ((d >= 20) && (d < 40))
-            *lp++ = '-';
-          *lp = '\0';
+          if ((state->l1.demodcw.d > 5) && (state->l1.demodcw.d < 20))
+            *state->l1.demodcw.lp++ = '.';
+          if ((state->l1.demodcw.d >= 20) && (state->l1.demodcw.d < 40))
+            *state->l1.demodcw.lp++ = '-';
+          *state->l1.demodcw.lp = '\0';
           state->l1.demodcw.run1 = state->l1.demodcw.run;
-          if (lp == &state->l1.demodcw.line[79]) lp--; /* prevent overflow */
+          if (state->l1.demodcw.lp == &state->l1.demodcw.line[79]) state->l1.demodcw.lp--; /* prevent overflow */
         }
 
-          if ((state->l1.demodcw.lbit == 0) && (lp != state->l1.demodcw.line))
+          if ((state->l1.demodcw.lbit == 0) && (state->l1.demodcw.lp != state->l1.demodcw.line))
         {
-          if (d >= 20)
+          if (state->l1.demodcw.d >= 20)
             {
               for (i=0; *morse[i+1] != '?'; i += 2)
             if (strcmp (morse[i+1], state->l1.demodcw.line) == 0)
@@ -135,32 +130,30 @@
               if (*morse[i+1] == '?')
                {
                   message.append(state->l1.demodcw.line);
-                  //qDebug() << message;
+                  qDebug() << message;
               }
               else
               {
                   message.append(*morse[i]);
-                  //qDebug() << message;
+                  qDebug() << message;
               }
-              if (d > 80)
+              if (state->l1.demodcw.d > 80)
               {
                   message.append(" ");
-                  //qDebug() << message;
+                  qDebug() << message;
                   emit newMessage(message);
-                  //fflush (stdout);
               }
-              lp = state->l1.demodcw.line;
+              state->l1.demodcw.lp = state->l1.demodcw.line;
             }
           /* check if a "dah-do" */
           if ((state->l1.demodcw.run1 > 2) && ((state->l1.demodcw.run1) > (2*state->l1.demodcw.run)))
             {
-              d = (state->l1.demodcw.run+state->l1.demodcw.run1) / 4;
-              if ((d > (SUBSAMP/2)) &&
-              ((3*d) > (2*ditlength)) && ((2*d) < (3*ditlength)))
+              state->l1.demodcw.d = (state->l1.demodcw.run+state->l1.demodcw.run1) / 4;
+              if ((state->l1.demodcw.d > (SUBSAMP/2)) &&
+              ((3*state->l1.demodcw.d) > (2*state->l1.demodcw.ditlength)) && ((2*state->l1.demodcw.d) < (3*state->l1.demodcw.ditlength)))
             {
-              ditlength = d;
-              //fprintf (stderr, "<%d>",ditlength);
-              qDebug() << ditlength;
+              state->l1.demodcw.ditlength = state->l1.demodcw.d;
+              qDebug() << state->l1.demodcw.ditlength;
             }
               state->l1.demodcw.run1=0;
             }
