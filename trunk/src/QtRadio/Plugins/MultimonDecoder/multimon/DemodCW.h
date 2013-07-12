@@ -5,7 +5,7 @@
 #include "multimon.h"
 
 #define SAMP 22050
-#define SUBSAMP 3
+#define SUBSAMP 6
 #define EST_WPM (10.0)
 
 class DemodCW : public QObject
@@ -24,7 +24,6 @@ signals:
 public slots:
     
 private:
-
     //int get_sample(float *buffer, int length);
     struct demod_state *state;
 
