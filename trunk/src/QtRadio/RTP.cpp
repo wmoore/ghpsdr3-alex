@@ -31,7 +31,7 @@ int RTP::init(const char* host,int port) {
 #ifdef HAVE_RTCP_ORTP
     rtp_session_set_local_addr(rtpSession,"0.0.0.0",-1,-1);
 #else
-    rtp_session_set_local_addr(rtpSession,"0.0.0.0",-1);
+    rtp_session_set_local_addr(rtpSession,"0.0.0.0",0,-1);
 #endif
 
     //rtp_session_set_remote_addr(rtpSession,host,port);
