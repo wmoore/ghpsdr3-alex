@@ -508,7 +508,7 @@
      <x>0</x>
      <y>0</y>
      <width>1067</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuBand">
@@ -593,18 +593,19 @@
    </widget>
    <widget class="QMenu" name="menuReceiver">
     <property name="title">
-     <string>Receiver</string>
+     <string>Radio</string>
     </property>
     <addaction name="actionConnectToServer"/>
     <addaction name="actionDisconnectFromServer"/>
     <addaction name="actionQuick_Server_List"/>
     <addaction name="separator"/>
     <addaction name="actionSubrx"/>
-    <addaction name="separator"/>
     <addaction name="actionBandscope"/>
     <addaction name="actionRecord"/>
+    <addaction name="separator"/>
     <addaction name="actionConfig"/>
     <addaction name="separator"/>
+    <addaction name="actionExit_QtRadio"/>
    </widget>
    <widget class="QMenu" name="menuAudio">
     <property name="title">
@@ -670,10 +671,31 @@
     <property name="title">
      <string>&amp;Window</string>
     </property>
-    <addaction name="actionLoad_Layout"/>
-    <addaction name="actionSave_Layout"/>
+    <widget class="QMenu" name="menuPlugins">
+     <property name="title">
+      <string>Plugins</string>
+     </property>
+     <addaction name="actionMultimon_Decoder"/>
+     <addaction name="actionLogbook"/>
+     <addaction name="actionReverse_Beacon"/>
+    </widget>
+    <widget class="QMenu" name="menuLayout">
+     <property name="title">
+      <string>Layout</string>
+     </property>
+     <addaction name="actionLoad_Layout"/>
+     <addaction name="actionSave_Layout"/>
+     <addaction name="actionDefault_Layout"/>
+     <addaction name="actionReset_Layout"/>
+    </widget>
+    <addaction name="menuLayout"/>
     <addaction name="separator"/>
-    <addaction name="actionDefault_Layout"/>
+    <addaction name="actionServer_List"/>
+    <addaction name="actionBookmarks"/>
+    <addaction name="actionKeypad_2"/>
+    <addaction name="actionEqualizer_2"/>
+    <addaction name="actionHardware_Options"/>
+    <addaction name="menuPlugins"/>
    </widget>
    <addaction name="menuReceiver"/>
    <addaction name="menuAudio"/>
@@ -1063,7 +1085,7 @@
   </action>
   <action name="actionConfig">
    <property name="text">
-    <string>Configure</string>
+    <string>Options</string>
    </property>
   </action>
   <action name="actionMuteMainRx">
@@ -1175,7 +1197,7 @@
   </action>
   <action name="actionQuick_Server_List">
    <property name="text">
-    <string>Quick Server List  </string>
+    <string>Server List  </string>
    </property>
    <property name="toolTip">
     <string>Quickly select a shared SDR  server from a list of online radios</string>
@@ -1268,12 +1290,12 @@
   </action>
   <action name="actionLoad_Layout">
    <property name="text">
-    <string>Load Layout...</string>
+    <string>Load</string>
    </property>
   </action>
   <action name="actionSave_Layout">
    <property name="text">
-    <string>Save Layout...</string>
+    <string>Save</string>
    </property>
   </action>
   <action name="actionDefault_Layout">
@@ -1281,12 +1303,89 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Default Layout</string>
+    <string>Make Default</string>
    </property>
   </action>
   <action name="actionPlugins">
    <property name="text">
     <string>Plugins</string>
+   </property>
+  </action>
+  <action name="actionServer_List">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Server List</string>
+   </property>
+  </action>
+  <action name="actionMultimon_Decoder">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Multimon Decoder</string>
+   </property>
+  </action>
+  <action name="actionLogbook">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Logbook</string>
+   </property>
+  </action>
+  <action name="actionReverse_Beacon">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Reverse Beacon</string>
+   </property>
+  </action>
+  <action name="actionKeypad_2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Keypad</string>
+   </property>
+  </action>
+  <action name="actionEqualizer_2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Equalizer</string>
+   </property>
+  </action>
+  <action name="actionHardware_Options">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hardware Options</string>
+   </property>
+  </action>
+  <action name="actionBookmarks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Bookmarks</string>
+   </property>
+  </action>
+  <action name="actionExit_QtRadio">
+   <property name="text">
+    <string>Exit QtRadio</string>
+   </property>
+  </action>
+  <action name="actionReset_Layout">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Reset</string>
    </property>
   </action>
  </widget>

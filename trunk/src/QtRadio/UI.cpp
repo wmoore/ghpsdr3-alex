@@ -71,6 +71,7 @@
 UI::UI(const QString server) {
 
     widget.setupUi(this);
+
     servers = 0;
     rbclient = 0;
     logbook = 0;
@@ -78,6 +79,7 @@ UI::UI(const QString server) {
     afsk1200decoder = 0;
     webbrowser = 0;
     pHwDlg = 0;
+
     meter = -121;
     initRigCtl();
     fprintf(stderr, "rigctl: Calling init\n");
@@ -823,6 +825,7 @@ void UI::actionQuick_Server_List() {
    dw->setWidget(servers);
    addDockWidget(Qt::BottomDockWidgetArea, dw);
 
+/*
    rbclient = new RBClient();
    QDockWidget *dw2 = new QDockWidget;
    dw2->setObjectName("dockReverseBeacon");
@@ -842,6 +845,7 @@ void UI::actionQuick_Server_List() {
 
    rbclient->show();
    logbook->show();
+ */
    servers->show();
    servers->refreshList();
 }
@@ -1252,6 +1256,7 @@ void UI::actionKeypad() {
     keypad->clear();
     keypad->show();
 
+ /*
     afsk1200decoder = new MultimonDecoder();
     QDockWidget *dw3 = new QDockWidget;
     dw3->setObjectName("dockAFSK1200Decoder");
@@ -1267,6 +1272,7 @@ void UI::actionKeypad() {
     dw4->setWidget(webbrowser);
     addDockWidget(Qt::RightDockWidgetArea, dw4);
     webbrowser->show();
+    */
 
 }
 void UI::setKeypadFrequency(long long f) {
