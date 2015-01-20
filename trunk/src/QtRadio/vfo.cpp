@@ -60,7 +60,7 @@ vfo::vfo(QWidget *parent) :
     ui->btnGrpBand->setId(ui->bandBtn_09, 9);
     ui->btnGrpBand->setId(ui->bandBtn_10, 10); // 6
     ui->btnGrpBand->setId(ui->bandBtn_11, 11); // GEN
-    ui->btnGrpBand->setId(ui->bandBtn_12, 12); // WWV
+    //ui->btnGrpBand->setId(ui->bandBtn_12, 12); // WWV
     connect(ui->btnGrpBand, SIGNAL(buttonClicked(int)),
                 this, SLOT(btnGrpClicked(int)));
     connect(ui->hSlider, SIGNAL(valueChanged(int)),

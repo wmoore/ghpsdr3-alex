@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>575</width>
-    <height>115</height>
+    <width>531</width>
+    <height>114</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
   <widget class="QPushButton" name="bandBtn_02">
    <property name="geometry">
     <rect>
-     <x>519</x>
+     <x>470</x>
      <y>7</y>
      <width>51</width>
      <height>25</height>
@@ -51,9 +51,9 @@
    <property name="geometry">
     <rect>
      <x>265</x>
-     <y>5</y>
+     <y>7</y>
      <width>24</width>
-     <height>42</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
@@ -77,7 +77,7 @@
   <widget class="QPushButton" name="bandBtn_10">
    <property name="geometry">
     <rect>
-     <x>468</x>
+     <x>419</x>
      <y>85</y>
      <width>51</width>
      <height>25</height>
@@ -102,7 +102,7 @@
   <widget class="QPushButton" name="bandBtn_01">
    <property name="geometry">
     <rect>
-     <x>468</x>
+     <x>419</x>
      <y>7</y>
      <width>51</width>
      <height>25</height>
@@ -127,8 +127,8 @@
   <widget class="QPushButton" name="pBtnBtoA">
    <property name="geometry">
     <rect>
-     <x>353</x>
-     <y>7</y>
+     <x>300</x>
+     <y>33</y>
      <width>53</width>
      <height>25</height>
     </rect>
@@ -147,9 +147,9 @@
    <property name="geometry">
     <rect>
      <x>5</x>
-     <y>45</y>
+     <y>33</y>
      <width>51</width>
-     <height>36</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="font">
@@ -178,9 +178,9 @@
    <property name="geometry">
     <rect>
      <x>5</x>
-     <y>82</y>
+     <y>59</y>
      <width>51</width>
-     <height>28</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="font">
@@ -205,7 +205,7 @@
   <widget class="QPushButton" name="bandBtn_08">
    <property name="geometry">
     <rect>
-     <x>519</x>
+     <x>470</x>
      <y>59</y>
      <width>51</width>
      <height>25</height>
@@ -230,7 +230,7 @@
   <widget class="QPushButton" name="bandBtn_09">
    <property name="geometry">
     <rect>
-     <x>416</x>
+     <x>367</x>
      <y>85</y>
      <width>51</width>
      <height>25</height>
@@ -255,7 +255,7 @@
   <widget class="Line" name="line_2">
    <property name="geometry">
     <rect>
-     <x>410</x>
+     <x>355</x>
      <y>2</y>
      <width>5</width>
      <height>112</height>
@@ -272,9 +272,9 @@
    <property name="geometry">
     <rect>
      <x>265</x>
-     <y>47</y>
+     <y>59</y>
      <width>24</width>
-     <height>42</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
@@ -314,7 +314,7 @@
   <widget class="QPushButton" name="bandBtn_00">
    <property name="geometry">
     <rect>
-     <x>416</x>
+     <x>367</x>
      <y>7</y>
      <width>51</width>
      <height>25</height>
@@ -339,9 +339,9 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>220</x>
      <y>90</y>
-     <width>51</width>
+     <width>31</width>
      <height>20</height>
     </rect>
    </property>
@@ -361,8 +361,8 @@
   <widget class="QPushButton" name="pBtnScanDn">
    <property name="geometry">
     <rect>
-     <x>353</x>
-     <y>33</y>
+     <x>300</x>
+     <y>85</y>
      <width>28</width>
      <height>25</height>
     </rect>
@@ -374,7 +374,7 @@
     </font>
    </property>
    <property name="text">
-    <string>&lt;Sc</string>
+    <string>&lt;</string>
    </property>
    <property name="checkable">
     <bool>true</bool>
@@ -384,7 +384,7 @@
    <property name="geometry">
     <rect>
      <x>300</x>
-     <y>33</y>
+     <y>59</y>
      <width>51</width>
      <height>25</height>
     </rect>
@@ -405,7 +405,7 @@
      <x>5</x>
      <y>7</y>
      <width>51</width>
-     <height>36</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="font">
@@ -433,9 +433,9 @@
   <widget class="QSlider" name="hSlider">
    <property name="geometry">
     <rect>
-     <x>190</x>
+     <x>110</x>
      <y>90</y>
-     <width>211</width>
+     <width>101</width>
      <height>20</height>
     </rect>
    </property>
@@ -466,9 +466,9 @@
   <widget class="QPushButton" name="pBtnRIT">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>59</y>
-     <width>52</width>
+     <x>60</x>
+     <y>85</y>
+     <width>41</width>
      <height>25</height>
     </rect>
    </property>
@@ -762,7 +762,7 @@
   <widget class="QPushButton" name="bandBtn_07">
    <property name="geometry">
     <rect>
-     <x>468</x>
+     <x>419</x>
      <y>59</y>
      <width>51</width>
      <height>25</height>
@@ -787,7 +787,7 @@
   <widget class="QPushButton" name="bandBtn_04">
    <property name="geometry">
     <rect>
-     <x>468</x>
+     <x>419</x>
      <y>33</y>
      <width>51</width>
      <height>25</height>
@@ -812,8 +812,8 @@
   <widget class="QPushButton" name="pBtnScanUp">
    <property name="geometry">
     <rect>
-     <x>380</x>
-     <y>33</y>
+     <x>327</x>
+     <y>85</y>
      <width>28</width>
      <height>25</height>
     </rect>
@@ -825,7 +825,7 @@
     </font>
    </property>
    <property name="text">
-    <string>an&gt;</string>
+    <string>&gt;</string>
    </property>
    <property name="checkable">
     <bool>true</bool>
@@ -834,7 +834,7 @@
   <widget class="QPushButton" name="pBtnSubRx">
    <property name="geometry">
     <rect>
-     <x>60</x>
+     <x>5</x>
      <y>85</y>
      <width>51</width>
      <height>25</height>
@@ -847,7 +847,7 @@
     </font>
    </property>
    <property name="text">
-    <string>subRx</string>
+    <string>SubRX</string>
    </property>
    <property name="shortcut">
     <string>S</string>
@@ -859,7 +859,7 @@
   <widget class="QPushButton" name="bandBtn_03">
    <property name="geometry">
     <rect>
-     <x>416</x>
+     <x>367</x>
      <y>33</y>
      <width>51</width>
      <height>25</height>
@@ -884,7 +884,7 @@
   <widget class="QPushButton" name="bandBtn_05">
    <property name="geometry">
     <rect>
-     <x>519</x>
+     <x>470</x>
      <y>33</y>
      <width>51</width>
      <height>25</height>
@@ -909,7 +909,7 @@
   <widget class="QPushButton" name="bandBtn_06">
    <property name="geometry">
     <rect>
-     <x>416</x>
+     <x>367</x>
      <y>59</y>
      <width>51</width>
      <height>25</height>
@@ -931,35 +931,10 @@
     <string notr="true">btnGrpBand</string>
    </attribute>
   </widget>
-  <widget class="QPushButton" name="bandBtn_12">
-   <property name="geometry">
-    <rect>
-     <x>353</x>
-     <y>59</y>
-     <width>53</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Droid Sans Mono</family>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>WWV</string>
-   </property>
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <attribute name="buttonGroup">
-    <string notr="true">btnGrpBand</string>
-   </attribute>
-  </widget>
   <widget class="QPushButton" name="bandBtn_11">
    <property name="geometry">
     <rect>
-     <x>519</x>
+     <x>470</x>
      <y>85</y>
      <width>51</width>
      <height>25</height>
@@ -987,7 +962,7 @@
      <x>294</x>
      <y>2</y>
      <width>5</width>
-     <height>80</height>
+     <height>112</height>
     </rect>
    </property>
    <property name="lineWidth">

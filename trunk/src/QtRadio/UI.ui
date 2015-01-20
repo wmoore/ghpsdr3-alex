@@ -680,6 +680,9 @@
      <addaction name="actionReverse_Beacon"/>
     </widget>
     <widget class="QMenu" name="menuLayout">
+     <property name="tearOffEnabled">
+      <bool>false</bool>
+     </property>
      <property name="title">
       <string>Layout</string>
      </property>
@@ -1317,6 +1320,9 @@
    </property>
    <property name="text">
     <string>Server List</string>
+   </property>
+   <property name="shortcut">
+    <string>S</string>
    </property>
   </action>
   <action name="actionMultimon_Decoder">
