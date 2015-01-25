@@ -1,11 +1,18 @@
 ACLOCAL_AMFLAGS=-I build-aux
 
-SUBDIRS = trunk/src/softrock trunk/src/DttSP trunk/src/dspserver  \
-          trunk/src/widget-server trunk/src/server trunk/bin      \
-          trunk/src/pylauncher trunk/src/hiqsdr trunk/src/sdriq   \
-          trunk/src/sdr1000                                       \
-          @MAKE_QTRADIO@                                          \
-          @MAKE_PERSEUS@ @MAKE_USRP@ @MAKE_RTLSDR@
-
-
-
+SUBDIRS =   src/lib/DttSP                   \
+            src/dspserver                   \
+            src/util/pylauncher             \
+            src/client/QtRadio              \
+            src/hardware/hiqsdr             \
+            src/hardware/HPSDRServer        \
+            src/hardware/hpsdrsvr           \
+            src/hardware/sdr1000            \
+            src/hardware/sdriq              \
+            src/hardware/softrock           \
+            src/hardware/sdr-widget         \
+            # src/hardware/usrp               \
+            @MAKE_QTRADIO@                  \
+            @MAKE_PERSEUS@                  \
+            @MAKE_USRP@                     \
+            @MAKE_RTLSDR@

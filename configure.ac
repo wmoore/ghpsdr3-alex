@@ -407,9 +407,9 @@ if test "x${do_perseus}" = xyes ; then
   Perseus SDR enabled.
 -----------------------------------])  
 
-    AC_CONFIG_SUBDIRS([trunk/src/perseus])
+    AC_CONFIG_SUBDIRS([src/hardware/perseus])
 
-    MAKE_PERSEUS="trunk/src/perseus"
+    MAKE_PERSEUS="src/hardware/perseus"
     AC_SUBST([MAKE_PERSEUS])
 fi
 
@@ -428,9 +428,9 @@ if test "x${do_rtlsdr}" = xyes ; then
    RTL SDR enabled.
 -----------------------------------])  
 
-    AC_CONFIG_SUBDIRS([trunk/src/rtlsdr])
+    AC_CONFIG_SUBDIRS([src/hardware/rtlsdr])
 
-    MAKE_RTLSDR="trunk/src/rtlsdr"
+    MAKE_RTLSDR="src/hardware/rtlsdr"
     AC_SUBST([MAKE_RTLSDR])
 
 fi
@@ -456,9 +456,9 @@ if test "x${have_uhd}" = xyes; then
   USRP enabled.
 -----------------------------------])  
 
-    AC_CONFIG_SUBDIRS([trunk/src/usrp])
+    AC_CONFIG_SUBDIRS([src/hardware/usrp])
 
-    MAKE_USRP="trunk/src/usrp"
+    MAKE_USRP="src/hardware/usrp"
     AC_SUBST([MAKE_USRP])
 
 fi
@@ -473,26 +473,28 @@ if test "x${have_GUI}" = xyes; then
 -----------------------------------
   QtRadio build enabled.
 -----------------------------------])  
-    AC_CONFIG_SUBDIRS([trunk/src/QtRadio])
-    MAKE_QTRADIO="trunk/src/QtRadio"
+    AC_CONFIG_SUBDIRS([src/client/QtRadio])
+    MAKE_QTRADIO="src/client/QtRadio"
     AC_SUBST([MAKE_QTRADIO])
 fi
 
 
 AC_CONFIG_FILES([Makefile
-                 trunk/src/softrock/Makefile
-                 trunk/src/DttSP/Makefile
-                 trunk/src/dspserver/Makefile
-                 trunk/src/widget-server/Makefile
-                 trunk/src/server/Makefile
-                 trunk/bin/Makefile
-                 trunk/src/pylauncher/Makefile
-                 trunk/src/hiqsdr/Makefile
-                 trunk/src/sdriq/Makefile
-                 trunk/src/sdr1000/Makefile
-		 ])
+                src/lib/DttSP/Makefile
+                src/dspserver/Makefile
+                src/util/pylauncher/Makefile
+                src/hardware/hiqsdr/Makefile
+                src/hardware/sdr1000/Makefile
+                src/hardware/sdriq/Makefile
+                src/hardware/softrock/Makefile
+                src/hardware/sdr-widget/Makefile
+                ])
 
-
+# src/hardware/HPSDRServer/Makefile
+# src/hardware/hpsdrsvr/Makefile
+# src/client/bandscope/Makefile
+# src/client/monitor/Makefile
+# src/client/receiver/Makefile
 
 AC_OUTPUT
 
