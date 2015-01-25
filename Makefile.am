@@ -11,7 +11,6 @@ SUBDIRS =   src/lib/DttSP                   \
             src/hardware/sdriq              \
             src/hardware/softrock           \
             src/hardware/sdr-widget         \
-            # src/hardware/usrp               \
             @MAKE_QTRADIO@                  \
             @MAKE_PERSEUS@                  \
             @MAKE_USRP@                     \
