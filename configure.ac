@@ -468,7 +468,7 @@ fi
 # Subpackage QtRadio is unconditionally compiled
 #
 
-if test "x${have_GUI}" = xyes; then
+if test "x${have_GUI}" = xno; then
     AC_MSG_NOTICE([
 -----------------------------------
   QtRadio build enabled.

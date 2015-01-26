@@ -3,9 +3,7 @@ ACLOCAL_AMFLAGS=-I build-aux
 SUBDIRS =   src/lib/DttSP                   \
             src/dspserver                   \
             src/util/pylauncher             \
-            src/client/QtRadio              \
             src/hardware/hiqsdr             \
-            src/hardware/HPSDRServer        \
             src/hardware/hpsdrsvr           \
             src/hardware/sdr1000            \
             src/hardware/sdriq              \
