@@ -1,3 +1,4 @@
+cd ..
 rm -f	Makefile
 rm -f	Makefile.in
 rm -f	aclocal.m4
