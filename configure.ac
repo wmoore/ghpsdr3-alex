@@ -484,6 +484,7 @@ AC_CONFIG_FILES([Makefile
                 src/dspserver/Makefile
                 src/util/pylauncher/Makefile
                 src/hardware/hiqsdr/Makefile
+                src/hardware/hpsdrsvr/Makefile
                 src/hardware/sdr1000/Makefile
                 src/hardware/sdriq/Makefile
                 src/hardware/softrock/Makefile
@@ -491,7 +492,6 @@ AC_CONFIG_FILES([Makefile
                 ])
 
 # src/hardware/HPSDRServer/Makefile
-# src/hardware/hpsdrsvr/Makefile
 # src/client/bandscope/Makefile
 # src/client/monitor/Makefile
 # src/client/receiver/Makefile
