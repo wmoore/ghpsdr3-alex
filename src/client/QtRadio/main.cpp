@@ -99,13 +99,17 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < args.size(); ++i)
          fprintf (stderr, "%d: %s\n", i,  args.at(i).toLocal8Bit().constData() );
-     
+
+
+    QVector<QString> radios;
     QString srv("");
 
     if ( args.size() >1 ) srv = args.at(1) ;
     // create and show your widgets here
-    UI widget(srv);
 
+    radios << srv;
+
+    UI widget(radios);
     widget.show();
     return app.exec();
 }

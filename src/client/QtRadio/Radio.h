@@ -1,5 +1,5 @@
 /*
- * File:   UI.h
+ * File:   Radio.h
  * Author: John Melton, G0ORX/N6LYT
  *
  * Created on 13 August 2010, 14:28
@@ -23,10 +23,10 @@
 *
 */
 
-#ifndef _UI_H
-#define	_UI_H
+#ifndef _RADIO_H
+#define	_RADIO_H
 
-#include "ui_UI.h"
+#include "ui_Radio.h"
 
 #include <QDebug>
 #include <QSettings>
@@ -35,7 +35,8 @@
 #include <QVector>
 #include <QQueue>
 #include <QThread>
-
+#include <QWindow>
+/*
 #include "About.h"
 #include "Configure.h"
 #include "Audio.h"
@@ -69,7 +70,7 @@
 #include "rigctl.h"
 #include "Ctl.h"
 #include "G711A.h"
-#include "RTP.h"
+//#include "RTP.h"
 #include "Hardware.h"
 #include "powermate.h"
 #include "Plugins/Servers.h"
@@ -78,7 +79,7 @@
 #include "Plugins/LogBook.h"
 #include "Plugins/MultimonDecoder/MultimonDecoder.h"
 #include "Plugins/WebBrowser.h"
-
+*/
 #define DSPSERVER_BASE_PORT 8000
 
 #define AGC_FIXED 0
@@ -91,14 +92,11 @@
 #define MIC_NO_OF_FRAMES 4      // need to ensure this is the same value in dspserver
 #define MIC_ALAW_BUFFER_SIZE 58 // limited by the 64 byte TCP message frame
 
-class UI : public QMainWindow {
+class Radio : private QWidget {
     Q_OBJECT
 public:
-    UI(const QVector<QString> radios );
-    //UI( const QString server = QString(""));
-    QString server;
-
-    virtual ~UI();
+    Radio(const QString server = QString(""));
+    virtual ~Radio();
     void loadSettings();
     void saveSettings();
     void closeEvent(QCloseEvent* event);
@@ -363,7 +361,7 @@ private:
 
     QString stringFrequency(long long frequency);
 
-    Ui::UI widget;
+    Ui::Radio widget;
     Audio* audio;
     QAudioDeviceInfo audio_device;
     int audio_sample_rate;
@@ -415,13 +413,13 @@ private:
     int fps;
     QTimer* spectrumTimer;
 
-    About about;
-    Configure configure;
-    Servers *servers;
-    RBClient *rbclient;
-    LogBook *logbook;
-    MultimonDecoder *afsk1200decoder;
-    WebBrowser *webbrowser;
+    //About about;
+    //Configure configure;
+    //Servers *servers;
+    //RBClient *rbclient;
+    //LogBook *logbook;
+    //MultimonDecoder *afsk1200decoder;
+    //WebBrowser *webbrowser;
 
     int sampleRate;
 
@@ -430,20 +428,20 @@ private:
 
     Bandscope* bandscope;
 
-    Equalizer *equalizer; // KD0OSS
+    //Equalizer *equalizer; // KD0OSS
 
     int sampleZoomLevel; // KD0OSS
     int viewZoomLevel; // KD0OSS
 
     int notchFilterIndex; // KD0OSS
 
-    BookmarkDialog bookmarkDialog;
-    BookmarksDialog* bookmarksDialog;
-    BookmarksEditDialog* bookmarksEditDialog;
+    //BookmarkDialog bookmarkDialog;
+    //BookmarksDialog* bookmarksDialog;
+    //BookmarksEditDialog* bookmarksEditDialog;
 
-    Bookmarks bookmarks;
+    //Bookmarks bookmarks;
 
-    Keypad *keypad;
+    //Keypad *keypad;
 
 //    Meter* sMeter;
     int meter;
@@ -475,4 +473,4 @@ private:
     bool protocol3;
 };
 
-#endif	/* _UI_H */
+#endif	/* _RADIO_H */

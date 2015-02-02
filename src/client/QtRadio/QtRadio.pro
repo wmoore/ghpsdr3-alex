@@ -75,6 +75,7 @@ SOURCES += main.cpp\
     vfo.cpp \
     Audioinput.cpp\
     G711A.cpp \
+    Radio.cpp \
     RTP.cpp \
     powermate.cpp \
     Panadapter.cpp \
@@ -123,6 +124,7 @@ HEADERS  += \
     rigctl.h \
     vfo.h \
     G711A.h \
+    Radio.h \
     RTP.h \
     cusdr_queue.h \
     powermate.h \
@@ -141,6 +143,7 @@ FORMS    += \
     BookmarksDialog.ui \
     BookmarksEditDialog.ui \
     Ctl.ui \
+    Radio.ui \
     Vfo.ui
 
 include(Hardware/Hardware.pri)
@@ -152,4 +155,3 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/lib/
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/lib/debug/ 
 else:symbian: LIBS += -lcodec2 -lsamplerate
 else:unix: LIBS += -lcodec2 -lsamplerate -lortp
-
